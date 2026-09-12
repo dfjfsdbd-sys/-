@@ -70,6 +70,20 @@
             --fs-xs: 11px; --fs-sm: 12.5px; --fs-md: 14px; --fs-lg: 16px; --fs-xl: 20px; --fs-2xl: 26px;
         }
         * { box-sizing: border-box; }
+        /* ============================================================
+           حرس الوضع العمودي: إن دار النظام رغم القفل، ندير المحتوى
+           عكسياً فيبقى التطبيق عمودياً. لا يُطبَّق في وضع انغماس المؤقّت.
+           ============================================================ */
+        body.force-portrait {
+            position: fixed; top: 0; left: 0;
+            width: 100vh; height: 100vw;
+            transform-origin: top left;
+            overflow-y: auto; overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        body.force-portrait.fp-ccw { transform: translateX(100vw) rotate(90deg); }
+        body.force-portrait.fp-cw  { transform: translateY(100vh) rotate(-90deg); }
+
         /* يمنع مستطيل التحديد الأزرق الذي يرسمه المتصفح عند اللمس أو الضغط المطوّل */
         * {
             -webkit-tap-highlight-color: transparent;
@@ -1087,6 +1101,17 @@
             width: 4px; height: 4px; border-radius: 50%; background: var(--status-done);
         }
         .mini-tab-btn.current-week.active { background: rgba(53,183,145,0.12); color: var(--status-done); }
+        /* شريط تبويبات يلتفّ على صفّين حين لا تتّسع الأسماء في صفّ واحد.
+           أربعة في الأعلى وثلاثة في الأسفل، بأسماء كاملة لا مقصوصة. */
+        .mini-top-bar.tabs-wrap { flex-wrap: wrap; row-gap: 3px; border-radius: var(--r-lg); }
+        .mini-top-bar.tabs-wrap .mini-tab-btn {
+            flex: 1 1 calc(25% - 3px); min-width: calc(25% - 3px);
+            font-size: 11.5px; padding: 10px 4px; overflow: visible; text-overflow: clip;
+        }
+        .mini-top-bar.tabs-wrap .mini-tab-btn:nth-child(n+5) { flex-basis: calc(33.333% - 3px); min-width: calc(33.333% - 3px); }
+        @media (max-width: 360px) {
+            .mini-top-bar.tabs-wrap .mini-tab-btn { font-size: 10.5px; }
+        }
         .pl-add {
             width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; margin-right: auto;
             border: 1px solid var(--line-2); background: var(--surface-2);
@@ -2275,7 +2300,7 @@
 
 <!-- ===== الصفحة الرابعة: بنك المواد والكتب ===== -->
 <div id="screen-library" class="app-screen">
-    <div class="mini-top-bar" id="lib-tabs-bar">
+    <div class="mini-top-bar tabs-wrap" id="lib-tabs-bar">
         <div id="lib-tab-subjects" class="mini-tab-btn active" onclick="switchLibTab('subjects')">المواد</div>
         <div id="lib-tab-books" class="mini-tab-btn" onclick="switchLibTab('books')">الكتب</div>
         <div id="lib-tab-series" class="mini-tab-btn" onclick="switchLibTab('series')">فقه النفس</div>
@@ -5560,6 +5585,7 @@ function fsToggleImmersive(screenId,force){
     el.classList.toggle('is-immersive',on);
     const ic=el.querySelector('.fs-expand i');
     if(ic)ic.className='fa-solid fa-'+(on?'compress':'expand');
+    if(typeof applyPortraitGuard==='function')setTimeout(applyPortraitGuard,20);
     if(on){
         // iOS يشترط إذناً صريحاً بعد لمسة المستخدم
         if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){
@@ -9967,6 +9993,41 @@ function toggleAppNotifications(){
 // ================================================================
 // تسجيل Service Worker للعمل كـ PWA
 // ================================================================
+// ---------------- قفل الاتجاه العمودي ----------------
+function inImmersiveTimer(){
+    return !!document.querySelector('.focus-studio.is-immersive');
+}
+function tryLockPortrait(){
+    try{
+        if(screen.orientation&&screen.orientation.lock)
+            screen.orientation.lock('portrait').catch(()=>{});
+    }catch(e){}
+}
+// إن دار النظام رغم القفل، ندير المحتوى عكس دورانه فيعود عمودياً
+function applyPortraitGuard(){
+    const body=document.body;
+    const landscape=window.innerWidth>window.innerHeight;
+    if(!landscape||inImmersiveTimer()){
+        body.classList.remove('force-portrait','fp-cw','fp-ccw');
+        return;
+    }
+    let angle=90;
+    try{
+        if(screen.orientation&&typeof screen.orientation.angle==='number')angle=screen.orientation.angle;
+        else if(typeof window.orientation==='number')angle=window.orientation;
+    }catch(e){}
+    if(angle<0)angle+=360;
+    body.classList.add('force-portrait');
+    // زاوية ٩٠ = دار النظام ٩٠ مع عقارب الساعة، فندير المحتوى ٩٠ عكسها
+    const counterCW=(angle===90);
+    body.classList.toggle('fp-cw',counterCW);
+    body.classList.toggle('fp-ccw',!counterCW);
+}
+window.addEventListener('resize',applyPortraitGuard);
+window.addEventListener('orientationchange',()=>setTimeout(applyPortraitGuard,120));
+window.addEventListener('load',()=>{tryLockPortrait();applyPortraitGuard();});
+document.addEventListener('DOMContentLoaded',applyPortraitGuard);
+
 if('serviceWorker' in navigator){
     window.addEventListener('load',function(){
         navigator.serviceWorker.register('./sw.js').then(function(reg){
