@@ -103,6 +103,8 @@
                 radial-gradient(1100px 460px at 100% -8%, rgba(76,184,212,0.07), transparent 62%),
                 radial-gradient(900px 420px at 0% 6%, rgba(63,124,196,0.055), transparent 60%);
             background-attachment: fixed;
+            /* border-box حتى لا تُضاف الحشوة السفلية فوق 100vh فيظهر تمرير بلا محتوى */
+            box-sizing: border-box;
             margin: 0; padding: 16px; padding-bottom: 116px;
             font-size: var(--fs-md); line-height: 1.6; letter-spacing: -0.1px;
             -webkit-font-smoothing: antialiased;
@@ -341,7 +343,10 @@
         .f-step-btn { cursor: pointer; color: var(--ink-2); font-size: 14px; padding: 4px 8px; user-select: none; }
         .f-step-btn:active { color: var(--accent-color); }
         /* مفتاح مقسّم لخيارين */
-        .seg-switch { display: flex; background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-pill); padding: 3px; }
+        .seg-switch { display: flex; background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-pill); padding: 3px; margin-bottom: 8px; }
+        /* فاصل واضح بين آخر حقل وأزرار الحفظ في كل النوافذ */
+        .custom-modal-content > div[style*="display:flex"][style*="gap:9px"],
+        .edit-task-box > div[style*="display:flex"][style*="gap:9px"] { margin-top: 20px !important; }
         .seg-opt {
             flex: 1; padding: 10px 6px; border: none; background: none; cursor: pointer;
             color: var(--ink-3); font-family: inherit; font-size: 12.5px; font-weight: 500;
@@ -353,7 +358,7 @@
         /* عدّاد التكرار: صف مريح بدل مربّع رقمي معلّق */
         .core-rec {
             display: none; align-items: center; justify-content: space-between; gap: 10px;
-            margin-top: 9px; padding: 10px 13px; border-radius: var(--r-sm);
+            margin-top: 9px; margin-bottom: 6px; padding: 10px 13px; border-radius: var(--r-sm);
             background: var(--surface-2); border: 1px solid var(--line-1);
         }
         .core-rec-label { font-size: 11.5px; color: var(--ink-2); }
@@ -2265,6 +2270,10 @@
         <button id="btn-toggle-notifications" class="rt-line rt-line-btn clickable" onclick="toggleAppNotifications()">
             <span class="rt-line-name"><i class="fa-solid fa-bell"></i> <span id="notif-toggle-label">الإشعارات موقوفة</span></span>
             <span class="rt-switch"></span>
+        </button>
+        <button class="rt-line rt-line-btn clickable" onclick="openResetStats()">
+            <span class="rt-line-name"><i class="fa-solid fa-eraser"></i> تصفير سجلّ الإنجاز</span>
+            <span class="rt-line-val"><i class="fa-solid fa-chevron-left"></i></span>
         </button>
         <div class="rt-line">
             <span class="rt-line-name"><i class="fa-solid fa-database"></i> نسخة احتياطية</span>
@@ -8230,6 +8239,39 @@ function setupWeekViewDnD(){
 // النسخ الاحتياطي
 // ================================================================
 const BACKUP_FORMAT=2;
+// ================================================================
+// تصفير سجلّ الإنجاز
+// السجلّ لقطات يومية مجمّدة: حذف مهمة اليوم يُحدّث لقطة اليوم تلقائياً،
+// لكن أيام مضت لا يمكن إعادة حسابها لأن مهامها لم تعد موجودة.
+// لذا لا بدّ من تصفير صريح حين تبدأ من جديد.
+// ================================================================
+function openResetStats(){
+    const days=Object.keys(historyDB).length;
+    const hasCommit=commitmentDB&&commitmentDB.active;
+    showCustomConfirm(
+        `سيُحذف سجلّ ${days} ${days===1?'يوم':'يوم'} من صفحة الإنجاز.<br>
+         <span style="font-size:11px;color:var(--ink-3);">
+         مهامك ومكتبتك وروتينك لا تتأثّر — يُمسح سجلّ النِّسب والمنحنيات فقط،
+         ${hasCommit?'ويُعاد احتساب تعهّدك من اليوم.':'ويبدأ العدّ من جديد اليوم.'}</span>`,
+        ()=>{
+            showCustomConfirm('تأكيد أخير: تصفير سجلّ الإنجاز؟',()=>{
+                historyDB={};
+                localStorage.setItem('historyDB','{}');
+                commitLogDB={};
+                localStorage.setItem('commitLogDB','{}');
+                if(commitmentDB&&commitmentDB.active){
+                    commitmentDB.startDate=commitDayKey();
+                    saveCommitment();
+                }
+                recordTodayStats();                    // نعيد بناء لقطة اليوم من مهامه الحالية
+                if(typeof renderStats==='function')renderStats();
+                if(typeof renderCommitment==='function'&&statsTab==='commit')renderCommitment();
+                showToast('صُفّر السجلّ — بدأ العدّ من اليوم');
+            },{acceptLabel:'<i class="fa-solid fa-eraser"></i> نعم، صفّر',acceptColor:'var(--status-delay)'});
+        },
+        {acceptLabel:'<i class="fa-solid fa-arrow-left"></i> تابع',acceptColor:'var(--cat-work)'}
+    );
+}
 function exportData(){
     const b={
         app:'montheoma', format:BACKUP_FORMAT, savedAt:new Date().toISOString(),
@@ -9471,7 +9513,7 @@ const LONGPRESS_MASTERY_OPTIONS_TC={ // subject / worship-memorize / book-memori
     ]
 };
 const LONGPRESS_MASTERY_OPTIONS_COMPLETED={ // book / series / newseries: مبني على completed+masteryPercent
-    types:['book','series','newseries'],
+    types:['book','series','newseries','worship-read'],
     options:[
         {value:0,label:'لم تكتمل (0%)'},
         {value:75,label:'بدون ملاحظات (75%)'},
@@ -9482,8 +9524,14 @@ function renderLongpressMasteryChoices(dbType,entity){
     const section=document.getElementById('lib-longpress-mastery-section');
     const choicesEl=document.getElementById('lib-longpress-mastery-choices');
     let config=null;
-    if(LONGPRESS_MASTERY_OPTIONS_TC.types.includes(dbType))config=LONGPRESS_MASTERY_OPTIONS_TC;
-    else if(LONGPRESS_MASTERY_OPTIONS_COMPLETED.types.includes(dbType))config=LONGPRESS_MASTERY_OPTIONS_COMPLETED;
+    // العبادات تُمرَّر بنوع عام: نحدّد منطقها من نوع العبادة الأمّ
+    let key=dbType;
+    if(dbType==='worship'&&longpressTarget&&longpressTarget.parentId){
+        const par=worshipDatabase.find(x=>x.id===longpressTarget.parentId);
+        if(par)key=(par.type==='memorize')?'worship-memorize':'worship-read';
+    }
+    if(LONGPRESS_MASTERY_OPTIONS_TC.types.includes(key))config=LONGPRESS_MASTERY_OPTIONS_TC;
+    else if(LONGPRESS_MASTERY_OPTIONS_COMPLETED.types.includes(key))config=LONGPRESS_MASTERY_OPTIONS_COMPLETED;
     if(!config){section.style.display='none';choicesEl.innerHTML='';longpressMasterySelection=null;return;}
     section.style.display='block';
     // تحديد القيمة الحالية: timesCompleted للنوع الأول، أو 0/75/100 المشتقة من completed+masteryPercent للنوع الثاني
@@ -9687,7 +9735,11 @@ function saveLongpressEdit(){
         if(willCore)entity.recurrence=readLongpressRecurrence();
     } else {
         if(longpressMasterySelection!==null){
-            const dbType=longpressTarget.dbType;
+            let dbType=longpressTarget.dbType;
+            if(dbType==='worship'){
+                const par=worshipDatabase.find(x=>x.id===longpressTarget.parentId);
+                dbType=(par&&par.type==='memorize')?'worship-memorize':'worship-read';
+            }
             if(LONGPRESS_MASTERY_OPTIONS_TC.types.includes(dbType)){
                 entity.timesCompleted=longpressMasterySelection;
                 entity.masteryPercent=masteryPercent(longpressMasterySelection);
