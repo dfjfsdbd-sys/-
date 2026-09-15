@@ -223,6 +223,14 @@
         .f-fold > div { padding: 0 13px 13px; }
         /* لغة موحّدة لنوافذ الإنجاز: أيقونة، عنوان ملوّن، إجراء رئيسي، ثم تعديل/حذف */
         .cw-icon { font-size: 38px; margin-bottom: 10px; line-height: 1; }
+        .icon-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+        .icon-opt {
+            width: 40px; height: 40px; border-radius: var(--r-sm); cursor: pointer;
+            background: var(--surface-2); border: 1px solid var(--line-1);
+            color: var(--ink-2); font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .icon-opt.selected { background: var(--accent-tint); border-color: var(--accent-line); color: var(--accent-color); }
         .cw-avatar-img {
             width: 62px; height: 62px; border-radius: var(--r-md); object-fit: cover;
             border: 1px solid var(--line-2); display: block; margin: 0 auto;
@@ -258,6 +266,76 @@
         .metric-verdict { font-size: 11.5px; margin-top: 14px; min-height: 18px; color: var(--ink-3); }
         .metric-verdict.good { color: var(--status-done); }
         .metric-verdict.bad { color: var(--status-delay); }
+        .metric-verdict.near { color: var(--status-work); }
+        /* تقويم التخطيط */
+        .pc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+        .pc-title { font-size: 15px; font-weight: 600; color: var(--ink-1); }
+        .pc-weeks { display: flex; gap: 5px; margin-bottom: 14px; }
+        .pc-wk {
+            flex: 1; text-align: center; font-size: 9.5px; color: var(--ink-3);
+            background: var(--surface-2); border: 1px solid var(--line-1);
+            border-radius: var(--r-xs); padding: 6px 2px;
+        }
+        .pc-wk b { display: block; color: var(--ink-2); font-size: 10.5px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+        .pc-cell { position: relative; font-size: 12px; }
+        .pc-cell.is-past { opacity: 0.6; }
+        .pc-pct { position: absolute; bottom: 2px; left: 0; right: 0; font-size: 7.5px; opacity: 0.85; }
+        .pc-dot {
+            position: absolute; top: 2px; left: 2px; min-width: 13px; height: 13px; line-height: 13px;
+            border-radius: var(--r-pill); font-size: 8px; font-weight: 600;
+            background: var(--accent-tint); color: var(--accent-color);
+        }
+        .pc-del { background: none; border: none; color: var(--ink-3); cursor: pointer; font-size: 12px; padding: 4px; }
+        .drive-note { font-size: 11.5px; color: var(--ink-2); line-height: 1.8; background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm); padding: 12px 14px; margin-bottom: 16px; }
+        .drive-note b { color: var(--ink-1); }
+        .drive-status { font-size: 11px; color: var(--ink-3); text-align: center; }
+        .drive-status b { color: var(--ink-1); font-weight: 600; }
+        .drive-steps { font-size: 11.5px; color: var(--ink-2); line-height: 2; }
+        .drive-steps div { margin-bottom: 6px; }
+        .drive-steps b { color: var(--accent-color); margin-left: 5px; }
+        .drive-origin { display: inline-block; background: var(--surface-3); border-radius: var(--r-xs); padding: 3px 8px; font-size: 10.5px; margin-top: 4px; }
+        .pt-preview { background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm); padding: 4px 12px; margin-bottom: 16px; }
+        .pt-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line-1); font-size: 12px; }
+        .pt-row:last-child { border-bottom: none; }
+        .pt-name { color: var(--ink-2); width: 52px; }
+        .pt-time { color: var(--ink-1); font-weight: 600; font-variant-numeric: tabular-nums; }
+        .pt-after { margin-right: auto; font-size: 10px; color: var(--ink-3); }
+        .dd-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .dd-list { max-height: 44vh; overflow-y: auto; }
+        .dd-row { display: flex; align-items: center; gap: 10px; padding: 10px 2px; border-bottom: 1px solid var(--line-1); }
+        .dd-row:last-child { border-bottom: none; }
+        .dd-mark {
+            width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; font-size: 9px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(238,82,83,0.10); color: rgba(238,82,83,0.8); border: 1px solid rgba(238,82,83,0.25);
+        }
+        .dd-mark.on { background: rgba(53,183,145,0.14); color: var(--status-done); border-color: rgba(53,183,145,0.35); }
+        .dd-name { flex: 1; min-width: 0; font-size: 12.5px; color: var(--ink-1); text-align: right; line-height: 1.5; }
+        .dd-cat { font-size: 10px; color: var(--ink-3); flex-shrink: 0; }
+        .dd-edit-btn {
+            flex-shrink: 0; background: var(--surface-2); border: 1px solid var(--line-2);
+            color: var(--ink-2); border-radius: var(--r-pill); padding: 7px 13px;
+            font-size: 11px; font-family: inherit; cursor: pointer; white-space: nowrap;
+        }
+        .dd-edit-btn.on { background: var(--accent-tint); color: var(--accent-color); border-color: var(--accent-line); }
+        .dd-note { font-size: 10.5px; color: var(--ink-3); text-align: center; margin-bottom: 10px; }
+        .dd-editable { border: 1px solid var(--line-2); border-radius: var(--r-sm); margin-bottom: 5px; padding: 10px; }
+        .dd-edit-row { padding: 12px 2px; border-bottom: 1px solid var(--line-1); }
+        .dd-edit-name { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-1); margin-bottom: 10px; }
+        .dd-dot { width: 7px; height: 7px; border-radius: 50%; }
+        .dd-steppers { display: flex; gap: 10px; }
+        .dd-step {
+            flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 6px;
+            background: var(--surface-2); border: 1px solid var(--line-1);
+            border-radius: var(--r-sm); padding: 7px 10px;
+        }
+        .dd-step span { font-size: 10px; color: var(--ink-3); }
+        .dd-step b { font-size: 14px; color: var(--ink-1); font-variant-numeric: tabular-nums; min-width: 18px; text-align: center; }
+        .dd-step button {
+            width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line-2);
+            background: var(--surface-3); color: var(--ink-2); font-size: 12px; cursor: pointer; font-family: inherit;
+        }
+        .dd-add { padding-top: 14px; }
         .check-row {
             display: flex; align-items: center; gap: 11px; cursor: pointer;
             background: var(--surface-2); border: 1px solid var(--line-1);
@@ -380,14 +458,16 @@
             width:18px; height:18px; border-radius:50%;
             border:1.5px solid; font-size:10px; flex-shrink:0;
         }
-        .days-grid { display: flex; gap: 4px; margin-bottom: var(--sp-4); }
+        .days-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--sp-4); }
         .day-chip {
-            background: var(--surface-1); color: var(--ink-3); padding: 9px 2px;
-            border-radius: var(--r-sm); font-size: 10.5px; text-align: center; flex: 1; min-width: 0;
+            background: var(--surface-2); color: var(--ink-2); padding: 12px 4px;
+            border-radius: var(--r-sm); font-size: 13px; text-align: center;
+            flex: 1 1 calc(25% - 5px); min-width: calc(25% - 5px);
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
             border: 1px solid var(--line-1); cursor: pointer; position: relative;
             transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
         }
+        .day-chip:nth-child(n+5) { flex-basis: calc(33.333% - 4px); min-width: calc(33.333% - 4px); }
         .day-chip.active-day { background: var(--accent-tint); color: var(--accent-color); border-color: var(--accent-line); font-weight: 600; }
         /* اليوم الحالي: نقطة صغيرة بدل إطار ثانٍ يزاحم إطار التحديد */
         .day-chip.today-indicator::after {
@@ -425,6 +505,14 @@
             width: 34px; height: 34px; border-radius: var(--r-xs); cursor: pointer;
             border: 1px solid var(--line-1); background: var(--surface-2); color: var(--ink-2); font-size: 13px;
         }
+        .sleep-row { background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm); padding: 12px; margin-bottom: 9px; }
+        .sleep-row-top { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+        .sleep-label {
+            flex: 1; min-width: 0; background: none !important; border: none !important;
+            padding: 0 !important; font-size: 12.5px !important; color: var(--ink-1) !important;
+            text-align: right !important; font-weight: 500;
+        }
+        .sleep-hrs { font-size: 11px; color: var(--status-wait); font-variant-numeric: tabular-nums; flex-shrink: 0; }
         .rt-hint { font-size: 10.5px; color: var(--ink-3); padding: 0 4px 12px; line-height: 1.7; }
         .rt-slot {
             display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -1108,14 +1196,23 @@
         .mini-tab-btn.current-week.active { background: rgba(53,183,145,0.12); color: var(--status-done); }
         /* شريط تبويبات يلتفّ على صفّين حين لا تتّسع الأسماء في صفّ واحد.
            أربعة في الأعلى وثلاثة في الأسفل، بأسماء كاملة لا مقصوصة. */
-        .mini-top-bar.tabs-wrap { flex-wrap: wrap; row-gap: 3px; border-radius: var(--r-lg); }
-        .mini-top-bar.tabs-wrap .mini-tab-btn {
-            flex: 1 1 calc(25% - 3px); min-width: calc(25% - 3px);
-            font-size: 11.5px; padding: 10px 4px; overflow: visible; text-overflow: clip;
+        /* تبويبات المكتبة: أزرار مستقلة بحدود واضحة، لا شريط مقسّم باهت */
+        .mini-top-bar.tabs-wrap {
+            flex-wrap: wrap; gap: 6px; background: none; border: none; padding: 0;
+            border-radius: 0; margin-bottom: var(--sp-4);
         }
-        .mini-top-bar.tabs-wrap .mini-tab-btn:nth-child(n+5) { flex-basis: calc(33.333% - 3px); min-width: calc(33.333% - 3px); }
-        @media (max-width: 360px) {
-            .mini-top-bar.tabs-wrap .mini-tab-btn { font-size: 10.5px; }
+        .mini-top-bar.tabs-wrap .mini-tab-btn {
+            flex: 1 1 calc(25% - 5px); min-width: calc(25% - 5px);
+            font-size: 12.5px; font-weight: 500; padding: 11px 4px;
+            background: var(--surface-2); border: 1px solid var(--line-2);
+            border-radius: var(--r-sm); color: var(--ink-2);
+            overflow: visible; text-overflow: clip;
+        }
+        .mini-top-bar.tabs-wrap .mini-tab-btn:nth-child(n+5) { flex-basis: calc(33.333% - 4px); min-width: calc(33.333% - 4px); }
+        .mini-top-bar.tabs-wrap .mini-tab-btn:active { background: var(--surface-3); }
+        .mini-top-bar.tabs-wrap .mini-tab-btn.active {
+            background: var(--accent-tint); color: var(--accent-color);
+            border-color: var(--accent-line); font-weight: 600;
         }
         .pl-add {
             width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; margin-right: auto;
@@ -1165,7 +1262,18 @@
         .color-swatch-add-btn:hover { border-color: var(--text-muted); }
         /* صلاة Confirm */
         .prayer-confirm-modal-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(5,5,8,0.72); z-index: 99999; align-items: flex-end; justify-content: center; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-        .prayer-confirm-box { background: var(--surface-1); border: 1px solid rgba(53,183,145,0.22); border-bottom: none; border-radius: var(--r-xl) var(--r-xl) 0 0; padding: 20px 20px calc(22px + env(safe-area-inset-bottom, 0px)); width: 100%; max-width: 520px; text-align: center; box-shadow: var(--shadow-lg); }
+        /* كل نوافذ الإنجاز بمقاس واحد وترتيب واحد: أيقونة، عنوان، سؤال، إجراء، تعديل/حذف، إغلاق */
+        .prayer-confirm-box {
+            background: var(--surface-1); border: 1px solid var(--line-2); border-bottom: none;
+            border-radius: var(--r-xl) var(--r-xl) 0 0;
+            padding: 22px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+            width: 100%; max-width: 520px; text-align: center; box-shadow: var(--shadow-lg);
+        }
+        .prayer-confirm-box .cw-icon { font-size: 34px; margin-bottom: 12px; }
+        .prayer-confirm-title { min-height: 24px; }
+        .prayer-confirm-subtitle { min-height: 18px; }
+        .prayer-btn-done, .prayer-btn-sunnah { min-height: 48px; }
+        .prayer-btn-cancel { margin-top: 2px; }
         .prayer-confirm-title { font-size: 17px; font-weight: 600; color: var(--ink-1); margin-bottom: 5px; }
         .prayer-confirm-subtitle { font-size: 12.5px; color: var(--ink-3); margin-bottom: 20px; }
         .prayer-btn-done { background: var(--cat-god); color: #0d1512; border: none; border-radius: var(--r-sm); padding: 14px; font-size: 13.5px; font-weight: 600; font-family: inherit; cursor: pointer; width: 100%; margin-bottom: 9px; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -1480,7 +1588,7 @@
 <!-- نافذة إنجاز عبادة (قراءة/بسيطة) -->
 <div id="worship-completion-modal" class="prayer-confirm-modal-overlay">
     <div class="prayer-confirm-box" style="border-color:rgba(53,183,145,0.28);">
-        <div class="cw-icon" id="worship-completion-modal-avatar" style="color:var(--cat-god);"><i class="fa-solid fa-hands-praying"></i></div>
+        <div class="cw-icon" id="worship-completion-modal-avatar" style="color:var(--cat-god);"><i class="fa-solid fa-leaf"></i></div>
         <div class="prayer-confirm-title" id="worship-completion-title" style="color:var(--cat-god);">إنجاز عبادة</div>
         <div class="prayer-confirm-subtitle">هل أتممتها؟</div>
         <button class="prayer-btn-done clickable" onclick="confirmWorshipTaskDone()"><i class="fa-solid fa-check-circle"></i> تمت المهمة</button>
@@ -1603,8 +1711,12 @@
                 <div class="color-swatches-row" id="lib-longpress-color-swatches"><div class="color-swatch" data-color="#4a9ee0" style="background:#4a9ee0;" onclick="selectLongpressColor('#4a9ee0',this)"></div><div class="color-swatch" data-color="#e0a04a" style="background:#e0a04a;" onclick="selectLongpressColor('#e0a04a',this)"></div><div class="color-swatch" data-color="#a682e8" style="background:#a682e8;" onclick="selectLongpressColor('#a682e8',this)"></div><div class="color-swatch" data-color="#7bc39a" style="background:#7bc39a;" onclick="selectLongpressColor('#7bc39a',this)"></div><div class="color-swatch" data-color="#e0705f" style="background:#e0705f;" onclick="selectLongpressColor('#e0705f',this)"></div><div class="color-swatch" data-color="#c08a4e" style="background:#c08a4e;" onclick="selectLongpressColor('#c08a4e',this)"></div><div class="color-swatch" data-color="#35b791" style="background:#35b791;" onclick="selectLongpressColor('#35b791',this)"></div><div class="color-swatch" data-color="#e06a9e" style="background:#e06a9e;" onclick="selectLongpressColor('#e06a9e',this)"></div><div class="color-swatch" data-color="#4cb8d4" style="background:#4cb8d4;" onclick="selectLongpressColor('#4cb8d4',this)"></div></div>
             </div>
 
+            <div id="lib-longpress-iconname-section" class="f-row" style="display:none;">
+                <label class="f-label">الأيقونة البديلة (تظهر حين لا توجد صورة)</label>
+                <div id="lib-icon-picker" class="icon-picker"></div>
+            </div>
             <div id="lib-longpress-icon-section" class="f-row" style="display:none;">
-                <label class="f-label">أيقونة مخصصة</label>
+                <label class="f-label">صورة العنصر (تحلّ محلّ الأيقونة)</label>
                 <div style="display:flex;align-items:center;gap:10px;">
                     <img id="lib-longpress-icon-preview" src="" class="f-icon-preview" style="display:none;">
                     <button type="button" onclick="document.getElementById('lib-longpress-icon-input').click()" class="f-upload-btn"><i class="fa-solid fa-image"></i> اختر صورة</button>
@@ -1903,7 +2015,8 @@
 <div id="station-time-picker-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(5,5,8,0.7);z-index:99998;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
     <div style="background:var(--card-bg);border:1px solid var(--line-2);border-radius:16px;padding:20px;width:280px;text-align:right;">
         <h3 style="margin:0 0 12px 0;color:var(--accent-color);font-size:14px;"><i class="fa-solid fa-clock"></i> تحديد وقت الفترة</h3>
-        <p id="station-time-picker-label" style="font-size:12px;color:var(--text-muted);margin-bottom:10px;"></p>
+        <p id="station-time-picker-label" style="font-size:12px;color:var(--ink-2);margin-bottom:8px;"></p>
+        <div id="station-tp-hint" class="rt-hint" style="padding:10px 12px;background:var(--surface-2);border:1px solid var(--line-1);border-radius:var(--r-sm);margin-bottom:14px;"></div>
         <div style="display:flex;gap:8px;margin-bottom:14px;">
             <div style="flex:1;"><label class="f-label">من:</label>
                 <div class="time-display-trigger" onclick="openCustomTimePicker('station-tp-from')"><span id="disp-station-tp-from">--:--</span><i class="fa-solid fa-clock"></i></div>
@@ -2124,40 +2237,45 @@
 </div>
 
 <!-- نافذة النوم -->
-<div id="sleep-modal-picker" class="custom-modal-overlay">
+<!-- إضافة فترة روتين (محاضرة / عمل) -->
+<div id="routine-slot-modal" class="custom-modal-overlay">
     <div class="custom-modal-content">
-        <h3 class="m-title"><i class="fa-solid fa-bed"></i> روتين النوم الثابت</h3>
-        <div style="display:flex;flex-direction:column;gap:10px;text-align:right;">
-            <div>
-                <label style="font-size:12px;color:var(--text-muted);">النوم الرئيسي (الليل) - من / إلى:</label>
-                <div style="display:flex;gap:6px;margin-top:4px;">
-                    <div style="flex:1;">
-                        <div class="time-display-trigger" onclick="openCustomTimePicker('sleep-from-1')"><span id="disp-sleep-from-1">--:--</span><i class="fa-solid fa-clock"></i></div>
-                        <input type="hidden" id="sleep-from-1">
-                    </div>
-                    <div style="flex:1;">
-                        <div class="time-display-trigger" onclick="openCustomTimePicker('sleep-to-1')"><span id="disp-sleep-to-1">--:--</span><i class="fa-solid fa-clock"></i></div>
-                        <input type="hidden" id="sleep-to-1">
-                    </div>
-                </div>
+        <h3 class="m-title"><i class="fa-solid fa-clock-rotate-left"></i> <span id="routine-slot-title">إضافة فترة</span></h3>
+        <div id="routine-subject-picker" style="display:none;margin-bottom:14px;">
+            <label class="f-label">اختر المادة</label>
+            <div id="routine-subject-chips" class="chips-container" style="margin:0;"></div>
+        </div>
+        <div class="f-grid">
+            <div class="f-col-wide">
+                <label class="f-label">وقت البدء</label>
+                <div class="time-display-trigger" onclick="openCustomTimePicker('inline-slot-from')"><span id="disp-inline-slot-from">--:--</span><i class="fa-solid fa-clock"></i></div>
+                <input type="hidden" id="inline-slot-from">
             </div>
-            <div>
-                <label style="font-size:12px;color:var(--text-muted);">القيلولة / الراحة النهارية - من / إلى:</label>
-                <div style="display:flex;gap:6px;margin-top:4px;">
-                    <div style="flex:1;">
-                        <div class="time-display-trigger" onclick="openCustomTimePicker('sleep-from-2')"><span id="disp-sleep-from-2">--:--</span><i class="fa-solid fa-clock"></i></div>
-                        <input type="hidden" id="sleep-from-2">
-                    </div>
-                    <div style="flex:1;">
-                        <div class="time-display-trigger" onclick="openCustomTimePicker('sleep-to-2')"><span id="disp-sleep-to-2">--:--</span><i class="fa-solid fa-clock"></i></div>
-                        <input type="hidden" id="sleep-to-2">
-                    </div>
-                </div>
+            <div class="f-col-wide">
+                <label class="f-label">وقت الانتهاء</label>
+                <div class="time-display-trigger" onclick="openCustomTimePicker('inline-slot-to')"><span id="disp-inline-slot-to">--:--</span><i class="fa-solid fa-clock"></i></div>
+                <input type="hidden" id="inline-slot-to">
             </div>
         </div>
-        <div style="display:flex;gap:10px;margin-top:15px;">
-            <button class="btn-prime clickable" onclick="saveFixedSleepSettings()">حفظ</button>
-            <button class="btn-prime clickable" style="background:var(--line-1);color:white;" onclick="closeSleepModal()">إلغاء</button>
+        <div class="rt-hint" id="routine-slot-hint" style="padding:10px 12px;background:var(--surface-2);border:1px solid var(--line-1);border-radius:var(--r-sm);"></div>
+        <div style="display:flex;gap:9px;margin-top:16px;">
+            <button class="btn-prime clickable" style="flex:2;" onclick="submitInlineRoutineSlot()">تثبيت في الشبكة الأسبوعية</button>
+            <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closeRoutineSlotModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div id="sleep-modal-picker" class="custom-modal-overlay">
+    <div class="custom-modal-content">
+        <h3 class="m-title"><i class="fa-solid fa-bed"></i> روتين النوم</h3>
+        <div id="sleep-periods-list"></div>
+        <button class="rt-add" style="width:100%;margin-bottom:14px;" onclick="addSleepPeriodRow()">
+            <i class="fa-solid fa-plus"></i> إضافة فترة نوم
+        </button>
+        <div class="rt-hint" id="sleep-total-hint" style="padding:10px 12px;background:var(--surface-2);border:1px solid var(--line-1);border-radius:var(--r-sm);"></div>
+        <div style="display:flex;gap:9px;margin-top:16px;">
+            <button class="btn-prime clickable" style="flex:2;" onclick="saveFixedSleepSettings()">حفظ</button>
+            <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closeSleepModal()">إلغاء</button>
         </div>
     </div>
 </div>
@@ -2210,27 +2328,6 @@
             <button class="rt-add" onclick="toggleRoutineInlineForm('عمل')"><i class="fa-solid fa-briefcase"></i> عمل</button>
             <button class="rt-add" onclick="openSleepModal()"><i class="fa-solid fa-bed"></i> نوم</button>
         </div>
-        <div id="inline-routine-add-form" class="expandable-input-container">
-            <div class="rt-form">
-                <div id="routine-subject-picker" style="display:none;margin-bottom:14px;">
-                    <label class="f-label">اختر المادة</label>
-                    <div id="routine-subject-chips" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-                </div>
-                <div style="display:flex;gap:10px;">
-                    <div style="flex:1;">
-                        <label class="f-label">وقت البدء</label>
-                        <div class="time-display-trigger" onclick="openCustomTimePicker('inline-slot-from')"><span id="disp-inline-slot-from">--:--</span><i class="fa-solid fa-clock"></i></div>
-                        <input type="hidden" id="inline-slot-from">
-                    </div>
-                    <div style="flex:1;">
-                        <label class="f-label">وقت الانتهاء</label>
-                        <div class="time-display-trigger" onclick="openCustomTimePicker('inline-slot-to')"><span id="disp-inline-slot-to">--:--</span><i class="fa-solid fa-clock"></i></div>
-                        <input type="hidden" id="inline-slot-to">
-                    </div>
-                </div>
-                <button class="btn-prime clickable" style="margin-top:14px;" onclick="submitInlineRoutineSlot()">تثبيت في الشبكة الأسبوعية</button>
-            </div>
-        </div>
     </div>
 
     <div class="section-title"><i class="fa-solid fa-chart-pie"></i> ميزانية اليوم</div>
@@ -2271,6 +2368,14 @@
             <span class="rt-line-name"><i class="fa-solid fa-bell"></i> <span id="notif-toggle-label">الإشعارات موقوفة</span></span>
             <span class="rt-switch"></span>
         </button>
+        <button class="rt-line rt-line-btn clickable" onclick="openDriveSettings()">
+            <span class="rt-line-name"><i class="fa-brands fa-google-drive"></i> الحفظ في جوجل درايف</span>
+            <span class="rt-line-val" id="drive-state">—</span>
+        </button>
+        <button class="rt-line rt-line-btn clickable" onclick="openPrayerSettings()">
+            <span class="rt-line-name"><i class="fa-solid fa-mosque"></i> أوقات الصلاة</span>
+            <span class="rt-line-val" id="prayer-settings-state">—</span>
+        </button>
         <button class="rt-line rt-line-btn clickable" onclick="openResetStats()">
             <span class="rt-line-name"><i class="fa-solid fa-eraser"></i> تصفير سجلّ الإنجاز</span>
             <span class="rt-line-val"><i class="fa-solid fa-chevron-left"></i></span>
@@ -2302,7 +2407,10 @@
         </div>
         <div id="specific-week-pool-container" class="drop-pane"></div>
 
-        <div class="section-title"><i class="fa-solid fa-calendar-week"></i> أيام الأسبوع</div>
+        <div class="section-title">
+            <i class="fa-solid fa-calendar-week"></i> أيام الأسبوع
+            <button class="pl-add clickable" onclick="openPlanCalendar()" title="تقويم الشهر"><i class="fa-solid fa-calendar-days"></i></button>
+        </div>
         <div style="display:flex;flex-direction:column;gap:10px;" id="seven-days-buckets-wrapper"></div>
     </div>
 </div>
@@ -2841,6 +2949,164 @@
     </div>
 </div>
 
+<!-- تقويم الشهر في التخطيط -->
+<div id="plan-cal-modal" class="custom-modal-overlay" style="z-index:100013;">
+    <div class="custom-modal-content" style="max-height:92vh;">
+        <div class="pc-head">
+            <button class="fs-icon-btn" onclick="stepPlanMonth(-1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="pc-title" id="plan-cal-title">الشهر</div>
+            <button class="fs-icon-btn" onclick="stepPlanMonth(1)"><i class="fa-solid fa-chevron-left"></i></button>
+        </div>
+        <div class="pc-weeks" id="plan-cal-weeks"></div>
+        <div class="cm-week-head">
+            <div>ج</div><div>س</div><div>ح</div><div>ن</div><div>ث</div><div>ر</div><div>خ</div>
+        </div>
+        <div class="cm-grid" id="plan-cal-grid"></div>
+        <div class="cm-legend">
+            <span><i class="cm-dot done"></i> منجَز</span>
+            <span><i class="cm-dot broken"></i> ناقص</span>
+            <span><i class="cm-dot rest"></i> بلا مهام</span>
+            <span><i class="cm-dot future"></i> قادم</span>
+        </div>
+        <div class="rt-hint" style="text-align:center;">اضغط أي يوم قادم لتضيف فيه مهمة — ولو بعد شهرين.</div>
+        <button class="btn-prime btn-ghost clickable" onclick="closePlanCalendar()">إغلاق</button>
+    </div>
+</div>
+
+<!-- يوم من تقويم التخطيط -->
+<div id="plan-day-modal" class="custom-modal-overlay" style="z-index:100015;">
+    <div class="custom-modal-content">
+        <div class="lib-head-title" id="plan-day-title">اليوم</div>
+        <div class="lib-head-sum" id="plan-day-sum" style="margin-bottom:14px;"></div>
+        <div id="plan-day-rows" class="dd-list"></div>
+        <div style="border-top:1px solid var(--line-1);margin-top:14px;padding-top:14px;">
+            <label class="f-label">إضافة مهمة لهذا اليوم</label>
+            <input type="text" id="plan-day-input" placeholder="مثال: مراجعة عقد الإيجار" style="width:100%;text-align:right;">
+            <div class="chips-container" id="plan-day-cats" style="margin-top:10px;">
+                <div class="chip-choice selected" onclick="pickPlanDayCat('noCategory',this)">عام</div>
+                <div class="chip-choice" onclick="pickPlanDayCat('study',this)">دراسة</div>
+                <div class="chip-choice" onclick="pickPlanDayCat('god',this)">عبادات</div>
+                <div class="chip-choice" onclick="pickPlanDayCat('work',this)">عمل</div>
+                <div class="chip-choice" onclick="pickPlanDayCat('behavior',this)">سلوك</div>
+            </div>
+            <div style="display:flex;gap:9px;margin-top:6px;">
+                <button class="btn-prime clickable" style="flex:2;" onclick="addScheduledFromCalendar()">إضافة</button>
+                <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closePlanDay()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- الحفظ في جوجل درايف -->
+<div id="drive-modal" class="custom-modal-overlay">
+    <div class="custom-modal-content">
+        <h3 class="m-title"><i class="fa-brands fa-google-drive"></i> الحفظ في حسابك</h3>
+        <div class="drive-note">
+            تُحفظ نسخة من بياناتك في <b>درايفك أنت</b> تلقائياً، فلا تضيع مهامك وإنجازاتك
+            إن مسحت المتصفح أو غيّرت جهازك. لا تمرّ بياناتك بأي خادم.
+        </div>
+
+        <div class="drive-status" id="drive-sync-status"></div>
+
+        <button class="core-cta clickable" id="drive-connect-btn"
+                style="margin-top:14px;background:var(--accent-tint);border-color:var(--accent-line);"
+                onclick="driveConnect()">
+            <span>سجّل الدخول بحساب جوجل</span><i class="fa-brands fa-google"></i>
+        </button>
+
+        <div id="drive-actions" style="display:none;">
+            <label class="check-row" style="margin-bottom:12px;">
+                <input type="checkbox" id="drive-auto" onchange="toggleDriveAuto()">
+                <span>مزامنة تلقائية بعد كل تغيير</span>
+            </label>
+            <div style="display:flex;gap:9px;">
+                <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="driveSyncNow(false)"><i class="fa-solid fa-cloud-arrow-up"></i> ارفع الآن</button>
+                <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="driveRestore()"><i class="fa-solid fa-cloud-arrow-down"></i> استعد</button>
+            </div>
+        </div>
+
+        <div id="drive-unavailable" class="st-empty" style="display:none;">
+            المزامنة غير مهيّأة في هذه النسخة من التطبيق.
+        </div>
+
+        <button class="btn-prime btn-ghost clickable" style="margin-top:14px;" onclick="closeDriveSettings()">إغلاق</button>
+
+        <details class="f-fold" style="margin-top:16px;">
+            <summary>للمطوّر — تهيئة المزامنة مرة واحدة</summary>
+            <div class="drive-steps">
+                <div>يكفي أن يُهيَّأ هذا مرة واحدة، ثم يسجّل كل مستخدم دخوله بضغطة بلا أي إعداد.</div>
+                <div><b>١.</b> <span dir="ltr">console.cloud.google.com</span> ← مشروع جديد.</div>
+                <div><b>٢.</b> APIs &amp; Services ← Library ← <span dir="ltr">Google Drive API</span> ← Enable.</div>
+                <div><b>٣.</b> OAuth consent screen ← <span dir="ltr">External</span> ← املأ الاسم والبريد.</div>
+                <div><b>٤.</b> Credentials ← Create credentials ← <span dir="ltr">OAuth client ID</span> ← <span dir="ltr">Web application</span>.</div>
+                <div><b>٥.</b> تحت <span dir="ltr">Authorized JavaScript origins</span> أضف رابط موقعك:<br><span dir="ltr" class="drive-origin" id="drive-origin-hint">https://…</span></div>
+                <div><b>٦.</b> ضع المعرّف في السطر <span dir="ltr">DRIVE_CLIENT_ID</span> أعلى ملف <span dir="ltr">index.html</span>، أو الصقه هنا لتجربته على هذا الجهاز فقط:</div>
+                <input type="text" id="drive-client-id" placeholder="xxxxx.apps.googleusercontent.com" style="width:100%;text-align:left;direction:ltr;font-size:11px !important;margin-top:8px;">
+                <button class="btn-prime btn-ghost clickable" style="margin-top:9px;" onclick="saveDriveSettings()">حفظ المعرّف</button>
+            </div>
+        </details>
+    </div>
+</div>
+
+<!-- إعدادات أوقات الصلاة -->
+<div id="prayer-settings-modal" class="custom-modal-overlay">
+    <div class="custom-modal-content">
+        <h3 class="m-title"><i class="fa-solid fa-mosque"></i> أوقات الصلاة</h3>
+        <div id="prayer-times-preview" class="pt-preview"></div>
+        <label class="f-label">طريقة الحساب</label>
+        <div class="chips-container" id="prayer-method-chips"></div>
+        <label class="f-label">وقت العصر</label>
+        <div class="seg-switch" id="prayer-madhab">
+            <button class="seg-opt active" onclick="pickAsrMadhab('standard')">الجمهور</button>
+            <button class="seg-opt" onclick="pickAsrMadhab('hanafi')">الحنفي</button>
+        </div>
+        <div class="f-grid">
+            <div class="f-col-narrow">
+                <label class="f-label">مدّة الصلاة (دقيقة)</label>
+                <input type="number" id="prayer-duration" min="5" max="120" step="5" oninput="renderPrayerPreview()" style="width:100%;text-align:center;">
+            </div>
+            <div class="f-col-narrow">
+                <label class="f-label">تعديل يدوي (± دقيقة)</label>
+                <input type="number" id="prayer-tuning" min="-30" max="30" style="width:100%;text-align:center;">
+            </div>
+        </div>
+        <button class="core-cta clickable" style="background:var(--accent-tint);border-color:var(--accent-line);" onclick="requestPrayerLocation(false)">
+            <span>تحديث الموقع</span>
+            <i class="fa-solid fa-location-crosshairs" style="color:var(--accent-color);"></i>
+        </button>
+        <details class="f-fold">
+            <summary>إدخال الإحداثيات يدوياً</summary>
+            <div class="f-grid" style="margin:0;">
+                <div class="f-col-narrow"><label class="f-label">خط العرض</label><input type="number" id="prayer-lat" step="0.0001" oninput="renderPrayerPreview()" style="width:100%;text-align:center;"></div>
+                <div class="f-col-narrow"><label class="f-label">خط الطول</label><input type="number" id="prayer-lng" step="0.0001" oninput="renderPrayerPreview()" style="width:100%;text-align:center;"></div>
+            </div>
+        </details>
+        <div style="display:flex;gap:9px;margin-top:16px;">
+            <button class="btn-prime clickable" style="flex:2;" onclick="savePrayerSettingsUI()">حفظ</button>
+            <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closePrayerSettings()">إغلاق</button>
+        </div>
+    </div>
+</div>
+
+<!-- تفاصيل يوم من المنحنى أو التقويم -->
+<div id="day-detail-modal" class="custom-modal-overlay" style="z-index:100014;">
+    <div class="custom-modal-content">
+        <div class="dd-head">
+            <div class="hero-ring" id="day-detail-ring" style="width:60px;height:60px;">
+                <div class="hero-ring-inner" style="width:48px;height:48px;font-size:13px;"><span id="day-detail-pct">0%</span></div>
+            </div>
+            <div style="flex:1;min-width:0;text-align:right;">
+                <div class="lib-head-title" id="day-detail-title">اليوم</div>
+                <div class="lib-head-sum" id="day-detail-sum"></div>
+            </div>
+            <button class="dd-edit-btn clickable" id="day-detail-edit" onclick="toggleDayEdit()"><i class="fa-solid fa-pen"></i> تعديل</button>
+        </div>
+        <div class="dd-note" id="day-detail-note"></div>
+        <div id="day-detail-rows" class="dd-list"></div>
+        <button class="btn-prime btn-ghost clickable" style="margin-top:16px;" onclick="closeDayDetail()">إغلاق</button>
+    </div>
+</div>
+
 <!-- خيارات المهمة المنجَزة -->
 <div id="done-action-modal" class="prayer-confirm-modal-overlay">
     <div class="prayer-confirm-box" style="border-color:rgba(53,183,145,0.28);">
@@ -2953,13 +3219,15 @@
                 <label class="f-label">الاسم</label>
                 <input type="text" id="add-sport-name" style="width:100%;text-align:right;">
             </div>
-            <div class="f-col-narrow" id="sport-field-target" style="display:none;">
-                <label class="f-label" id="sport-target-label">الحد</label>
-                <input type="number" id="add-sport-target" style="width:100%;text-align:center;">
-            </div>
+        </div>
+        <div class="f-grid" id="sport-numbers-row" style="display:none;">
             <div class="f-col-narrow" id="sport-field-start" style="display:none;">
                 <label class="f-label">الوزن الحالي (كغ)</label>
                 <input type="number" id="add-sport-start" style="width:100%;text-align:center;">
+            </div>
+            <div class="f-col-narrow" id="sport-field-target" style="display:none;">
+                <label class="f-label" id="sport-target-label">الحد</label>
+                <input type="number" id="add-sport-target" style="width:100%;text-align:center;">
             </div>
         </div>
         <label class="f-label">التصنيف</label>
@@ -2994,6 +3262,27 @@
         <div class="f-row">
             <label class="f-label">ملاحظة (اختيارية)</label>
             <input type="text" id="add-behavior-note" placeholder="ما الذي تريد تذكّره عند ضعف العزيمة؟" style="width:100%;text-align:right;">
+        </div>
+        <label class="check-row" style="margin-bottom:14px;">
+            <input type="checkbox" id="add-behavior-measured" onchange="toggleBehaviorMeasured()">
+            <span>هذا السلوك يُقاس برقم يومي (ساعات، مرّات…)</span>
+        </label>
+        <div class="f-grid" id="behavior-measure-row" style="display:none;">
+            <div class="f-col-wide">
+                <label class="f-label">الوحدة</label>
+                <input type="text" id="add-behavior-unit" placeholder="ساعة" style="width:100%;text-align:center;">
+            </div>
+            <div class="f-col-narrow">
+                <label class="f-label">الحدّ اليومي</label>
+                <input type="number" id="add-behavior-limit" step="0.5" style="width:100%;text-align:center;">
+            </div>
+            <div class="f-col-wide">
+                <label class="f-label">الاتجاه</label>
+                <div class="seg-switch" style="margin:0;">
+                    <button class="seg-opt active" id="beh-dir-atMost" onclick="pickBehaviorDir('atMost')">لا يتجاوز</button>
+                    <button class="seg-opt" id="beh-dir-atLeast" onclick="pickBehaviorDir('atLeast')">لا يقلّ</button>
+                </div>
+            </div>
         </div>
         <label class="f-label">التصنيف</label>
         <div class="seg-switch" id="core-seg-behavior">
@@ -3187,10 +3476,10 @@
 
 <div class="bottom-nav">
     <div id="nav-tasks" class="nav-item clickable active" onclick="switchScreen('tasks')"><i class="fa-solid fa-list-check"></i><span>المهام</span></div>
-    <div id="nav-routine" class="nav-item clickable" onclick="switchScreen('routine')"><i class="fa-solid fa-network-wired"></i><span>الروتين</span></div>
+    <div id="nav-stats" class="nav-item clickable" onclick="switchScreen('stats')"><i class="fa-solid fa-chart-simple"></i><span>الإنجاز</span></div>
     <div id="nav-library" class="nav-item clickable" onclick="switchScreen('library')"><i class="fa-solid fa-book-bookmark"></i><span>المكتبة</span></div>
     <div id="nav-plan" class="nav-item clickable" onclick="switchScreen('plan')"><i class="fa-solid fa-chart-line"></i><span>التخطيط</span></div>
-    <div id="nav-stats" class="nav-item clickable" onclick="switchScreen('stats')"><i class="fa-solid fa-chart-simple"></i><span>الإنجاز</span></div>
+    <div id="nav-routine" class="nav-item clickable" onclick="switchScreen('routine')"><i class="fa-solid fa-network-wired"></i><span>الروتين</span></div>
 </div>
 
 <script>
@@ -3422,6 +3711,146 @@ const stationDefaultTimes={
     isha:{from:"21:30",to:"23:59"}
 };
 
+// ================================================================
+// حساب أوقات الصلاة فلكياً — بلا إنترنت
+// نحسب ميل الشمس ومعادلة الزمن لليوم، ثم زوايا كل صلاة.
+// مفصولٌ تماماً عن أوقات "الفترات": الأذان وقتٌ، والفترة تبدأ بعده
+// بمدّة الصلاة (نصف ساعة افتراضاً) وتنتهي بأذان الصلاة التالية.
+// ================================================================
+const PRAYER_METHODS={
+    mwl:{name:'رابطة العالم الإسلامي',fajr:18,isha:17},
+    isna:{name:'الهيئة الأمريكية (ISNA)',fajr:15,isha:15},
+    egypt:{name:'الهيئة المصرية',fajr:19.5,isha:17.5},
+    makkah:{name:'أم القرى',fajr:18.5,ishaMinutes:90},
+    karachi:{name:'كراتشي',fajr:18,isha:18},
+    france:{name:'اتحاد المنظمات الإسلامية (فرنسا)',fajr:12,isha:12}
+};
+let prayerSettings=JSON.parse(localStorage.getItem('prayerSettings'))||
+    {enabled:false,method:'mwl',asrMadhab:'standard',lat:null,lng:null,city:'',prayerDuration:30,tuning:0};
+function savePrayerSettings(){localStorage.setItem('prayerSettings',JSON.stringify(prayerSettings));}
+
+const _rad=d=>d*Math.PI/180, _deg=r=>r*180/Math.PI;
+function _fixAngle(a){a=a-360*Math.floor(a/360);return a<0?a+360:a;}
+function _fixHour(h){h=h-24*Math.floor(h/24);return h<0?h+24:h;}
+// ميل الشمس ومعادلة الزمن ليوم جوليان معيّن
+function _sunPosition(jd){
+    const D=jd-2451545.0;
+    const g=_fixAngle(357.529+0.98560028*D);
+    const q=_fixAngle(280.459+0.98564736*D);
+    const L=_fixAngle(q+1.915*Math.sin(_rad(g))+0.020*Math.sin(_rad(2*g)));
+    const e=23.439-0.00000036*D;
+    const decl=_deg(Math.asin(Math.sin(_rad(e))*Math.sin(_rad(L))));
+    let RA=_deg(Math.atan2(Math.cos(_rad(e))*Math.sin(_rad(L)),Math.cos(_rad(L))))/15;
+    RA=_fixHour(RA);
+    return{decl:decl,eqt:q/15-RA};
+}
+function _julian(y,m,d){
+    if(m<=2){y-=1;m+=12;}
+    const A=Math.floor(y/100),B=2-A+Math.floor(A/4);
+    return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5;
+}
+// الزاوية الساعية لارتفاع معيّن للشمس
+function _hourAngle(angle,lat,decl){
+    const c=(-Math.sin(_rad(angle))-Math.sin(_rad(lat))*Math.sin(_rad(decl)))/
+            (Math.cos(_rad(lat))*Math.cos(_rad(decl)));
+    if(c>1||c<-1)return null;                    // الظاهرة لا تحدث في هذا الخط (ليل/نهار قطبي)
+    return _deg(Math.acos(c))/15;
+}
+function computePrayerTimes(date,lat,lng,methodKey,asrMadhab){
+    const m=PRAYER_METHODS[methodKey]||PRAYER_METHODS.mwl;
+    const jd=_julian(date.getFullYear(),date.getMonth()+1,date.getDate())-lng/(15*24);
+    const sp=_sunPosition(jd);
+    const tzOffset=-date.getTimezoneOffset()/60;
+    const noon=_fixHour(12-sp.eqt)+tzOffset-lng/15;   // الظهر الحقيقي بالتوقيت المحلي
+
+    const hFajr=_hourAngle(m.fajr,lat,sp.decl);
+    const hSunrise=_hourAngle(0.833,lat,sp.decl);
+    const hMaghrib=_hourAngle(0.833,lat,sp.decl);
+    const shadow=(asrMadhab==='hanafi')?2:1;
+    const asrAngle=-_deg(Math.atan(1/(shadow+Math.tan(_rad(Math.abs(lat-sp.decl))))));
+    const hAsr=_hourAngle(asrAngle,lat,sp.decl);
+
+    const out={};
+    out.fajr    = (hFajr!==null)?noon-hFajr:null;
+    out.sunrise = (hSunrise!==null)?noon-hSunrise:null;
+    out.dhuhr   = noon+1/60;                         // دقيقة احتياط بعد الزوال
+    out.asr     = (hAsr!==null)?noon+hAsr:null;
+    out.maghrib = (hMaghrib!==null)?noon+hMaghrib:null;
+    if(m.ishaMinutes!==undefined)out.isha=(out.maghrib!==null)?out.maghrib+m.ishaMinutes/60:null;
+    else{const hIsha=_hourAngle(m.isha,lat,sp.decl);out.isha=(hIsha!==null)?noon+hIsha:null;}
+    // تعديل يدوي بالدقائق إن احتاج المستخدم مطابقة مسجده
+    const tune=(prayerSettings.tuning||0)/60;
+    Object.keys(out).forEach(k=>{if(out[k]!==null)out[k]=_fixHour(out[k]+tune);});
+    return out;
+}
+function hoursToHHMM(h){
+    if(h===null||h===undefined)return null;
+    let mins=Math.round(h*60);
+    mins=((mins%1440)+1440)%1440;
+    return String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');
+}
+// أوقات أذان اليوم بصيغة نصية، أو null إن لم تُضبط الإعدادات
+function todayAdhanTimes(date){
+    if(!prayerSettings.enabled||prayerSettings.lat===null||prayerSettings.lng===null)return null;
+    const t=computePrayerTimes(date||new Date(),prayerSettings.lat,prayerSettings.lng,
+                               prayerSettings.method,prayerSettings.asrMadhab);
+    const out={};
+    Object.keys(t).forEach(k=>out[k]=hoursToHHMM(t[k]));
+    return out;
+}
+// يشتق أوقات الفترات من الأذان: الفترة تبدأ بعد الأذان بمدّة الصلاة وتنتهي بالأذان التالي
+function derivedStationTimes(){
+    const a=todayAdhanTimes();
+    if(!a)return null;
+    const dur=prayerSettings.prayerDuration||30;
+    const add=(hhmm,mins)=>{
+        if(!hhmm)return null;
+        const[h,m]=hhmm.split(':').map(Number);
+        let t=h*60+m+mins; t=((t%1440)+1440)%1440;
+        return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+    };
+    const res={};
+    if(a.fajr)   res.fajr   ={from:add(a.fajr,dur),   to:a.sunrise||add(a.fajr,dur+90)};
+    if(a.sunrise)res.morning={from:a.sunrise,          to:a.dhuhr||'12:00'};
+    if(a.dhuhr)  res.dhuhr  ={from:add(a.dhuhr,dur),  to:a.asr||add(a.dhuhr,dur+180)};
+    if(a.asr)    res.asr    ={from:add(a.asr,dur),    to:a.maghrib||add(a.asr,dur+180)};
+    if(a.maghrib)res.maghrib={from:add(a.maghrib,dur),to:a.isha||add(a.maghrib,dur+90)};
+    if(a.isha)   res.isha   ={from:add(a.isha,dur),   to:add(a.fajr,0)};
+    return res;
+}
+
+// يطلب الموقع مرة واحدة ويحفظه، ثم يتحقّق يومياً من تغيّره
+function requestPrayerLocation(silent){
+    if(!navigator.geolocation){
+        if(!silent)showToast('جهازك لا يدعم تحديد الموقع — أدخل مدينتك يدوياً');
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(pos=>{
+        const lat=+pos.coords.latitude.toFixed(4), lng=+pos.coords.longitude.toFixed(4);
+        const moved=(prayerSettings.lat===null)||
+            (Math.abs(lat-prayerSettings.lat)>0.15||Math.abs(lng-prayerSettings.lng)>0.15);
+        if(moved){
+            prayerSettings.lat=lat;prayerSettings.lng=lng;prayerSettings.enabled=true;
+            savePrayerSettings();
+            if(typeof renderDailyTasks==='function')renderDailyTasks();
+            if(!silent||prayerSettings.lastLocCheck)showToast('حُدِّث موقعك — أُعيد حساب أوقات الصلاة');
+        }
+        prayerSettings.lastLocCheck=isoDay();
+        savePrayerSettings();
+    },err=>{
+        if(!silent)showToast('تعذّر تحديد الموقع — يمكنك إدخال الإحداثيات يدوياً');
+    },{enableHighAccuracy:false,timeout:12000,maximumAge:3600000});
+}
+// يُستدعى عند كل فتح: أول مرة يطلب الإذن، وبعدها مرة كل يوم
+function ensurePrayerLocation(){
+    if(prayerSettings.lat===null){
+        // نؤجّل قليلاً حتى لا يقاطع الطلبُ فتحَ التطبيق
+        setTimeout(()=>requestPrayerLocation(false),2500);
+        return;
+    }
+    if(prayerSettings.lastLocCheck!==isoDay())requestPrayerLocation(true);
+}
+
 // تحديد اليوم والأسبوع الحاليين من التاريخ الفعلي
 const todayDateObj=new Date();
 const currentActualDayKey=dayKeysMap[todayDateObj.getDay()];
@@ -3525,7 +3954,9 @@ function confirmCustomTimePicker(){
     if(input)input.value=val;
     const disp=document.getElementById('disp-'+_tpTarget);
     if(disp)disp.innerText=formatTime12(val);
+    const wasSleep=(_tpTarget==='sleep-temp-input');
     closeCustomTimePicker();
+    if(wasSleep&&typeof applySleepTempTime==='function')applySleepTempTime();
 }
 function toggleCustomSelect(key){
     const opts=document.getElementById('csel-'+key+'-options');if(!opts)return;
@@ -3558,15 +3989,41 @@ document.addEventListener('click',function(e){
         document.querySelectorAll('.custom-select-trigger').forEach(t=>t.classList.remove('open'));
     }
 });
+// أبكر بداية مسموحة لفترة: نهاية وقت الصلاة (الأذان + مدّة الصلاة)
+function earliestStationStart(sk){
+    const a=todayAdhanTimes();
+    if(!a||!a[sk]||typeof a[sk]!=='string')return null;
+    const[h,m]=a[sk].split(':').map(Number);
+    let t=h*60+m+(prayerSettings.prayerDuration||30);
+    t=((t%1440)+1440)%1440;
+    return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+}
+function _toMin(hhmm){
+    if(typeof hhmm!=='string'||!hhmm.includes(':'))return 0;
+    const[h,m]=hhmm.split(':').map(Number);
+    return (h||0)*60+(m||0);
+}
 function getStationEffectiveTimes(sk){
-    if(stationTimesDB[sk]&&stationTimesDB[sk].from)return stationTimesDB[sk];
-    return stationDefaultTimes[sk]||{from:'',to:''};
+    const derived=derivedStationTimes();
+    const auto=(derived&&derived[sk])?derived[sk]:null;
+    const manual=(stationTimesDB[sk]&&stationTimesDB[sk].from)?stationTimesDB[sk]:null;
+    if(!manual)return auto||stationDefaultTimes[sk]||{from:'',to:''};
+    // نهايتك اليدوية محترمة دائماً، أما البداية فلا تنزل قبل انتهاء وقت الصلاة
+    const floor=earliestStationStart(sk);
+    let from=manual.from;
+    if(floor&&_toMin(from)<_toMin(floor))from=floor;
+    return{from:from,to:manual.to||(auto?auto.to:'')};
 }
 // نصف ساعة محجوزة لكل صلاة من الصلوات الخمس، تبدأ من وقت أذانها (بداية فترتها الخاصة: فجر/ظهر/عصر/مغرب/عشاء)
 // "الضحى" ليست صلاة مفروضة فلا تُحسب هنا. هذا المجموع (5×نصف ساعة=2.5 ساعة) هو نفسه المحجوز أصلاً بإجمالي اليوم (calcPureFree)
 const prayerStationKeys=['fajr','dhuhr','asr','maghrib','isha'];
 function getPrayerReservedSlots(){
+    const adhan=todayAdhanTimes();
     return prayerStationKeys.map(sk=>{
+        // المحجوز هو ما بين الأذان وبداية الفترة، لا أول نصف ساعة من الفترة
+        if(adhan&&typeof adhan[sk]==='string'){
+            return{from:adhan[sk],to:addMinutesToTime(adhan[sk],prayerSettings.prayerDuration||30)};
+        }
         const t=getStationEffectiveTimes(sk);
         if(!t.from)return null;
         return{from:t.from,to:addMinutesToTime(t.from,30)};
@@ -3728,7 +4185,11 @@ function dispatchTouchDrop(taskId,zone,insertBeforeId){
     }
 }
 
-function saveTasks(){localStorage.setItem('dailyTasksDB',JSON.stringify(storedDailyTasks));recordTodayStats();}
+function saveTasks(){
+    localStorage.setItem('dailyTasksDB',JSON.stringify(storedDailyTasks));
+    recordTodayStats();
+    if(typeof scheduleDriveSync==='function')scheduleDriveSync();
+}
 
 // ================================================================
 // سجلّ الإنجاز اليومي — أساس صفحة الإحصائيات
@@ -4047,7 +4508,10 @@ function confirmUnitCompletion(withNotes){
 // ================================================================
 function checkDayTransition(){
     const savedDay=localStorage.getItem('lastKnownDay');
-    const todayStr=currentActualDayKey+'-'+todayDateObj.toDateString();
+    // اليوم "المنطقي" ينتهي عند أذان الفجر: قيام الليل وتسجيل الوزن
+    // يقعان بعد منتصف الليل ويخصّان اليوم السابق، فلا يُغلق اليوم قبلهما.
+    const logical=commitDayKey();
+    const todayStr='L'+logical;
     if(savedDay&&savedDay!==todayStr){
         // يوم جديد: المنجزات تختفي، غير المنجزة تنزل للتراكم
         const yesterdayKey=dayKeysMap[(todayDateObj.getDay()+6)%7];
@@ -4066,16 +4530,41 @@ function checkDayTransition(){
             savePeriodTasks();
         }
         saveTasks();
-        showToast('يوم جديد! المهام المتعثرة نزلت للتراكم 📋');
+        showToast('بدأ يوم جديد — المهام المتعثّرة نزلت لصندوق التراكم');
     }
     localStorage.setItem('lastKnownDay',todayStr);
     rolloverParkingToWeekPool();
+    cleanupDuplicateCoreTasks();
 }
 
 // ================================================================
 // عند انتقال الأسبوع: ما بقي في صندوق التراكم يصعد إلى أهداف الأسبوع
 // الجديد، فتُعاد جدولته مع باقي الأسبوع بدل أن يبقى معلّقاً في اليوم
 // ================================================================
+// ================================================================
+// تنظيف لمرّة واحدة: نسخ سابقة من التطبيق كانت تُنشئ نسخاً مكرّرة
+// من المهمة الرئيسية، أو تُنشئها بلا يوم فتظهر كلها في يوم واحد.
+// ================================================================
+function cleanupDuplicateCoreTasks(){
+    let changed=false;
+    const seen=new Set();
+    const keep=[];
+    storedDailyTasks.forEach(t=>{
+        if(!t.coreSourceId){keep.push(t);return;}
+        // مهمة رئيسية بلا يوم: ننسبها لليوم الحالي
+        if(!t.targetDay){t.targetDay=currentActualDayKey;t.targetWeek=t.targetWeek||currentWeekKey;changed=true;}
+        const key=t.coreSourceId+'|'+t.targetDay+'|'+(t.targetWeek||'')+'|'+(t.linkedUnitId||'');
+        if(seen.has(key)&&t.status!=='done'){changed=true;return;}   // نُسقط المكرّر غير المنجز
+        seen.add(key);keep.push(t);
+    });
+    if(changed){
+        const removed=storedDailyTasks.length-keep.length;
+        storedDailyTasks=keep;
+        saveTasks();
+        if(removed>0)setTimeout(()=>showToast(`نُظّفت ${removed} مهمة مكرّرة`),1500);
+    }
+}
+
 function rolloverParkingToWeekPool(){
     const savedWeek=localStorage.getItem('lastKnownWeek');
     if(savedWeek===currentWeekKey){return;}
@@ -5013,9 +5502,40 @@ function distributeCoreFromModal(){
 
 // Time Picker
 let stationLongPressTimer=null;
-function openStationTimePicker(sk){currentStationPickerKey=sk;document.getElementById('station-time-picker-label').innerText=`الفترة: ${stationLabelsArabic[sk]}`;const ex=stationTimesDB[sk]||stationDefaultTimes[sk]||{};document.getElementById('station-tp-from').value=ex.from||'';document.getElementById('disp-station-tp-from').innerText=ex.from?formatTime12(ex.from):'--:--';document.getElementById('station-tp-to').value=ex.to||'';document.getElementById('disp-station-tp-to').innerText=ex.to?formatTime12(ex.to):'--:--';document.getElementById('station-time-picker-overlay').style.display='flex';}
+function openStationTimePicker(sk){
+    currentStationPickerKey=sk;
+    document.getElementById('station-time-picker-label').innerText=`الفترة: ${stationLabelsArabic[sk]}`;
+    const ex=getStationEffectiveTimes(sk);
+    document.getElementById('station-tp-from').value=ex.from||'';
+    document.getElementById('disp-station-tp-from').innerText=ex.from?formatTime12(ex.from):'--:--';
+    document.getElementById('station-tp-to').value=ex.to||'';
+    document.getElementById('disp-station-tp-to').innerText=ex.to?formatTime12(ex.to):'--:--';
+    // تنبيه بالحدّ الأدنى: لا تبدأ الفترة قبل انتهاء وقت الصلاة
+    const floor=earliestStationStart(sk);
+    const hint=document.getElementById('station-tp-hint');
+    const a=todayAdhanTimes();
+    if(hint){
+        hint.innerHTML=floor
+            ? `أذان ${stationLabelsArabic[sk].replace('بعد ','')} الساعة <b>${formatTime12(a[sk])}</b> ·
+               بعده ${prayerSettings.prayerDuration||30} دقيقة للصلاة، فلا تبدأ الفترة قبل <b>${formatTime12(floor)}</b>.`
+            : 'فعّل أوقات الصلاة من صفحة الروتين ليُضبط الحدّ تلقائياً.';
+    }
+    document.getElementById('station-time-picker-overlay').style.display='flex';
+}
 function closeStationTimePicker(){document.getElementById('station-time-picker-overlay').style.display='none';currentStationPickerKey=null;}
-function saveStationTime(){if(!currentStationPickerKey)return;stationTimesDB[currentStationPickerKey]={from:document.getElementById('station-tp-from').value,to:document.getElementById('station-tp-to').value};localStorage.setItem('stationTimesDB',JSON.stringify(stationTimesDB));closeStationTimePicker();showToast(`تم تحديد الوقت`);renderDailyTasks();}
+function saveStationTime(){
+    if(!currentStationPickerKey)return;
+    let from=document.getElementById('station-tp-from').value;
+    const to=document.getElementById('station-tp-to').value;
+    const floor=earliestStationStart(currentStationPickerKey);
+    let clamped=false;
+    if(floor&&from&&_toMin(from)<_toMin(floor)){from=floor;clamped=true;}
+    stationTimesDB[currentStationPickerKey]={from:from,to:to};
+    localStorage.setItem('stationTimesDB',JSON.stringify(stationTimesDB));
+    closeStationTimePicker();
+    showToast(clamped?`ضُبطت البداية على ${formatTime12(floor)} — لا تبدأ الفترة قبل انتهاء الصلاة`:'تم تحديد الوقت');
+    renderDailyTasks();
+}
 function startStationLongPress(sk,e){e.preventDefault();stationLongPressTimer=setTimeout(()=>openStationTimePicker(sk),600);}
 function cancelStationLongPress(){clearTimeout(stationLongPressTimer);}
 
@@ -5023,7 +5543,7 @@ function cancelStationLongPress(){clearTimeout(stationLongPressTimer);}
 function submitAddNewTask(){
     let title=document.getElementById('input-modal-task-title').value.trim();
     const station=document.getElementById('input-modal-station').value;
-    let linkedUnitId=null,expectedSeconds=0,subjectColor=null,subjectId=null,unitKind=null,worshipId=null,bookId=null,fromPage=null,toPage=null;
+    let linkedUnitId=null,expectedSeconds=0,subjectColor=null,subjectId=null,unitKind=null,worshipId=null,bookId=null,fromPage=null,toPage=null,libParentId=selectedModalParentId||null;
 
     if(selectedModalParentId&&selectedModalUnitKind){
         if(selectedModalUnitKind==='behavior'){
@@ -5045,6 +5565,7 @@ function submitAddNewTask(){
                 linkedUnitId=l.id;expectedSeconds=l.expectedSeconds||0;subjectColor=s.color;subjectId=s.id;unitKind='subject';
             }
         } else if(selectedModalUnitKind==='series'){
+            libParentId=selectedModalParentId;
             const s=seriesDatabase.find(x=>x.id===selectedModalParentId);
             const e=s&&s.episodes.find(x=>x.id===selectedModalUnitId);
             if(s&&e){
@@ -5125,7 +5646,7 @@ function submitAddNewTask(){
         hierarchicalGoalsDatabase.push({
             id:'weekgoal-'+Date.now(),text:title,
             category:selectedModalCategory,targetContext:pendingWeekDayTarget.week,
-            subjectId,subjectColor,linkedUnitId,unitKind,worshipId,bookId,fromPage,toPage,expectedSeconds,
+            subjectId,subjectColor,libParentId,linkedUnitId,unitKind,worshipId,bookId,fromPage,toPage,expectedSeconds,
             numericVolume:0,originalVolume:0,isCompleted:false
         });
         saveGoals();closeAddTaskModal();
@@ -5144,7 +5665,7 @@ function submitAddNewTask(){
         targetDay:pendingWeekDayTarget?pendingWeekDayTarget.day:null,
         subjectId,subjectColor,
         linkedUnitId,progressCounted:false,expectedSeconds,
-        unitKind,worshipId,bookId,fromPage,toPage,
+        unitKind,worshipId,bookId,libParentId,fromPage,toPage,
         stationTimeFixed:null
     };
     storedDailyTasks.push(newTask);
@@ -5194,15 +5715,23 @@ function tintOf(color,alpha){
     return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha||0.10})`;
 }
 // رأس نافذة الإنجاز: صورة العنصر من المكتبة إن رفعها المستخدم، وإلا الأيقونة
+// أيقونات بديلة يختار منها المستخدم حين لا توجد صورة للعنصر
+const LIB_ICONS=['book-open','graduation-cap','spa','leaf','pen-fancy','lightbulb',
+    'star','heart','moon','sun','mosque','book-quran','dumbbell','shield-halved',
+    'brain','microscope','flask','compass','feather','fire'];
 function paintCompletionAvatar(modalId,task){
     const el=document.getElementById(modalId+'-avatar');
     if(!el)return;
     if(!el.dataset.fallback)el.dataset.fallback=el.innerHTML;
     const f=taskLibrarySource(task);
-    const img=f&&f.item&&f.item.iconImage;
-    el.innerHTML=img
-        ? `<img src="${img}" class="cw-avatar-img" alt="">`
-        : el.dataset.fallback;
+    const it=f&&f.item;
+    if(it&&it.iconImage){
+        el.innerHTML=`<img src="${it.iconImage}" class="cw-avatar-img" alt="">`;
+    }else if(it&&it.iconName){
+        el.innerHTML=`<i class="fa-solid fa-${it.iconName}"></i>`;
+    }else{
+        el.innerHTML=el.dataset.fallback;
+    }
 }
 function fsResolveColor(c){
     if(!c)return '#4a9ee0';
@@ -5626,7 +6155,7 @@ function fsBack(screenId){
 // ================================================================
 let metricTaskId=null,metricSportId=null;
 function openMetricEntry(taskId,sportId){
-    const sp=sportsDatabase.find(x=>x.id===sportId);if(!sp)return;
+    const sp=measurableById(sportId);if(!sp)return;
     metricTaskId=taskId;metricSportId=sportId;
     const iso=commitDayKey();
     const e=commitEntry(iso);
@@ -5634,18 +6163,19 @@ function openMetricEntry(taskId,sportId){
     const col=fsResolveColor(sp.color||'var(--cat-sport)');
     document.getElementById('metric-box').style.borderColor=tintOf(col,0.30);
     const ic=document.getElementById('metric-icon');
-    ic.innerHTML=`<i class="fa-solid fa-${sp.kind==='track'?'weight-scale':'fire-flame-curved'}"></i>`;
+    ic.innerHTML=`<i class="fa-solid fa-${sp.measured?'hourglass-half':(sp.kind==='track'?'weight-scale':'fire-flame-curved')}"></i>`;
     ic.style.color=col;
     const ttl=document.getElementById('metric-title');
     ttl.innerText=sp.name;ttl.style.color=col;
-    document.getElementById('metric-unit').innerText=sp.kind==='track'?'كغ':(sp.unit||'سعرة');
+    document.getElementById('metric-unit').innerText=sp.measured?(sp.unit||''):(sp.kind==='track'?'كغ':(sp.unit||'سعرة'));
     const sv=document.getElementById('metric-save');
     sv.style.background=col;sv.style.color='#0d1512';
     document.getElementById('metric-input').value=(cur!==undefined&&cur!=='')?cur:'';
     document.getElementById('metric-history').innerHTML=renderMetricHistory(sp);
     // سياق يذكّرك بالهدف قبل أن تكتب
     let ctx='';
-    if(sp.kind==='number')ctx=`الحد الأدنى المطلوب: <b>${sp.target}</b> ${sp.unit||'سعرة'}`;
+    if(sp.measured)ctx=`هدفك: <b>${sp.direction==='atLeast'?'لا يقلّ عن':'لا يتجاوز'} ${sp.limit}</b> ${sp.unit||''}`;
+    else if(sp.kind==='number')ctx=`الحد الأدنى المطلوب: <b>${sp.target}</b> ${sp.unit||'سعرة'}`;
     else{
         const last=lastSportValue(sportId);
         ctx=`من <b>${sp.startValue||0}</b> إلى <b>${sp.target}</b> كغ`+
@@ -5676,11 +6206,22 @@ function renderMetricHistory(sp){
 function closeMetricEntry(){document.getElementById('metric-modal').style.display='none';metricTaskId=null;metricSportId=null;}
 // حكم فوري أثناء الكتابة: لا ينتظر الحفظ
 function evaluateMetric(){
-    const sp=sportsDatabase.find(x=>x.id===metricSportId);if(!sp)return;
+    const sp=measurableById(metricSportId);if(!sp)return;
     const v=parseFloat(document.getElementById('metric-input').value);
     const out=document.getElementById('metric-verdict');
     if(isNaN(v)){out.innerHTML='';out.className='metric-verdict';return;}
-    if(sp.kind==='number'){
+    if(sp.measured){
+        // أربع درجات بدل نجاح/فشل: الاقتراب من الهدف تقدّم يستحق الاعتراف
+        const lim=sp.limit||0,u=sp.unit||'';
+        const atMost=(sp.direction!=='atLeast');
+        const diff=atMost?(v-lim):(lim-v);          // موجب = تجاوز الهدف
+        let cls,txt;
+        if(diff<=0&&Math.abs(diff)>=lim*0.1){cls='good';txt=`ممتاز — ${Math.abs(diff).toFixed(1)} ${u} ${atMost?'دون':'فوق'} هدفك`;}
+        else if(diff<=0){cls='good';txt=`نظامي — بلغت هدفك بالضبط`;}
+        else if(diff<=lim*0.25){cls='near';txt=`اقتربت — تجاوزت بـ ${diff.toFixed(1)} ${u} فقط`;}
+        else {cls='bad';txt=`تجاوزت هدفك بـ ${diff.toFixed(1)} ${u} — لن تُحتسب منجَزة`;}
+        out.className='metric-verdict '+cls;out.innerHTML=txt;
+    }else if(sp.kind==='number'){
         const ok=v>=(sp.target||0);
         const diff=Math.abs(v-(sp.target||0));
         out.className='metric-verdict '+(ok?'good':'bad');
@@ -5707,14 +6248,19 @@ function deleteMetricTask(){
     },{acceptLabel:'<i class="fa-solid fa-trash"></i> حذف',acceptColor:'var(--status-delay)'});
 }
 function saveMetricEntry(){
-    const sp=sportsDatabase.find(x=>x.id===metricSportId);if(!sp)return;
+    const sp=measurableById(metricSportId);if(!sp)return;
     const v=parseFloat(document.getElementById('metric-input').value);
     if(isNaN(v)){showToast('أدخل رقماً أولاً');return;}
     const iso=commitDayKey();
     const e=commitEntry(iso);
     e.values[sp.id]=v;
     // الرقم يحدّد الحالة، لا ضغطة الزر
-    const ok=(sp.kind==='number')?(v>=(sp.target||0)):true;
+    let ok=true;
+    if(sp.measured){
+        const lim=sp.limit||0;
+        ok=(sp.direction!=='atLeast')?(v<=lim*1.25):(v>=lim*0.75);  // هامش ربع الهدف يُحتسب اقتراباً
+        if(sp.direction!=='atLeast')ok=(v<=lim);else ok=(v>=lim);
+    } else if(sp.kind==='number')ok=(v>=(sp.target||0));
     e.checks[sp.id]=ok;
     saveCommitLog();
     const t=storedDailyTasks.find(x=>x.id===metricTaskId);
@@ -5798,11 +6344,17 @@ function deleteSimpleItemFromEdit(){
 // هذا ما يمنع ظهور مؤقّت البومودورو على قراءة قرآن أو حلقة يوتيوب.
 // ================================================================
 function taskSportId(t){
-    const sid=t.sportId||t.coreSourceId;
-    return (sid&&sportsDatabase.some(x=>x.id===sid))?sid:null;
+    const sid=t.sportId||t.coreSourceId||t.behaviorId;
+    if(sid&&sportsDatabase.some(x=>x.id===sid))return sid;
+    if(sid&&behaviorDatabase.some(x=>x.id===sid))return sid;
+    return null;
+}
+// عنصر قابل للقياس من الرياضة أو السلوك
+function measurableById(id){
+    return sportsDatabase.find(x=>x.id===id)||behaviorDatabase.find(x=>x.id===id)||null;
 }
 function taskLibrarySource(t){
-    const ids=[t.coreSourceId,t.subjectId,t.bookId,t.seriesId,t.newSeriesId,t.worshipId,t.sportId,t.behaviorId];
+    const ids=[t.libParentId,t.coreSourceId,t.subjectId,t.bookId,t.seriesId,t.newSeriesId,t.worshipId,t.sportId,t.behaviorId];
     for(const id of ids){
         if(!id)continue;
         const f=findLibraryItem(id);
@@ -5819,7 +6371,7 @@ function resolveTaskRoute(t){
         switch(f.type){
             case 'sports':
                 return (it.kind==='number'||it.kind==='track')?'metric':'simple';
-            case 'behavior': return 'simple';
+            case 'behavior': return it.measured?'metric':'simple';
             case 'series': case 'newseries': return 'series';
             case 'worship':
                 if(it.type==='memorize')return 'memorize';
@@ -6557,7 +7109,12 @@ function renderFreeTimeDetail(){
     c.innerHTML=html;
 }
 function calcOverlap(a1,a2,b1,b2){
-    const tm=t=>{const[h,m]=t.split(':').map(Number);return h*60+m;};
+    // تقبل النص "HH:MM" أو عدد الدقائق مباشرة (أوقات الصلاة تُحسب بالدقائق)
+    const tm=t=>{
+        if(typeof t==='number')return t;
+        if(typeof t!=='string'||!t.includes(':'))return 0;
+        const[h,m]=t.split(':').map(Number);return (h||0)*60+(m||0);
+    };
     const x1=tm(a1),x2=tm(a2);
     const y1=tm(b1),y2=tm(b2);
     const simple=(s1,s2,e1,e2)=>{const s=Math.max(s1,e1),e=Math.min(s2,e2);return s<e?(e-s)/60:0;};
@@ -6571,22 +7128,88 @@ function calcOverlap(a1,a2,b1,b2){
 // ================================================================
 // الروتين - الصفحة الثانية
 // ================================================================
+let sleepDraft=[];
 function openSleepModal(){
     const sp=fixedSleepDatabase[currentSelectedDay]||[];
-    const f1=(sp[0]&&sp[0].from)||"23:00",t1=(sp[0]&&sp[0].to)||"04:30",f2=(sp[1]&&sp[1].from)||"14:00",t2=(sp[1]&&sp[1].to)||"15:30";
-    document.getElementById('sleep-from-1').value=f1;document.getElementById('disp-sleep-from-1').innerText=formatTime12(f1);
-    document.getElementById('sleep-to-1').value=t1;document.getElementById('disp-sleep-to-1').innerText=formatTime12(t1);
-    document.getElementById('sleep-from-2').value=f2;document.getElementById('disp-sleep-from-2').innerText=formatTime12(f2);
-    document.getElementById('sleep-to-2').value=t2;document.getElementById('disp-sleep-to-2').innerText=formatTime12(t2);
+    sleepDraft=sp.filter(x=>x&&x.from&&x.to).map(x=>({from:x.from,to:x.to,label:x.label||''}));
+    if(!sleepDraft.length)sleepDraft=[{from:'23:00',to:'06:30',label:'نوم الليل'}];
+    renderSleepRows();
     document.getElementById('sleep-modal-picker').style.display='flex';
 }
 function closeSleepModal(){document.getElementById('sleep-modal-picker').style.display='none';}
-// إعادة احتساب فورية لوقت الفراغ بصفحتي "المهام اليومية" و"التخطيط" فور أي تعديل بالروتين أو النوم (تكامل شامل بلا انتظار تنقّل الشاشات)
+function addSleepPeriodRow(){
+    // الفترة الجديدة تبدأ بعد آخر فترة حتى لا تتداخل افتراضياً
+    const last=sleepDraft[sleepDraft.length-1];
+    const from=last?addMinutesToTime(last.to,60):'14:00';
+    sleepDraft.push({from:from,to:addMinutesToTime(from,60),label:''});
+    renderSleepRows();
+}
+function removeSleepPeriodRow(i){
+    if(sleepDraft.length<=1){showToast('لا بدّ من فترة نوم واحدة على الأقل');return;}
+    sleepDraft.splice(i,1);renderSleepRows();
+}
+function onSleepTimeChange(i,which,val){sleepDraft[i][which]=val;renderSleepRows();}
+function renderSleepRows(){
+    const c=document.getElementById('sleep-periods-list');if(!c)return;
+    c.innerHTML=sleepDraft.map((p,i)=>{
+        const hrs=calcHDiff(p.from,p.to);
+        const name=p.label||(i===0?'نوم الليل':`فترة ${i+1}`);
+        return `<div class="sleep-row">
+            <div class="sleep-row-top">
+                <input type="text" class="sleep-label" value="${p.label||''}" placeholder="${name}"
+                       oninput="sleepDraft[${i}].label=this.value">
+                <span class="sleep-hrs">${hrs} ساعة</span>
+                <button class="rt-icon-btn danger clickable" onclick="removeSleepPeriodRow(${i})"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <div style="flex:1;">
+                    <label class="f-label">من</label>
+                    <div class="time-display-trigger" onclick="openSleepTimePicker(${i},'from')"><span>${formatTime12(p.from)}</span><i class="fa-solid fa-clock"></i></div>
+                </div>
+                <div style="flex:1;">
+                    <label class="f-label">إلى</label>
+                    <div class="time-display-trigger" onclick="openSleepTimePicker(${i},'to')"><span>${formatTime12(p.to)}</span><i class="fa-solid fa-clock"></i></div>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+    const total=sleepDraft.reduce((a,p)=>a+calcHDiff(p.from,p.to),0);
+    document.getElementById('sleep-total-hint').innerHTML=
+        `مجموع النوم <b style="color:var(--ink-1);">${total.toFixed(1)} ساعة</b> على ${sleepDraft.length} ${sleepDraft.length===1?'فترة':'فترات'}`;
+}
+// نستعمل منتقي الوقت العام ونعيد القيمة إلى المسودة
+let sleepPickTarget=null;
+function openSleepTimePicker(i,which){
+    sleepPickTarget={i,which};
+    let hidden=document.getElementById('sleep-temp-input');
+    if(!hidden){
+        hidden=document.createElement('input');
+        hidden.type='hidden';hidden.id='sleep-temp-input';
+        document.body.appendChild(hidden);
+    }
+    hidden.value=sleepDraft[i][which];
+    openCustomTimePicker('sleep-temp-input');
+}
+function applySleepTempTime(){
+    if(!sleepPickTarget)return;
+    const v=document.getElementById('sleep-temp-input').value;
+    sleepDraft[sleepPickTarget.i][sleepPickTarget.which]=v;
+    sleepPickTarget=null;renderSleepRows();
+}
+// إعادة احتساب فورية لوقت الفراغ بصفحتي "المهام اليومية" و"التخطيط" فور أي تعديل بالروتين أو النوم
 function refreshFreeTimeAcrossPages(){
     renderDailyTasks();
     renderHierarchicalTopDownSystem();
 }
-function saveFixedSleepSettings(){fixedSleepDatabase[currentSelectedDay]=[{from:document.getElementById('sleep-from-1').value,to:document.getElementById('sleep-to-1').value},{from:document.getElementById('sleep-from-2').value,to:document.getElementById('sleep-to-2').value}];localStorage.setItem('sleepFixedDB',JSON.stringify(fixedSleepDatabase));closeSleepModal();showToast("تم حفظ روتين النوم");renderCurrentDaySlots();if(freeTimeDetailOpen)renderFreeTimeDetail();refreshFreeTimeAcrossPages();}
+function saveFixedSleepSettings(){
+    fixedSleepDatabase[currentSelectedDay]=sleepDraft.filter(p=>p.from&&p.to)
+        .map(p=>({from:p.from,to:p.to,label:p.label||''}));
+    localStorage.setItem('sleepFixedDB',JSON.stringify(fixedSleepDatabase));
+    closeSleepModal();showToast('حُفظ روتين النوم');
+    renderCurrentDaySlots();
+    if(freeTimeDetailOpen)renderFreeTimeDetail();
+    refreshFreeTimeAcrossPages();
+}
 function selectDayGlobal(d){currentSelectedDay=d;document.querySelectorAll('.days-grid .day-chip').forEach(c=>c.classList.remove('active-day'));const ac=document.getElementById('routine-day-'+d);if(ac)ac.classList.add('active-day');renderCurrentDaySlots();}
 function addMinutesToTime(t,m){let[h,mm]=t.split(':').map(Number);h=h||0;mm=(mm||0)+m;h+=Math.floor(mm/60);mm=mm%60;h=h%24;return`${String(h).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;}
 function calcHDiff(f,t){const s=new Date("2000/01/01 "+f);let e=new Date("2000/01/01 "+t);if(e<=s)e.setDate(e.getDate()+1);return parseFloat(((e-s)/3600000).toFixed(2));}
@@ -6602,35 +7225,39 @@ function calcPureFree(dk){
     return Math.max(0,24-occ-(tasksSeconds/3600));
 }
 let selectedRoutineSubjectId=null;
+function closeRoutineSlotModal(){document.getElementById('routine-slot-modal').style.display='none';}
 function toggleRoutineInlineForm(type){
-    const f=document.getElementById('inline-routine-add-form');
-    if(currentFormType===type&&f.classList.contains('open')){f.classList.remove('open');currentFormType=null;return;}
-    currentFormType=type;f.classList.add('open');
-    // إظهار/إخفاء اختيار المادة
+    currentFormType=type;
+    document.getElementById('routine-slot-title').innerText=(type==='جامعة')?'إضافة محاضرة':'إضافة فترة عمل';
+    // اختيار المادة للمحاضرات فقط
     const sp=document.getElementById('routine-subject-picker');
     selectedRoutineSubjectId=null;
     if(type==='جامعة'&&subjectsDatabase.length>0){
         sp.style.display='block';
-        const chipsEl=document.getElementById('routine-subject-chips');
-        chipsEl.innerHTML=subjectsDatabase.map(s=>`
-            <div onclick="selectRoutineSubject('${s.id}',this)" style="padding:5px 10px;border-radius:8px;border:1px solid ${s.color};background:rgba(0,0,0,0.3);color:#fff;font-size:11px;cursor:pointer;transition:all 0.15s;">${s.name}</div>
-        `).join('');
-    }else{sp.style.display='none';}
+        document.getElementById('routine-subject-chips').innerHTML=subjectsDatabase.map(x=>
+            `<div class="chip-choice" onclick="selectRoutineSubject('${x.id}',this)">${x.name}</div>`).join('');
+    }else sp.style.display='none';
+    // نبدأ من نهاية آخر التزام في اليوم حتى لا تتداخل الفترات
     let le="08:00";
     const cs=routineDatabase[currentSelectedDay]||[];
     if(cs.length>0)le=[...cs].sort((a,b)=>b.to.localeCompare(a.to))[0].to;
-    else{const ss=fixedSleepDatabase[currentSelectedDay]||[];if(ss[1]&&ss[1].to)le=ss[1].to;}
+    else{
+        const ss=(fixedSleepDatabase[currentSelectedDay]||[]).filter(x=>x&&x.to);
+        if(ss.length)le=ss[0].to;
+    }
     document.getElementById('inline-slot-from').value=le;
     document.getElementById('disp-inline-slot-from').innerText=formatTime12(le);
     const defaultTo=addMinutesToTime(le,90);
     document.getElementById('inline-slot-to').value=defaultTo;
     document.getElementById('disp-inline-slot-to').innerText=formatTime12(defaultTo);
+    document.getElementById('routine-slot-hint').innerHTML=
+        `تُثبَّت في <b style="color:var(--ink-1);">${dayNamesArabic[currentSelectedDay]}</b> من كل أسبوع، وتُخصم من ساعات فراغك.`;
+    document.getElementById('routine-slot-modal').style.display='flex';
 }
 function selectRoutineSubject(id,el){
     selectedRoutineSubjectId=id;
-    document.querySelectorAll('#routine-subject-chips div').forEach(d=>{d.style.background='rgba(0,0,0,0.3)';d.style.fontWeight='normal';});
-    const s=subjectsDatabase.find(x=>x.id===id);
-    if(el&&s){el.style.background=s.color+'33';el.style.fontWeight='bold';}
+    document.querySelectorAll('#routine-subject-chips .chip-choice').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
 }
 function submitInlineRoutineSlot(){
     const f=document.getElementById('inline-slot-from').value,t=document.getElementById('inline-slot-to').value;
@@ -6656,7 +7283,7 @@ function finalizeInlineRoutineSlot(f,t,h){
     }
     routineDatabase[currentSelectedDay].push({type:currentFormType,from:f,to:t,hours:h,isSuspended:false,subjectLabel:label,subjectId:selectedRoutineSubjectId||null});
     localStorage.setItem('routineDB',JSON.stringify(routineDatabase));
-    document.getElementById('inline-routine-add-form').classList.remove('open');
+    closeRoutineSlotModal();
     currentFormType=null;selectedRoutineSubjectId=null;
     showToast("تم تثبيت الفترة");renderCurrentDaySlots();if(freeTimeDetailOpen)renderFreeTimeDetail();refreshFreeTimeAcrossPages();
 }
@@ -6666,7 +7293,20 @@ function deleteSlot(i){routineDatabase[currentSelectedDay].splice(i,1);localStor
 function renderCurrentDaySlots(){
     const c=document.getElementById('current-day-slots-list');if(!c)return;
     const slots=routineDatabase[currentSelectedDay]||[];let html='',tu=0,ts=0,tocc=2.5;
-    (fixedSleepDatabase[currentSelectedDay]||[]).forEach(p=>{if(p.from&&p.to){const h=calcHDiff(p.from,p.to);ts+=h;tocc+=h;}});
+    const sleepList=(fixedSleepDatabase[currentSelectedDay]||[]).filter(p=>p&&p.from&&p.to);
+    sleepList.forEach(p=>{const h=calcHDiff(p.from,p.to);ts+=h;tocc+=h;});
+    // نعرض فترات النوم ضمن قائمة الروتين نفسها فتظهر الصورة كاملة
+    sleepList.forEach((p,i)=>{
+        html+=`<div class="rt-slot" style="--c:var(--status-wait);">
+            <div class="rt-slot-main">
+                <div class="rt-slot-name">${p.label||(i===0?'نوم الليل':'فترة نوم '+(i+1))}</div>
+                <div class="rt-slot-time">${formatTime12(p.from)} — ${formatTime12(p.to)} · ${calcHDiff(p.from,p.to)} ساعة</div>
+            </div>
+            <div class="rt-slot-acts">
+                <button class="rt-icon-btn clickable" title="تعديل" onclick="openSleepModal()"><i class="fa-solid fa-pen"></i></button>
+            </div>
+        </div>`;
+    });
     slots.forEach((s,i)=>{
         const sp=s.isSuspended;
         // لون الفترة: إذا محاضرة جامعة مرتبطة بمادة، نستخدم لون المادة الفعلي
@@ -6732,7 +7372,9 @@ function closeAddSportModal(){document.getElementById('add-sport-modal').style.d
 function setSportKind(k){
     pendingSportKind=k;
     document.querySelectorAll('#add-sport-kinds .chip-choice').forEach(c=>c.classList.toggle('selected',c.dataset.kind===k));
-    document.getElementById('sport-field-target').style.display=(k==='number'||k==='track')?'block':'none';
+    const numeric=(k==='number'||k==='track');
+    document.getElementById('sport-numbers-row').style.display=numeric?'flex':'none';
+    document.getElementById('sport-field-target').style.display=numeric?'block':'none';
     document.getElementById('sport-field-start').style.display=(k==='track')?'block':'none';
     document.getElementById('sport-calc-open').style.display=(k==='number')?'flex':'none';
     const lbl=document.getElementById('sport-target-label');
@@ -6893,6 +7535,11 @@ function openAddBehaviorModal(){
     document.getElementById('add-behavior-name').value='';
     document.getElementById('add-behavior-note').value='';
     resetAddCore('behavior');
+    document.getElementById('add-behavior-measured').checked=false;
+    document.getElementById('behavior-measure-row').style.display='none';
+    document.getElementById('add-behavior-unit').value='';
+    document.getElementById('add-behavior-limit').value='';
+    pickBehaviorDir('atMost');
     setBehaviorKind('abstain');
     document.getElementById('add-behavior-modal').style.display='flex';
 }
@@ -6903,16 +7550,34 @@ function setBehaviorKind(k){
     const nm=document.getElementById('add-behavior-name');
     nm.placeholder=(k==='abstain')?'ترك إدمان الهاتف':'المحافظة على الهدوء';
 }
+let pendingBehaviorDir='atMost';
+function pickBehaviorDir(d){
+    pendingBehaviorDir=d;
+    document.getElementById('beh-dir-atMost').classList.toggle('active',d==='atMost');
+    document.getElementById('beh-dir-atLeast').classList.toggle('active',d==='atLeast');
+}
+function toggleBehaviorMeasured(){
+    const on=document.getElementById('add-behavior-measured').checked;
+    document.getElementById('behavior-measure-row').style.display=on?'flex':'none';
+}
 function submitAddBehavior(){
     const name=document.getElementById('add-behavior-name').value.trim();
     if(!name){showToast('اكتب اسم السلوك');return;}
-    behaviorDatabase.push({
+    const measured=document.getElementById('add-behavior-measured').checked;
+    const item={
         id:'beh-'+Date.now(),name,
         kind:pendingBehaviorKind,
         note:document.getElementById('add-behavior-note').value.trim(),
         ...readAddCore('behavior'),
         color:pendingBehaviorKind==='abstain'?'var(--cat-series)':'var(--cat-break)'
-    });
+    };
+    if(measured){
+        item.measured=true;
+        item.unit=document.getElementById('add-behavior-unit').value.trim()||'ساعة';
+        item.limit=parseFloat(document.getElementById('add-behavior-limit').value)||0;
+        item.direction=pendingBehaviorDir;
+    }
+    behaviorDatabase.push(item);
     saveBehavior();closeAddBehaviorModal();renderLibrary();showToast('أُضيف إلى السلوك');
 }
 function deleteBehaviorItem(id){
@@ -6952,6 +7617,7 @@ function renderLibBehavior(){
                         <div class="lib-card-name"><span>${x.name}</span>${x.isCore?'<span class="core-badge">رئيسية</span>':''}</div>
                         <div class="lib-card-stats">
                             <span>${kindLabel}</span>
+                            ${x.measured?`<span>${x.direction==='atLeast'?'لا يقلّ عن':'لا يتجاوز'} ${x.limit} ${x.unit||''}</span>`:''}
                             <span>${r.type==='daily'?'كل يوم':r.times+' مرات أسبوعياً'}</span>
                             ${streak?`<span style="color:var(--status-done);">${streak} يوم متتالٍ</span>`:''}
                         </div>
@@ -7432,11 +8098,12 @@ function renderCommitCurve(st){
     }).join('');
 
     const dots=past.map(pt=>{
+        const hit=`<circle cx="${pt.x}" cy="${pt.y}" r="16" fill="transparent" style="cursor:pointer;" onclick="openDayDetail('${pt.iso}')"/>`;
         if(pt.rate===null||pt.rate===undefined)
-            return `<circle cx="${pt.x}" cy="${yOf(0)}" r="2.5" fill="#454553"/>`;
+            return hit+`<circle cx="${pt.x}" cy="${yOf(0)}" r="2.5" fill="#454553" pointer-events="none"/>`;
         const full=pt.rate>=1;
-        return `<circle cx="${pt.x}" cy="${pt.y}" r="${pt.isToday?4.5:3.2}" fill="${full?'var(--status-done)':'var(--status-delay)'}"/>`
-            +(pt.isToday?`<circle cx="${pt.x}" cy="${pt.y}" r="9" fill="none" stroke="var(--accent-color)" stroke-opacity="0.4"/>`:'');
+        return hit+`<circle cx="${pt.x}" cy="${pt.y}" r="${pt.isToday?4.5:3.2}" fill="${full?'var(--status-done)':'var(--status-delay)'}" pointer-events="none"/>`
+            +(pt.isToday?`<circle cx="${pt.x}" cy="${pt.y}" r="9" fill="none" stroke="var(--accent-color)" stroke-opacity="0.4" pointer-events="none"/>`:'');
     }).join('');
 
     const every=n>18?Math.ceil(n/9):n>10?2:1;
@@ -7489,7 +8156,7 @@ function renderCommitCalendar(st){
             const v=dayVerdict(iso);
             const cls=v==='done'?'done':v==='broken'?'broken':v==='rest'?'rest':v==='pending'?'today':'future';
             const isToday=iso===todayIso?' is-today':'';
-            return `<div class="cm-cell ${cls}${isToday}">${d.getDate()}</div>`;
+            return `<div class="cm-cell ${cls}${isToday} clickable" onclick="openDayDetail('${iso}')">${d.getDate()}</div>`;
         }).join('');
         return `<div class="cm-month">
             <div class="cm-month-label">${m.label}</div>
@@ -7543,6 +8210,7 @@ function buildStatsBuckets(){
         label:ST_DAY_NAMES[d.getDay()],
         short:String(d.getDate()),
         date:new Date(d),
+        iso:isoDay(d),                       // ضروري لفتح تفاصيل اليوم
         recs:[getDayRecord(d)].filter(Boolean)
     });
 
@@ -7565,7 +8233,8 @@ function buildStatsBuckets(){
             const days=new Date(year,m+1,0).getDate();
             const recs=[];
             for(let i=1;i<=days;i++){const r=getDayRecord(new Date(year,m,i,12));if(r)recs.push(r);}
-            buckets.push({label:ST_MONTHS[m],short:ST_MONTHS[m].slice(0,3),date:new Date(year,m,1),recs});
+            buckets.push({label:ST_MONTHS[m],short:ST_MONTHS[m].slice(0,3),date:new Date(year,m,1),
+                      iso:isoDay(new Date(year,m,1)),isMonth:true,recs});
         }
         return{buckets,title:String(year)};
     }
@@ -7670,6 +8339,158 @@ function renderStats(){
     }).join(''):'<div class="st-empty">لا توزيع لعرضه بعد.</div>';
 }
 
+// ================================================================
+// تفاصيل يوم بعينه: كم مهمة كانت، وما أُنجز منها وما لم يُنجز
+// اليوم الحالي يُقرأ من مهامه الحيّة، والأيام الماضية من سجلّها
+// ================================================================
+let ddIso=null,ddEdit=false;
+function openDayDetail(iso,keepMode){
+    if(!iso||typeof iso!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+        showToast('لا تفاصيل لهذه النقطة');return;
+    }
+    ddIso=iso;
+    if(!keepMode)ddEdit=false;
+    renderDayDetail();
+    document.getElementById('day-detail-modal').style.display='flex';
+}
+function closeDayDetail(){document.getElementById('day-detail-modal').style.display='none';ddIso=null;ddEdit=false;}
+function toggleDayEdit(){ddEdit=!ddEdit;renderDayDetail();}
+
+// السجلّ لقطة مجمّدة، فنتيح تصحيحها: نسيتَ تعليم شيء أو علّمته خطأً
+function ensureDayRecord(iso){
+    if(!historyDB[iso])historyDB[iso]={total:0,done:0,focusSeconds:0,byCat:{},rate:0,success:false};
+    if(!historyDB[iso].byCat)historyDB[iso].byCat={};
+    return historyDB[iso];
+}
+function recalcDayRecord(iso){
+    const r=ensureDayRecord(iso);
+    let t=0,d=0;
+    Object.keys(r.byCat).forEach(k=>{
+        const c=r.byCat[k];
+        c.total=Math.max(0,c.total|0);
+        c.done=Math.max(0,Math.min(c.done|0,c.total));
+        if(!c.total){delete r.byCat[k];return;}
+        t+=c.total;d+=c.done;
+    });
+    r.total=t;r.done=d;
+    r.rate=t?d/t:0;
+    r.success=t>0&&r.rate>=DAY_SUCCESS_THRESHOLD;
+    localStorage.setItem('historyDB',JSON.stringify(historyDB));
+}
+function ddAdjust(cat,field,delta){
+    const r=ensureDayRecord(ddIso);
+    if(!r.byCat[cat])r.byCat[cat]={total:0,done:0};
+    r.byCat[cat][field]=Math.max(0,(r.byCat[cat][field]|0)+delta);
+    if(field==='total'&&r.byCat[cat].done>r.byCat[cat].total)r.byCat[cat].done=r.byCat[cat].total;
+    if(field==='done'&&r.byCat[cat].done>r.byCat[cat].total)r.byCat[cat].total=r.byCat[cat].done;
+    recalcDayRecord(ddIso);
+    renderDayDetail();
+    if(typeof renderStats==='function'&&statsTab==='stats')renderStats();
+    if(typeof renderCommitment==='function'&&statsTab==='commit')renderCommitment();
+}
+function ddAddCategory(cat){
+    if(!cat)return;
+    const r=ensureDayRecord(ddIso);
+    if(!r.byCat[cat])r.byCat[cat]={total:1,done:0};
+    recalcDayRecord(ddIso);renderDayDetail();
+}
+function ddToggleTask(taskId){
+    const t=storedDailyTasks.find(x=>x.id===taskId);if(!t)return;
+    t.status=(t.status==='done')?'wait':'done';
+    saveTasks();renderDayDetail();renderDailyTasks();
+}
+function ddDeleteRecord(){
+    showCustomConfirm('حذف سجلّ هذا اليوم بالكامل؟',()=>{
+        delete historyDB[ddIso];
+        localStorage.setItem('historyDB',JSON.stringify(historyDB));
+        renderDayDetail();
+        if(typeof renderStats==='function')renderStats();
+        showToast('حُذف سجلّ اليوم');
+    },{acceptLabel:'<i class="fa-solid fa-trash"></i> حذف',acceptColor:'var(--status-delay)'});
+}
+
+function renderDayDetail(){
+    const iso=ddIso;if(!iso)return;
+    const today=commitDayKey();
+    const isToday=(iso===today);
+    const rec=historyDB[iso]||null;
+    const d=dateFromIso(iso);
+    document.getElementById('day-detail-title').innerText=
+        `${ST_DAY_NAMES[d.getDay()]} ${d.getDate()} ${ST_MONTHS[d.getMonth()]}`;
+
+    const editBtn=document.getElementById('day-detail-edit');
+    editBtn.innerHTML=ddEdit?'<i class="fa-solid fa-check"></i> تم':'<i class="fa-solid fa-pen"></i> تعديل';
+    editBtn.classList.toggle('on',ddEdit);
+
+    let total=0,done=0,rows='';
+    if(isToday){
+        const list=todaysTasks().filter(t=>t.status!=='parking');
+        total=list.length;done=list.filter(t=>t.status==='done').length;
+        rows=list.map(t=>{
+            const cat=categoryConfig[t.category]||categoryConfig['noCategory'];
+            const ok=t.status==='done';
+            const clickable=ddEdit?` clickable" onclick="ddToggleTask('${t.id}')`:'"';
+            return `<div class="dd-row${ddEdit?' dd-editable':''}${clickable}>
+                <span class="dd-mark ${ok?'on':''}"><i class="fa-solid fa-${ok?'check':'xmark'}"></i></span>
+                <span class="dd-name">${t.title}</span>
+                <span class="dd-cat" style="color:${cat.color};">${cat.name}</span>
+            </div>`;
+        }).join('');
+    }else{
+        const byCat=(rec&&rec.byCat)||{};
+        total=(rec&&rec.total)||0;done=(rec&&rec.done)||0;
+        rows=Object.keys(byCat).map(k=>{
+            const cfg=categoryConfig[k]||categoryConfig['noCategory'];
+            const c=byCat[k];
+            const ok=c.done>=c.total;
+            if(!ddEdit)return `<div class="dd-row">
+                <span class="dd-mark ${ok?'on':''}"><i class="fa-solid fa-${ok?'check':'xmark'}"></i></span>
+                <span class="dd-name">${cfg.name}</span>
+                <span class="dd-cat">${c.done} من ${c.total}</span>
+            </div>`;
+            return `<div class="dd-edit-row">
+                <div class="dd-edit-name"><span class="dd-dot" style="background:${cfg.color};"></span>${cfg.name}</div>
+                <div class="dd-steppers">
+                    <div class="dd-step">
+                        <span>أُنجز</span>
+                        <button onclick="ddAdjust('${k}','done',-1)">−</button>
+                        <b>${c.done}</b>
+                        <button onclick="ddAdjust('${k}','done',1)">+</button>
+                    </div>
+                    <div class="dd-step">
+                        <span>الكل</span>
+                        <button onclick="ddAdjust('${k}','total',-1)">−</button>
+                        <b>${c.total}</b>
+                        <button onclick="ddAdjust('${k}','total',1)">+</button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+        if(ddEdit){
+            const missing=Object.keys(categoryConfig).filter(k=>!byCat[k]);
+            rows+=`<div class="dd-add">
+                <span class="f-label" style="margin:0;">إضافة تصنيف لهذا اليوم</span>
+                <div class="chips-container" style="margin:8px 0 0;">
+                    ${missing.map(k=>`<div class="chip-choice" onclick="ddAddCategory('${k}')">${categoryConfig[k].name}</div>`).join('')}
+                </div>
+                ${rec?`<button class="cw-side danger clickable" style="margin-top:12px;" onclick="ddDeleteRecord()"><i class="fa-solid fa-trash"></i> حذف سجلّ اليوم</button>`:''}
+            </div>`;
+        }
+    }
+    const pct=total?Math.round((done/total)*100):0;
+    document.getElementById('day-detail-sum').innerHTML=total
+        ? `أنجزت <b>${done}</b> من <b>${total}</b> · ${pct}%`
+        : (ddEdit?'أضف تصنيفاً لتسجيل هذا اليوم':'لا سجلّ لهذا اليوم');
+    document.getElementById('day-detail-ring').style.setProperty('--p',pct);
+    document.getElementById('day-detail-pct').innerText=pct+'%';
+    document.getElementById('day-detail-rows').innerHTML=
+        rows||'<div class="st-empty">لا تفاصيل محفوظة لهذا اليوم.<br>اضغط «تعديل» لتسجيله يدوياً.</div>';
+    const note=document.getElementById('day-detail-note');
+    if(note)note.innerText=ddEdit
+        ? (isToday?'اضغط أي مهمة لتبديل حالتها':'عدّل الأرقام لتصحيح ما سُجّل')
+        : '';
+}
+
 function renderStatsDays(buckets){
     const todayIso=isoDay();
     const wide=buckets.length>8;
@@ -7683,7 +8504,7 @@ function renderStatsDays(buckets){
         const today=isoDay(b.date)===todayIso?' is-today':'';
         const tag=!has?'<span class="st-day-tag none">—</span>'
             :(good?'<span class="st-day-tag">مُنجز</span>':`<span class="st-day-tag none">${Math.round(r*100)}٪</span>`);
-        return `<div class="st-day${today}">
+        return `<div class="st-day${today} clickable" onclick="openDayDetail('${b.iso}')">
             <div class="st-day-name">${b.label}</div>
             <div class="st-dot ${cls}">${icon}</div>
             <div class="st-day-val">${String(b.date.getDate()).padStart(2,'0')}/${String(b.date.getMonth()+1).padStart(2,'0')}</div>
@@ -7733,8 +8554,12 @@ function renderStatsChart(buckets){
         if(!bucketHasData(p.b))return '';
         const isToday=isoDay(p.b.date)===todayIso;
         const good=bucketRate(p.b)>=DAY_SUCCESS_THRESHOLD;
-        return `<circle cx="${p.x}" cy="${p.y}" r="${isToday?4.5:3}" fill="${good?'var(--status-done)':'var(--accent-color)'}"/>`
-            +(isToday?`<circle cx="${p.x}" cy="${p.y}" r="8" fill="none" stroke="var(--accent-color)" stroke-opacity="0.35"/>`:'');
+        const iso=p.b.iso||isoDay(p.b.date);
+        // دائرة شفافة أوسع تسهّل اللمس؛ وفي عرض السنة النقطة شهر لا يوم
+        const hit=p.b.isMonth?'':`<circle cx="${p.x}" cy="${p.y}" r="16" fill="transparent" style="cursor:pointer;" onclick="openDayDetail('${iso}')"/>`;
+        return hit
+            +`<circle cx="${p.x}" cy="${p.y}" r="${isToday?4.5:3}" fill="${good?'var(--status-done)':'var(--accent-color)'}" pointer-events="none"/>`
+            +(isToday?`<circle cx="${p.x}" cy="${p.y}" r="8" fill="none" stroke="var(--accent-color)" stroke-opacity="0.35" pointer-events="none"/>`:'');
     }).join('');
     // خط عتبة اليوم المنجَز
     const thY=padT+innerH-DAY_SUCCESS_THRESHOLD*innerH;
@@ -8054,10 +8879,12 @@ function distributeCoreTasks(){
     const items=getCoreItems();
     if(!items.length){showToast('لا مهام رئيسية بعد — حدّدها من المكتبة');return;}
 
+    // الأيام التي مضت لا تُوزَّع عليها مهام جديدة
     // في الأسبوع الجاري نبدأ من اليوم؛ وفي أسبوع قادم من أوّله
     const todayIdx=WEEK_ORDER.indexOf(currentActualDayKey);
     const weekNum=parseInt(String(activePlanWeekContext).replace('w',''))||1;
     const curNum=parseInt(String(currentWeekKey).replace('w',''))||1;
+    if(weekNum<curNum){showToast('هذا أسبوع مضى — اختر الأسبوع الحالي أو ما بعده');return;}
     const startIdx=(weekNum===curNum&&todayIdx>=0)?todayIdx:0;
 
     // كل وحدة محجوزة في أي أسبوع أو أي مهمة غير منجزة — يضمن أن الأسبوع
@@ -8147,6 +8974,138 @@ function distributeCoreTasks(){
     if(exhausted.length)bits.push(`نفدت وحدات: ${[...new Set(exhausted)].join('، ')}`);
     showToast(bits.length?bits.join(' · '):'كل شيء موزّع سلفاً');
 }
+// ================================================================
+// تقويم الشهر: يربط نظام الأسابيع الأربعة بتواريخ حقيقية
+// w1 = أيام 1-7، w2 = 8-14، w3 = 15-21، w4 = 22 فما بعد
+// ================================================================
+let planCalMonthOffset=0;
+let scheduledTasksDB=JSON.parse(localStorage.getItem('scheduledTasksDB'))||[];
+function saveScheduled(){localStorage.setItem('scheduledTasksDB',JSON.stringify(scheduledTasksDB));}
+
+function weekKeyOfDate(d){return 'w'+Math.min(Math.ceil(d.getDate()/7),4);}
+function dayKeyOfDate(d){return WEEK_ORDER[(d.getDay()+2)%7];}   // الجمعة أول الأسبوع
+
+// المهام المخطّطة ليوم بتاريخ معيّن: من مهام الأسبوع + التذكيرات المجدولة
+function plannedForDate(d){
+    const iso=isoDay(d);
+    const wk=weekKeyOfDate(d), dk=dayKeyOfDate(d);
+    const sameMonth=(d.getMonth()===new Date().getMonth()&&d.getFullYear()===new Date().getFullYear());
+    const out=[];
+    if(sameMonth){
+        storedDailyTasks.filter(t=>t.targetDay===dk&&t.targetWeek===wk&&t.status!=='parking')
+            .forEach(t=>out.push({title:t.title,category:t.category,done:t.status==='done',src:'task',id:t.id}));
+    }
+    scheduledTasksDB.filter(x=>x.date===iso).forEach(x=>
+        out.push({title:x.title,category:x.category||'noCategory',done:false,src:'sched',id:x.id}));
+    return out;
+}
+function openPlanCalendar(){planCalMonthOffset=0;renderPlanCalendar();document.getElementById('plan-cal-modal').style.display='flex';}
+function closePlanCalendar(){document.getElementById('plan-cal-modal').style.display='none';}
+function stepPlanMonth(d){planCalMonthOffset+=d;renderPlanCalendar();}
+
+function renderPlanCalendar(){
+    const now=new Date();
+    const ref=new Date(now.getFullYear(),now.getMonth()+planCalMonthOffset,1);
+    const y=ref.getFullYear(),mo=ref.getMonth();
+    const days=new Date(y,mo+1,0).getDate();
+    document.getElementById('plan-cal-title').innerText=`${ST_MONTHS[mo]} ${y}`;
+    const todayIso=isoDay(now);
+    const pad=Array.from({length:(new Date(y,mo,1).getDay()+2)%7},()=>'<div class="cm-cell empty"></div>').join('');
+    let cells='';
+    for(let i=1;i<=days;i++){
+        const d=new Date(y,mo,i,12);
+        const iso=isoDay(d);
+        const past=daysBetween(iso,todayIso)>0;
+        const isToday=iso===todayIso;
+        const rec=historyDB[iso];
+        const planned=plannedForDate(d);
+        let cls='future',badge='';
+        if(past){
+            if(rec&&rec.total>0){
+                const r=rec.done/rec.total;
+                cls=(r>=DAY_SUCCESS_THRESHOLD)?'done':'broken';
+                badge=`<span class="pc-pct">${Math.round(r*100)}%</span>`;
+            }else cls='rest';
+        }else if(planned.length){
+            badge=`<span class="pc-dot">${planned.length}</span>`;
+        }
+        cells+=`<div class="cm-cell pc-cell ${cls}${isToday?' is-today':''}${past?' is-past':''} clickable"
+             onclick="openPlanDay('${iso}')">${i}${badge}</div>`;
+    }
+    document.getElementById('plan-cal-grid').innerHTML=pad+cells;
+    // شريط الأسابيع: يبيّن أي مدى تواريخ يقابل كل تبويب أسبوع
+    document.getElementById('plan-cal-weeks').innerHTML=[1,2,3,4].map(w=>{
+        const a=(w-1)*7+1, b=(w===4)?days:w*7;
+        return `<span class="pc-wk">الأسبوع ${w}<b>${a}–${b}</b></span>`;
+    }).join('');
+}
+
+// تفاصيل يوم في التقويم: ماضٍ = حصيلة، قادم = مخطّط + إضافة
+function openPlanDay(iso){
+    const d=dateFromIso(iso);
+    const todayIso=isoDay(new Date());
+    const past=daysBetween(iso,todayIso)>0;
+    if(past){openDayDetail(iso);return;}
+    planDayIso=iso;
+    document.getElementById('plan-day-title').innerText=
+        `${ST_DAY_NAMES[d.getDay()]} ${d.getDate()} ${ST_MONTHS[d.getMonth()]}`;
+    const list=plannedForDate(d);
+    document.getElementById('plan-day-sum').innerText=list.length?`${list.length} مهمة مخطّطة`:'لا مهام مخطّطة بعد';
+    document.getElementById('plan-day-rows').innerHTML=list.length?list.map(x=>{
+        const cat=categoryConfig[x.category]||categoryConfig['noCategory'];
+        return `<div class="dd-row">
+            <span class="dd-mark ${x.done?'on':''}"><i class="fa-solid fa-${x.done?'check':'clock'}"></i></span>
+            <span class="dd-name">${x.title}</span>
+            <span class="dd-cat" style="color:${cat.color};">${cat.name}</span>
+            ${x.src==='sched'?`<button class="pc-del clickable" onclick="deleteScheduled('${x.id}')"><i class="fa-solid fa-xmark"></i></button>`:''}
+        </div>`;
+    }).join(''):'<div class="st-empty">اكتب مهمة أدناه لتُضاف إلى هذا اليوم.</div>';
+    document.getElementById('plan-day-input').value='';
+    document.getElementById('plan-day-modal').style.display='flex';
+}
+let planDayIso=null;
+function closePlanDay(){document.getElementById('plan-day-modal').style.display='none';planDayIso=null;}
+function addScheduledFromCalendar(){
+    const title=document.getElementById('plan-day-input').value.trim();
+    if(!title){showToast('اكتب اسم المهمة');return;}
+    if(!planDayIso)return;
+    scheduledTasksDB.push({
+        id:'sch-'+Date.now()+Math.floor(Math.random()*1000),
+        date:planDayIso,title:title,category:selectedPlanDayCat||'noCategory'
+    });
+    saveScheduled();
+    injectScheduledForToday();
+    openPlanDay(planDayIso);renderPlanCalendar();
+    showToast('أُضيفت — ستظهر في يومها تلقائياً');
+}
+function deleteScheduled(id){
+    scheduledTasksDB=scheduledTasksDB.filter(x=>x.id!==id);
+    saveScheduled();openPlanDay(planDayIso);renderPlanCalendar();
+}
+let selectedPlanDayCat='noCategory';
+function pickPlanDayCat(c,el){
+    selectedPlanDayCat=c;
+    document.querySelectorAll('#plan-day-cats .chip-choice').forEach(x=>x.classList.remove('selected'));
+    el.classList.add('selected');
+}
+// عند بداية كل يوم: التذكيرات المستحقّة تنزل مهامَّ فعلية
+function injectScheduledForToday(){
+    const iso=isoDay();
+    let added=0;
+    scheduledTasksDB.filter(x=>x.date===iso&&!x.injected).forEach(x=>{
+        storedDailyTasks.push({
+            id:'task-sch-'+x.id,title:x.title,category:x.category||'noCategory',
+            status:'wait',notes:'',totalSecondsSpent:0,
+            station:stationForCategory(x.category||'noCategory'),
+            targetDay:currentActualDayKey,targetWeek:currentWeekKey,
+            fromScheduled:x.id
+        });
+        x.injected=true;added++;
+    });
+    if(added){saveScheduled();saveTasks();
+        setTimeout(()=>showToast(`${added} تذكير حان موعده اليوم`),1800);}
+}
+
 function onDayBucketDrop(event,dk){
     event.preventDefault();event.stopPropagation();
     const tid=event.dataTransfer.getData('text/plain');if(!tid)return;
@@ -8165,7 +9124,7 @@ function dropOnDay(tid,dk){
             subjectId:g.subjectId||null,subjectColor:g.subjectColor||null,
             linkedUnitId:g.linkedUnitId||null,progressCounted:false,expectedSeconds:g.expectedSeconds||0,
             unitKind:g.unitKind||null,worshipId:g.worshipId||null,bookId:g.bookId||null,fromPage:g.fromPage||null,toPage:g.toPage||null,
-            isCoreTask:!!g.isCoreGoal,coreSourceId:g.coreSourceId||null
+            isCoreTask:!!g.isCoreGoal,coreSourceId:g.coreSourceId||null,libParentId:g.coreSourceId||g.libParentId||null
         };
         storedDailyTasks.push(newDayTask);
         hierarchicalGoalsDatabase=hierarchicalGoalsDatabase.filter(x=>x.id!==g.id);
@@ -8245,6 +9204,90 @@ const BACKUP_FORMAT=2;
 // لكن أيام مضت لا يمكن إعادة حسابها لأن مهامها لم تعد موجودة.
 // لذا لا بدّ من تصفير صريح حين تبدأ من جديد.
 // ================================================================
+function openDriveSettings(){
+    document.getElementById('drive-client-id').value=driveCfg.clientId||'';
+    document.getElementById('drive-auto').checked=!!driveCfg.auto;
+    const oh=document.getElementById('drive-origin-hint');
+    if(oh)oh.innerText=location.origin.startsWith('http')?location.origin:'https://اسم-حسابك.github.io';
+    updateDriveState();
+    document.getElementById('drive-modal').style.display='flex';
+}
+function toggleDriveAuto(){
+    driveCfg.auto=document.getElementById('drive-auto').checked;
+    saveDriveCfg();
+    showToast(driveCfg.auto?'المزامنة التلقائية مفعّلة':'المزامنة التلقائية موقوفة');
+}
+function closeDriveSettings(){document.getElementById('drive-modal').style.display='none';}
+function saveDriveSettings(){
+    const id=document.getElementById('drive-client-id').value.trim();
+    if(id&&!id.endsWith('.apps.googleusercontent.com')){
+        showToast('المعرّف يجب أن ينتهي بـ apps.googleusercontent.com');return;
+    }
+    driveCfg.clientId=id;
+    saveDriveCfg();updateDriveState();
+    showToast(id?'حُفظ المعرّف — سجّل الدخول الآن':'أُزيل المعرّف');
+}
+
+// ---------------- واجهة إعدادات أوقات الصلاة ----------------
+const PRAYER_LABELS={fajr:'الفجر',sunrise:'الشروق',dhuhr:'الظهر',asr:'العصر',maghrib:'المغرب',isha:'العشاء'};
+function openPrayerSettings(){
+    document.getElementById('prayer-method-chips').innerHTML=Object.keys(PRAYER_METHODS).map(k=>
+        `<div class="chip-choice${prayerSettings.method===k?' selected':''}" onclick="pickPrayerMethod('${k}')">${PRAYER_METHODS[k].name}</div>`).join('');
+    pickAsrMadhab(prayerSettings.asrMadhab||'standard',true);
+    document.getElementById('prayer-duration').value=prayerSettings.prayerDuration||30;
+    document.getElementById('prayer-tuning').value=prayerSettings.tuning||0;
+    document.getElementById('prayer-lat').value=(prayerSettings.lat!==null&&prayerSettings.lat!==undefined)?prayerSettings.lat:'';
+    document.getElementById('prayer-lng').value=(prayerSettings.lng!==null&&prayerSettings.lng!==undefined)?prayerSettings.lng:'';
+    renderPrayerPreview();
+    document.getElementById('prayer-settings-modal').style.display='flex';
+}
+function closePrayerSettings(){document.getElementById('prayer-settings-modal').style.display='none';}
+function pickPrayerMethod(k){
+    prayerSettings.method=k;
+    const keys=Object.keys(PRAYER_METHODS);
+    document.querySelectorAll('#prayer-method-chips .chip-choice').forEach((c,i)=>c.classList.toggle('selected',keys[i]===k));
+    renderPrayerPreview();
+}
+function pickAsrMadhab(m,quiet){
+    prayerSettings.asrMadhab=m;
+    const btns=document.querySelectorAll('#prayer-madhab .seg-opt');
+    if(btns.length>1){btns[0].classList.toggle('active',m==='standard');btns[1].classList.toggle('active',m==='hanafi');}
+    if(!quiet)renderPrayerPreview();
+}
+function renderPrayerPreview(){
+    const box=document.getElementById('prayer-times-preview');if(!box)return;
+    const lat=parseFloat(document.getElementById('prayer-lat').value),
+          lng=parseFloat(document.getElementById('prayer-lng').value);
+    const useLat=isNaN(lat)?prayerSettings.lat:lat, useLng=isNaN(lng)?prayerSettings.lng:lng;
+    if(useLat===null||useLat===undefined||useLng===null||useLng===undefined){
+        box.innerHTML='<div class="st-empty">لم يُحدَّد موقعك بعد.<br>اضغط «تحديث الموقع» أو أدخل الإحداثيات.</div>';
+        return;
+    }
+    const dur=parseInt(document.getElementById('prayer-duration').value)||30;
+    const t=computePrayerTimes(new Date(),useLat,useLng,prayerSettings.method,prayerSettings.asrMadhab);
+    box.innerHTML=['fajr','sunrise','dhuhr','asr','maghrib','isha'].map(k=>{
+        const hh=hoursToHHMM(t[k]);
+        if(!hh)return '';
+        const after=(k!=='sunrise')?`<span class="pt-after">الفترة ${formatTime12(hoursToHHMM(t[k]+dur/60))}</span>`:'';
+        return `<div class="pt-row"><span class="pt-name">${PRAYER_LABELS[k]}</span><span class="pt-time">${formatTime12(hh)}</span>${after}</div>`;
+    }).join('');
+}
+function savePrayerSettingsUI(){
+    const lat=parseFloat(document.getElementById('prayer-lat').value),
+          lng=parseFloat(document.getElementById('prayer-lng').value);
+    if(!isNaN(lat)&&!isNaN(lng)){prayerSettings.lat=lat;prayerSettings.lng=lng;}
+    prayerSettings.prayerDuration=Math.max(5,Math.min(120,parseInt(document.getElementById('prayer-duration').value)||30));
+    prayerSettings.tuning=Math.max(-30,Math.min(30,parseInt(document.getElementById('prayer-tuning').value)||0));
+    prayerSettings.enabled=(prayerSettings.lat!==null&&prayerSettings.lat!==undefined);
+    savePrayerSettings();closePrayerSettings();renderDailyTasks();updatePrayerSettingsState();
+    showToast(prayerSettings.enabled?'حُفظت أوقات الصلاة':'أدخل الموقع أولاً');
+}
+function updatePrayerSettingsState(){
+    const el=document.getElementById('prayer-settings-state');if(!el)return;
+    const a=todayAdhanTimes();
+    el.innerHTML=a?`<span style="font-size:11px;">الفجر ${formatTime12(a.fajr)}</span>`
+                  :'<span style="font-size:11px;color:var(--ink-3);">غير مفعّلة</span>';
+}
 function openResetStats(){
     const days=Object.keys(historyDB).length;
     const hasCommit=commitmentDB&&commitmentDB.active;
@@ -8272,13 +9315,268 @@ function openResetStats(){
         {acceptLabel:'<i class="fa-solid fa-arrow-left"></i> تابع',acceptColor:'var(--cat-work)'}
     );
 }
-function exportData(){
-    const b={
+// ================================================================
+// المزامنة مع Google Drive
+// نحفظ ملفاً واحداً داخل appDataFolder: مجلد مخفي في درايف المستخدم
+// لا يراه إلا هذا التطبيق. لا سيرفر، ولا تمرّ البيانات بأحد.
+// كل شيء هنا اختياري ويفشل بهدوء بلا إنترنت.
+// ================================================================
+// ================================================================
+// ★ معرّف التطبيق: يُملأ مرة واحدة من المطوّر، ثم كل مستخدم يسجّل
+//   دخوله بضغطة واحدة بلا أي إعداد. الصق معرّفك بين علامتَي الاقتباس.
+// ================================================================
+const DRIVE_CLIENT_ID='311844278883-8evjhdp65mrugf1qqvvj5qshjeqbk6nm.apps.googleusercontent.com';
+
+// drive.file نطاق غير حسّاس: التطبيق لا يرى إلا الملفات التي أنشأها هو،
+// ولا يحتاج مراجعة من جوجل، ولا حدّ لعدد المستخدمين.
+const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file';
+const DRIVE_FILENAME='montheoma-backup.json';
+let driveCfg=JSON.parse(localStorage.getItem('driveCfg'))||
+    {clientId:'',auto:true,lastSync:null,lastLocalChange:null,email:'',connected:false,declined:false};
+// المعرّف المدمج أولاً، وحقل الإعدادات يبقى للتجربة أو التجاوز
+function driveClientId(){return (driveCfg.clientId||DRIVE_CLIENT_ID||'').trim();}
+function driveReady(){return !!driveClientId();}
+function saveDriveCfg(){localStorage.setItem('driveCfg',JSON.stringify(driveCfg));}
+let _driveToken=null,_driveTokenExp=0,_tokenClient=null,_gisReady=false;
+
+function loadGIS(){
+    return new Promise((res,rej)=>{
+        if(_gisReady&&window.google&&google.accounts)return res();
+        if(document.getElementById('gis-script')){
+            const t=setInterval(()=>{if(window.google&&google.accounts){clearInterval(t);_gisReady=true;res();}},200);
+            setTimeout(()=>{clearInterval(t);rej(new Error('timeout'));},12000);return;
+        }
+        const sc=document.createElement('script');
+        sc.id='gis-script';sc.src='https://accounts.google.com/gsi/client';sc.async=true;
+        sc.onload=()=>{_gisReady=true;res();};
+        sc.onerror=()=>rej(new Error('offline'));
+        document.head.appendChild(sc);
+    });
+}
+// يطلب رمز وصول؛ silent=true لا يُظهر نافذة إن سبق الإذن
+function getDriveToken(silent){
+    return new Promise((resolve,reject)=>{
+        if(_driveToken&&Date.now()<_driveTokenExp-60000)return resolve(_driveToken);
+        if(!driveReady())return reject(new Error('no-client-id'));
+        loadGIS().then(()=>{
+            _tokenClient=google.accounts.oauth2.initTokenClient({
+                client_id:driveClientId(),
+                scope:DRIVE_SCOPE,
+                callback:resp=>{
+                    if(resp&&resp.access_token){
+                        _driveToken=resp.access_token;
+                        _driveTokenExp=Date.now()+((resp.expires_in||3600)*1000);
+                        resolve(_driveToken);
+                    }else reject(new Error('denied'));
+                },
+                error_callback:()=>reject(new Error('denied'))
+            });
+            _tokenClient.requestAccessToken({prompt:silent?'':'consent'});
+        }).catch(reject);
+    });
+}
+function driveFetch(url,opts){
+    opts=opts||{};opts.headers=opts.headers||{};
+    opts.headers.Authorization='Bearer '+_driveToken;
+    return fetch(url,opts).then(r=>{
+        if(r.status===401){_driveToken=null;throw new Error('expired');}
+        if(!r.ok)throw new Error('http-'+r.status);
+        return r;
+    });
+}
+function findDriveFile(){
+    const q=encodeURIComponent(`name='${DRIVE_FILENAME}' and trashed=false`);
+    return driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&pageSize=10`)
+        .then(r=>r.json())
+        .then(j=>(j.files||[])[0]||null);
+}
+function uploadToDrive(){
+    const payload=JSON.stringify(buildBackupPayload());
+    return findDriveFile().then(file=>{
+        const meta=file?{}:{name:DRIVE_FILENAME,description:'نسخة احتياطية من المنظومة الإنتاجية'};
+        const boundary='-------montheoma'+Date.now();
+        const body=
+            `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`+
+            JSON.stringify(meta)+
+            `\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n`+
+            payload+`\r\n--${boundary}--`;
+        const url=file
+            ? `https://www.googleapis.com/upload/drive/v3/files/${file.id}?uploadType=multipart`
+            : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+        return driveFetch(url,{
+            method:file?'PATCH':'POST',
+            headers:{'Content-Type':'multipart/related; boundary='+boundary},
+            body:body
+        });
+    });
+}
+function downloadFromDrive(){
+    return findDriveFile().then(file=>{
+        if(!file)return null;
+        return driveFetch(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`)
+            .then(r=>r.json()).then(j=>({data:j,modified:file.modifiedTime}));
+    });
+}
+
+// ---- تسجيل الدخول: ضغطة واحدة، بلا أي إعداد من المستخدم ----
+function driveConnect(){
+    if(!driveReady()){showToast('المزامنة غير مهيّأة في هذه النسخة');return;}
+    if(!navigator.onLine){showToast('تحتاج اتصالاً بالإنترنت لتسجيل الدخول');return;}
+    showToast('جارٍ فتح تسجيل الدخول...');
+    getDriveToken(false)
+        .then(()=>{
+            driveCfg.connected=true;driveCfg.declined=false;saveDriveCfg();
+            updateDriveState();
+            return driveSyncNow(false);
+        })
+        .catch(err=>{
+            const m=String(err.message||'');
+            showToast(m==='denied'?'أُلغي تسجيل الدخول':'تعذّر الاتصال بجوجل');
+        });
+}
+function driveDisconnect(){
+    showCustomConfirm('إيقاف المزامنة على هذا الجهاز؟<br><span style="font-size:11px;color:var(--ink-3);">نسختك في درايف تبقى كما هي، وبياناتك على الجهاز لا تتأثّر.</span>',()=>{
+        try{if(_driveToken&&window.google&&google.accounts)google.accounts.oauth2.revoke(_driveToken,()=>{});}catch(e){}
+        _driveToken=null;driveCfg.connected=false;saveDriveCfg();updateDriveState();
+        showToast('أُوقفت المزامنة');
+    },{acceptLabel:'<i class="fa-solid fa-link-slash"></i> أوقف',acceptColor:'var(--status-delay)'});
+}
+// عرض واحد عند أول تشغيل، ولا يتكرّر إن رفضه المستخدم
+function maybeOfferDriveOnFirstRun(){
+    if(!driveReady()||driveCfg.connected||driveCfg.declined)return;
+    setTimeout(()=>{
+        showCustomConfirm(
+            'هل تريد حفظ بياناتك في حسابك على جوجل؟<br><span style="font-size:11px;color:var(--ink-3);">تُحفظ نسخة في درايفك تلقائياً، فلا تضيع مهامك وإنجازاتك إن مسحت المتصفح أو غيّرت جهازك. يمكنك تفعيلها لاحقاً من صفحة الروتين.</span>',
+            ()=>driveConnect(),
+            {acceptLabel:'<i class="fa-brands fa-google"></i> سجّل الدخول',acceptColor:'var(--accent-color)'}
+        );
+        driveCfg.declined=true;saveDriveCfg();   // لا نعرضه مجدداً تلقائياً
+    },4000);
+}
+
+// ---- عمليات الواجهة ----
+function driveSyncNow(silent){
+    if(!driveReady()){if(!silent)showToast('المزامنة غير مهيّأة في هذه النسخة');return Promise.resolve();}
+    if(!navigator.onLine){if(!silent)showToast('لا اتصال بالإنترنت');return Promise.resolve();}
+    if(!silent)showToast('جارٍ الرفع إلى درايف...');
+    return getDriveToken(silent)
+        .then(()=>uploadToDrive())
+        .then(()=>{
+            driveCfg.lastSync=new Date().toISOString();saveDriveCfg();
+            updateDriveState();
+            if(!silent)showToast('حُفظت نسختك في درايف');
+        })
+        .catch(err=>{
+            const m=String(err.message||'');
+            if(!silent){
+                if(m==='no-client-id')showToast('أضف معرّف التطبيق أولاً');
+                else if(m==='denied')showToast('لم يُمنح الإذن');
+                else if(m==='offline')showToast('تعذّر الاتصال بجوجل');
+                else showToast('تعذّرت المزامنة — حاول لاحقاً');
+            }
+        });
+}
+function driveRestore(){
+    if(!driveReady()){showToast('المزامنة غير مهيّأة في هذه النسخة');return;}
+    showToast('جارٍ الجلب من درايف...');
+    getDriveToken(false)
+        .then(()=>downloadFromDrive())
+        .then(res=>{
+            if(!res){showToast('لا توجد نسخة محفوظة في درايف');return;}
+            const p=res.data;
+            const when=p.savedAt?new Date(p.savedAt).toLocaleString('ar-EG'):'تاريخ غير معروف';
+            const bits=[];
+            if(p.storedDailyTasks)bits.push(`${p.storedDailyTasks.length} مهمة`);
+            if(p.subjectsDatabase)bits.push(`${p.subjectsDatabase.length} مادة`);
+            if(p.historyDB)bits.push(`${Object.keys(p.historyDB).length} يوم في السجلّ`);
+            showCustomConfirm(
+                `نسخة درايف بتاريخ ${when}<br><span style="font-size:11px;color:var(--ink-3);">${bits.join(' · ')}</span><br><br>سيحلّ محتواها محلّ كل بياناتك على هذا الجهاز. هل تتابع؟`,
+                ()=>{
+                    try{
+                        applyBackupPayload(p);
+                        showToast('تمت الاستعادة — جارٍ إعادة التحميل');
+                        setTimeout(()=>location.reload(),900);
+                    }catch(e){showToast('لا مساحة كافية للاستعادة');}
+                },
+                {acceptLabel:'<i class="fa-solid fa-download"></i> نعم، استعد',acceptColor:'var(--status-delay)'}
+            );
+        })
+        .catch(()=>showToast('تعذّر الجلب من درايف'));
+}
+// مزامنة صامتة مؤجّلة بعد أي تغيير، حتى لا نرفع مع كل ضغطة
+let _driveDebounce=null;
+function scheduleDriveSync(){
+    if(!driveCfg.auto||!driveReady()||!driveCfg.connected)return;
+    driveCfg.lastLocalChange=new Date().toISOString();
+    clearTimeout(_driveDebounce);
+    _driveDebounce=setTimeout(()=>driveSyncNow(true),45000);
+}
+function updateDriveState(){
+    const el=document.getElementById('drive-state');
+    if(el){
+        el.innerHTML=driveCfg.connected
+            ?(driveCfg.lastSync
+                ?`<span style="font-size:11px;color:var(--status-done);">محفوظة ${new Date(driveCfg.lastSync).toLocaleDateString('ar-EG')}</span>`
+                :'<span style="font-size:11px;color:var(--status-done);">متصل</span>')
+            :`<span style="font-size:11px;color:var(--ink-3);">${driveReady()?'غير متصل':'غير متاحة'}</span>`;
+    }
+    const cbtn=document.getElementById('drive-connect-btn');
+    if(cbtn){
+        cbtn.innerHTML=driveCfg.connected
+            ? '<span>إيقاف المزامنة</span><i class="fa-solid fa-link-slash"></i>'
+            : '<span>سجّل الدخول بحساب جوجل</span><i class="fa-brands fa-google"></i>';
+        cbtn.setAttribute('onclick',driveCfg.connected?'driveDisconnect()':'driveConnect()');
+        cbtn.style.display=driveReady()?'flex':'none';
+    }
+    const actions=document.getElementById('drive-actions');
+    if(actions)actions.style.display=driveCfg.connected?'':'none';
+    const unavail=document.getElementById('drive-unavailable');
+    if(unavail)unavail.style.display=driveReady()?'none':'block';
+    const st=document.getElementById('drive-sync-status');
+    if(st){
+        st.innerHTML=driveCfg.lastSync
+            ?`آخر رفع: <b>${new Date(driveCfg.lastSync).toLocaleString('ar-EG')}</b>`
+            :'لم تُرفع أي نسخة بعد.';
+    }
+}
+// شبكة أمان: تذكير أسبوعي بنسخة محلية حتى مع وجود درايف
+function checkBackupReminder(){
+    const last=localStorage.getItem('lastManualBackup');
+    const days=last?Math.floor((Date.now()-new Date(last).getTime())/86400000):999;
+    if(days>=7&&!driveCfg.connected){
+        setTimeout(()=>showToast('مضى وقت على آخر نسخة احتياطية — صدّر نسخة من الروتين'),3500);
+    }
+}
+
+// حمولة النسخة الاحتياطية — مصدر واحد للتصدير اليدوي وللمزامنة مع درايف
+function buildBackupPayload(){
+    return{
         app:'montheoma', format:BACKUP_FORMAT, savedAt:new Date().toISOString(),
         routineDatabase,fixedSleepDatabase,storedDailyTasks,hierarchicalGoalsDatabase,
         subjectsDatabase,booksDatabase,seriesDatabase,newSeriesDatabase,worshipDatabase,
-        stationTimesDB,periodTasksDB,historyDB,sportsDatabase,behaviorDatabase,commitmentDB,commitLogDB
+        stationTimesDB,periodTasksDB,historyDB,sportsDatabase,behaviorDatabase,
+        commitmentDB,commitLogDB,scheduledTasksDB,prayerSettings
     };
+}
+const BACKUP_KEY_MAP={
+    routineDatabase:'routineDB', fixedSleepDatabase:'sleepFixedDB',
+    storedDailyTasks:'dailyTasksDB', hierarchicalGoalsDatabase:'hGoalsDB',
+    subjectsDatabase:'subjectsDB', booksDatabase:'booksDB',
+    seriesDatabase:'seriesDB', newSeriesDatabase:'newSeriesDB',
+    worshipDatabase:'worshipDB', stationTimesDB:'stationTimesDB',
+    periodTasksDB:'periodTasksDB', historyDB:'historyDB',
+    sportsDatabase:'sportsDB', behaviorDatabase:'behaviorDB',
+    commitmentDB:'commitmentDB', commitLogDB:'commitLogDB',
+    scheduledTasksDB:'scheduledTasksDB', prayerSettings:'prayerSettings'
+};
+function applyBackupPayload(p){
+    Object.keys(BACKUP_KEY_MAP).forEach(k=>{
+        if(p[k]!==undefined)localStorage.setItem(BACKUP_KEY_MAP[k],JSON.stringify(p[k]));
+    });
+}
+
+function exportData(){
+    const b=buildBackupPayload();
     // اسم ملف لاتيني بتاريخ ISO. الاسم العربي القديم كان يحوي / وعلامات اتجاه،
     // فكان أندرويد يشوّهه ويسقط الامتداد .json — ولهذا تعذّر استيراده لاحقاً.
     const name=`montheoma-backup-${isoDay()}.json`;
@@ -8288,6 +9586,7 @@ function exportData(){
         const a=document.createElement('a');
         a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
         setTimeout(()=>URL.revokeObjectURL(url),4000);
+        localStorage.setItem('lastManualBackup',new Date().toISOString());
         showToast('تم حفظ النسخة: '+name);
     }catch(e){showToast('تعذّر إنشاء ملف النسخة');}
 }
@@ -8326,7 +9625,8 @@ function importData(){
                         worshipDatabase:'worshipDB', stationTimesDB:'stationTimesDB',
                         periodTasksDB:'periodTasksDB', historyDB:'historyDB',
                         sportsDatabase:'sportsDB', behaviorDatabase:'behaviorDB',
-                        commitmentDB:'commitmentDB', commitLogDB:'commitLogDB'
+                        commitmentDB:'commitmentDB', commitLogDB:'commitLogDB',
+                        scheduledTasksDB:'scheduledTasksDB', prayerSettings:'prayerSettings'
                     };
                     try{
                         Object.keys(map).forEach(k=>{
@@ -9281,6 +10581,7 @@ function addUnitTaskToDay(parentId,unitId,type){
         station:'dhuhr',
         parentGoalId:null,targetWeek:null,targetDay:null,
         subjectId,subjectColor,
+        libParentId:parentId,
         linkedUnitId:(type==='book'||type==='series'||type==='newseries'||type==='worship-simple')?null:unitId,
         progressCounted:false,expectedSeconds:expSec,
         unitKind,worshipId
@@ -9611,6 +10912,20 @@ function resetAddCore(scope){
 }
 
 let longpressCoreChoice=0;
+let pendingIconName=null;
+function renderIconPicker(current){
+    pendingIconName=current||null;
+    document.getElementById('lib-icon-picker').innerHTML=LIB_ICONS.map(ic=>
+        `<button class="icon-opt${ic===current?' selected':''}" onclick="pickLibIcon('${ic}',this)"><i class="fa-solid fa-${ic}"></i></button>`
+    ).join('');
+}
+function pickLibIcon(ic,el){
+    // ضغطة ثانية على نفس الأيقونة تلغي الاختيار
+    if(pendingIconName===ic){pendingIconName=null;el.classList.remove('selected');return;}
+    pendingIconName=ic;
+    document.querySelectorAll('#lib-icon-picker .icon-opt').forEach(b=>b.classList.remove('selected'));
+    el.classList.add('selected');
+}
 function readLongpressRecurrence(){
     const inp=document.getElementById('lib-longpress-times');
     const quota=inp.dataset.quota==='1';
@@ -9661,6 +10976,8 @@ function openLibLongpressModal(kind,dbType,parentId,unitId){
     }
     // قسم الأيقونة المخصصة - فقط للعناصر الرئيسية (ليس الوحدات الفرعية)
     document.getElementById('lib-longpress-icon-section').style.display=hasColor?'block':'none';
+    document.getElementById('lib-longpress-iconname-section').style.display=hasColor?'block':'none';
+    if(hasColor)renderIconPicker(entity.iconName||'');
     const iconPrev=document.getElementById('lib-longpress-icon-preview');
     if(hasColor&&entity.iconImage){iconPrev.src=entity.iconImage;iconPrev.style.display='block';}
     else iconPrev.style.display='none';
@@ -9715,6 +11032,7 @@ function saveLongpressEdit(){
         if(picked)entity.color=picked.getAttribute('data-color');
         if(pendingLongpressIcon)entity.iconImage=pendingLongpressIcon;
         else if(longpressIconRemoved)entity.iconImage=null;
+        entity.iconName=pendingIconName||null;
         const wasCore=!!entity.isCore, willCore=(longpressCoreChoice===1);
         const applyCore=()=>{
             entity.isCore=willCore;
@@ -10035,6 +11353,14 @@ function toggleAppNotifications(){
     activePlanWeekContext=currentWeekKey; // فتح الأسبوع الحالي افتراضياً
     highlightCurrentDayInGrid();
     initDragAutoScroll();
+    injectScheduledForToday();
+    ensurePrayerLocation();
+    updatePrayerSettingsState();
+    updateDriveState();
+    checkBackupReminder();
+    // مزامنة صامتة عند الفتح إن كانت مفعّلة
+    if(driveCfg.connected&&driveCfg.auto&&navigator.onLine)setTimeout(()=>driveSyncNow(true),6000);
+    maybeOfferDriveOnFirstRun();
     document._weekTaskDeleteMode=null;
     refreshNotificationToggleUI();
     if(localStorage.getItem('periodNotificationsEnabled')==='true' && 'Notification' in window && Notification.permission==='granted'){

@@ -12,7 +12,7 @@
    أو الأيقونات، لتُمسح النسخ القديمة.
    ================================================================ */
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = `montheoma-${CACHE_VERSION}`;
 
 // ملفات الهيكل الأساسي التي تُخزَّن عند أول تشغيل
@@ -64,6 +64,13 @@ function isHtml(request) {
          (request.headers.get('accept') || '').includes('text/html');
 }
 
+// نداءات جوجل لا تُخزَّن ولا تمرّ عبر الكاش إطلاقاً
+function isGoogleApi(url) {
+  return url.hostname.includes('googleapis.com') ||
+         url.hostname.includes('accounts.google.com') ||
+         url.hostname.includes('gstatic.com') && url.pathname.includes('gsi');
+}
+
 function isStatic(url) {
   return /\.(png|jpg|jpeg|svg|ico|webp|woff2?|ttf|css)$/i.test(url.pathname) ||
          url.hostname.includes('fonts.gstatic.com') ||
@@ -76,6 +83,9 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
+
+  // المصادقة والمزامنة تمرّ مباشرة للشبكة
+  if (isGoogleApi(url)) return;
 
   // 1) صفحة التطبيق: الشبكة أولاً حتى تصل التحديثات فوراً،
   //    ومع انقطاع الشبكة نعود للنسخة المخزّنة فلا تظهر صفحة "لا يوجد اتصال".
