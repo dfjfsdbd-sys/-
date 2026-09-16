@@ -288,7 +288,12 @@
         }
         .pc-wk b { display: block; color: var(--ink-2); font-size: 10.5px; margin-top: 2px; font-variant-numeric: tabular-nums; }
         .pc-cell { position: relative; font-size: 12px; }
-        .pc-cell.is-past { opacity: 0.6; }
+        /* يوم مضى: باهت ومشطوب، لا يُخطَّط له */
+        .pc-cell.is-past { opacity: 0.34; }
+        .pc-cell.is-past::before {
+            content: ''; position: absolute; left: 14%; right: 14%; top: 50%;
+            height: 1px; background: currentColor; opacity: 0.5;
+        }
         .pc-pct { position: absolute; bottom: 2px; left: 0; right: 0; font-size: 7.5px; opacity: 0.85; }
         .pc-dot {
             position: absolute; top: 2px; left: 2px; min-width: 13px; height: 13px; line-height: 13px;
@@ -555,6 +560,7 @@
         .rt-slot-name { font-size: 12.5px; color: var(--ink-1); font-weight: 500; }
         .rt-slot-time { font-size: 10.5px; color: var(--ink-3); margin-top: 3px; font-variant-numeric: tabular-nums; }
         .rt-slot-acts { display: flex; gap: 6px; flex-shrink: 0; }
+        .rt-kind { font-size: 10px; color: var(--c, var(--ink-3)); margin-left: 4px; }
         .rt-slot.is-off { opacity: 0.45; }
         .rt-slot.is-off .rt-slot-name { text-decoration: line-through; }
         .rt-icon-btn.danger { color: rgba(238,82,83,0.7); }
@@ -2306,7 +2312,7 @@
         </div>
         <div class="rt-hint" id="routine-slot-hint" style="padding:10px 12px;background:var(--surface-2);border:1px solid var(--line-1);border-radius:var(--r-sm);"></div>
         <div style="display:flex;gap:9px;margin-top:16px;">
-            <button class="btn-prime clickable" style="flex:2;" onclick="submitInlineRoutineSlot()">تثبيت في الشبكة الأسبوعية</button>
+            <button class="btn-prime clickable" style="flex:2;" id="routine-slot-save" onclick="submitInlineRoutineSlot()">تثبيت في الشبكة الأسبوعية</button>
             <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closeRoutineSlotModal()">إلغاء</button>
         </div>
     </div>
@@ -3019,7 +3025,7 @@
             <span><i class="cm-dot rest"></i> بلا مهام</span>
             <span><i class="cm-dot future"></i> قادم</span>
         </div>
-        <div class="rt-hint" style="text-align:center;">اضغط أي يوم قادم لتضيف فيه مهمة — ولو بعد شهرين.</div>
+        <div class="rt-hint" style="text-align:center;">اضغط أي يوم قادم لتضيف فيه مهمة — ولو بعد شهرين.<br>الأيام المشطوبة مضت، وتصحيحها من صفحة الإنجاز.</div>
         <button class="btn-prime btn-ghost clickable" onclick="closePlanCalendar()">إغلاق</button>
     </div>
 </div>
@@ -7338,6 +7344,57 @@ function refreshFreeTimeAcrossPages(){
     renderDailyTasks();
     renderHierarchicalTopDownSystem();
 }
+function toggleSleepSuspension(i){
+    const arr=fixedSleepDatabase[currentSelectedDay]||[];
+    if(!arr[i])return;
+    arr[i].isSuspended=!arr[i].isSuspended;
+    localStorage.setItem('sleepFixedDB',JSON.stringify(fixedSleepDatabase));
+    renderCurrentDaySlots();refreshFreeTimeAcrossPages();
+    showToast(arr[i].isSuspended?'عُطّلت اليوم — عادت ساعاتها لفراغك':'أُعيد تفعيلها');
+}
+function deleteSleepPeriod(i){
+    const arr=fixedSleepDatabase[currentSelectedDay]||[];
+    const p=arr[i];if(!p)return;
+    showCustomConfirm(
+        `حذف «${p.label||'فترة النوم'}» نهائياً من ${dayNamesArabic[currentSelectedDay]}؟<br>
+         <span style="font-size:11px;color:var(--ink-3);">إن كنت تريد إلغاءها اليوم فقط، استعمل زر التعطيل بدل الحذف.</span>`,
+        ()=>{
+            arr.splice(i,1);
+            localStorage.setItem('sleepFixedDB',JSON.stringify(fixedSleepDatabase));
+            renderCurrentDaySlots();refreshFreeTimeAcrossPages();showToast('حُذفت الفترة');
+        },{acceptLabel:'<i class="fa-solid fa-trash"></i> حذف',acceptColor:'var(--status-delay)'});
+}
+function confirmDeleteSlot(i){
+    const arr=routineDatabase[currentSelectedDay]||[];
+    const sl=arr[i];if(!sl)return;
+    const name=sl.type==='جامعة'?(sl.subjectLabel?`محاضرة ${sl.subjectLabel}`:'المحاضرة'):'فترة العمل';
+    showCustomConfirm(
+        `حذف «${name}» نهائياً من ${dayNamesArabic[currentSelectedDay]}؟<br>
+         <span style="font-size:11px;color:var(--ink-3);">إن كانت ملغاة اليوم فقط، استعمل زر التعطيل بدل الحذف.</span>`,
+        ()=>{deleteSlot(i);},
+        {acceptLabel:'<i class="fa-solid fa-trash"></i> حذف',acceptColor:'var(--status-delay)'});
+}
+// تعديل فترة روتين قائمة بنفس لوح الإضافة
+let editingSlotIndex=null;
+function editRoutineSlot(i){
+    const arr=routineDatabase[currentSelectedDay]||[];
+    const sl=arr[i];if(!sl)return;
+    toggleRoutineInlineForm(sl.type);
+    editingSlotIndex=i;                      // بعد الاستدعاء: الدالة تصفّره عند الإضافة
+    document.getElementById('routine-slot-title').innerText=
+        (sl.type==='جامعة')?'تعديل المحاضرة':'تعديل فترة العمل';
+    document.getElementById('routine-slot-save').innerText='حفظ التعديل';
+    document.getElementById('inline-slot-from').value=sl.from;
+    document.getElementById('disp-inline-slot-from').innerText=formatTime12(sl.from);
+    document.getElementById('inline-slot-to').value=sl.to;
+    document.getElementById('disp-inline-slot-to').innerText=formatTime12(sl.to);
+    if(sl.subjectId){
+        selectedRoutineSubjectId=sl.subjectId;
+        document.querySelectorAll('#routine-subject-chips .chip-choice').forEach(c=>{
+            if(c.getAttribute('onclick').includes(sl.subjectId))c.classList.add('selected');
+        });
+    }
+}
 function saveFixedSleepSettings(){
     fixedSleepDatabase[currentSelectedDay]=sleepDraft.filter(p=>p.from&&p.to)
         .map(p=>({from:p.from,to:p.to,label:p.label||''}));
@@ -7362,7 +7419,10 @@ function calcPureFree(dk){
     return Math.max(0,24-occ-(tasksSeconds/3600));
 }
 let selectedRoutineSubjectId=null;
-function closeRoutineSlotModal(){document.getElementById('routine-slot-modal').style.display='none';}
+function closeRoutineSlotModal(){
+    document.getElementById('routine-slot-modal').style.display='none';
+    editingSlotIndex=null;
+}
 function toggleRoutineInlineForm(type){
     currentFormType=type;
     document.getElementById('routine-slot-title').innerText=(type==='جامعة')?'إضافة محاضرة':'إضافة فترة عمل';
@@ -7387,6 +7447,9 @@ function toggleRoutineInlineForm(type){
     const defaultTo=addMinutesToTime(le,90);
     document.getElementById('inline-slot-to').value=defaultTo;
     document.getElementById('disp-inline-slot-to').innerText=formatTime12(defaultTo);
+    editingSlotIndex=null;
+    const sv=document.getElementById('routine-slot-save');
+    if(sv)sv.innerText='تثبيت في الشبكة الأسبوعية';
     document.getElementById('routine-slot-hint').innerHTML=
         `تُثبَّت في <b style="color:var(--ink-1);">${dayNamesArabic[currentSelectedDay]}</b> من كل أسبوع، وتُخصم من ساعات فراغك.`;
     document.getElementById('routine-slot-modal').style.display='flex';
@@ -7418,11 +7481,21 @@ function finalizeInlineRoutineSlot(f,t,h){
         const s=subjectsDatabase.find(x=>x.id===selectedRoutineSubjectId);
         if(s)label=s.name;
     }
-    routineDatabase[currentSelectedDay].push({type:currentFormType,from:f,to:t,hours:h,isSuspended:false,subjectLabel:label,subjectId:selectedRoutineSubjectId||null});
+    const entry={type:currentFormType,from:f,to:t,hours:h,isSuspended:false,
+                 subjectLabel:label,subjectId:selectedRoutineSubjectId||null};
+    const editing=(editingSlotIndex!==null&&editingSlotIndex!==undefined);
+    if(editing){
+        const prev=routineDatabase[currentSelectedDay][editingSlotIndex]||{};
+        entry.isSuspended=!!prev.isSuspended;             // نحتفظ بحالة التعطيل
+        routineDatabase[currentSelectedDay][editingSlotIndex]=entry;
+    }else{
+        routineDatabase[currentSelectedDay].push(entry);
+    }
     localStorage.setItem('routineDB',JSON.stringify(routineDatabase));
     closeRoutineSlotModal();
     currentFormType=null;selectedRoutineSubjectId=null;
-    showToast("تم تثبيت الفترة");renderCurrentDaySlots();if(freeTimeDetailOpen)renderFreeTimeDetail();refreshFreeTimeAcrossPages();
+    showToast(editing?"حُفظ التعديل":"تم تثبيت الفترة");
+    renderCurrentDaySlots();if(freeTimeDetailOpen)renderFreeTimeDetail();refreshFreeTimeAcrossPages();
 }
 function toggleSlotSuspension(d,i){routineDatabase[d][i].isSuspended=!routineDatabase[d][i].isSuspended;localStorage.setItem('routineDB',JSON.stringify(routineDatabase));renderCurrentDaySlots();refreshFreeTimeAcrossPages();}
 function deleteSlot(i){routineDatabase[currentSelectedDay].splice(i,1);localStorage.setItem('routineDB',JSON.stringify(routineDatabase));renderCurrentDaySlots();if(freeTimeDetailOpen)renderFreeTimeDetail();refreshFreeTimeAcrossPages();}
@@ -7431,16 +7504,19 @@ function renderCurrentDaySlots(){
     const c=document.getElementById('current-day-slots-list');if(!c)return;
     const slots=routineDatabase[currentSelectedDay]||[];let html='',tu=0,ts=0,tocc=2.5;
     const sleepList=(fixedSleepDatabase[currentSelectedDay]||[]).filter(p=>p&&p.from&&p.to);
-    sleepList.forEach(p=>{const h=calcHDiff(p.from,p.to);ts+=h;tocc+=h;});
+    sleepList.forEach(p=>{if(p.isSuspended)return;const h=calcHDiff(p.from,p.to);ts+=h;tocc+=h;});
     // نعرض فترات النوم ضمن قائمة الروتين نفسها فتظهر الصورة كاملة
     sleepList.forEach((p,i)=>{
-        html+=`<div class="rt-slot" style="--c:var(--status-wait);">
+        const off=!!p.isSuspended;
+        html+=`<div class="rt-slot${off?' is-off':''}" style="--c:var(--status-wait);">
             <div class="rt-slot-main">
-                <div class="rt-slot-name">${p.label||(i===0?'نوم الليل':'فترة نوم '+(i+1))}</div>
-                <div class="rt-slot-time">${formatTime12(p.from)} — ${formatTime12(p.to)} · ${calcHDiff(p.from,p.to)} ساعة</div>
+                <div class="rt-slot-name"><i class="fa-solid fa-bed rt-kind"></i> ${p.label||(i===0?'نوم الليل':'فترة نوم '+(i+1))}</div>
+                <div class="rt-slot-time">${formatTime12(p.from)} — ${formatTime12(p.to)} · ${calcHDiff(p.from,p.to)} ساعة${off?' · معطّلة اليوم':''}</div>
             </div>
             <div class="rt-slot-acts">
+                <button class="rt-icon-btn clickable" title="${off?'تفعيل':'تعطيل اليوم'}" onclick="toggleSleepSuspension(${i})"><i class="fa-solid fa-${off?'play':'pause'}"></i></button>
                 <button class="rt-icon-btn clickable" title="تعديل" onclick="openSleepModal()"><i class="fa-solid fa-pen"></i></button>
+                <button class="rt-icon-btn clickable danger" title="حذف" onclick="deleteSleepPeriod(${i})"><i class="fa-solid fa-trash"></i></button>
             </div>
         </div>`;
     });
@@ -7453,17 +7529,20 @@ function renderCurrentDaySlots(){
             if(linkedSub)bc=linkedSub.color;
         }
         // إظهار اسم المادة إذا وُجد
-        const lt=s.type==='جامعة'?(s.subjectLabel?`محاضرة: ${s.subjectLabel}`:'محاضرة جامعية'):s.type==='عمل'?'فترة عمل':'فراغ/راحة';
+        const icon=s.type==='جامعة'?'graduation-cap':s.type==='عمل'?'briefcase':'mug-hot';
+        const lt=`<i class="fa-solid fa-${icon} rt-kind"></i> `+
+            (s.type==='جامعة'?(s.subjectLabel?`محاضرة: ${s.subjectLabel}`:'محاضرة جامعية'):s.type==='عمل'?'فترة عمل':'فراغ/راحة');
         if(!sp){if(s.type==='جامعة')tu+=s.hours;tocc+=s.hours;}
         const fromF=formatTime12(s.from),toF=formatTime12(s.to);
         html+=`<div class="rt-slot${sp?' is-off':''}" style="--c:${bc};">
             <div class="rt-slot-main">
                 <div class="rt-slot-name">${lt}</div>
-                <div class="rt-slot-time">${fromF} — ${toF}</div>
+                <div class="rt-slot-time">${fromF} — ${toF}${sp?' · معطّلة اليوم':''}</div>
             </div>
             <div class="rt-slot-acts">
-                <button class="rt-icon-btn clickable" title="${sp?'تفعيل':'تعليق'}" onclick="toggleSlotSuspension('${currentSelectedDay}',${i})"><i class="fa-solid fa-${sp?'play':'pause'}"></i></button>
-                <button class="rt-icon-btn clickable danger" title="حذف" onclick="deleteSlot(${i})"><i class="fa-solid fa-trash"></i></button>
+                <button class="rt-icon-btn clickable" title="${sp?'تفعيل':'تعطيل اليوم'}" onclick="toggleSlotSuspension('${currentSelectedDay}',${i})"><i class="fa-solid fa-${sp?'play':'pause'}"></i></button>
+                <button class="rt-icon-btn clickable" title="تعديل" onclick="editRoutineSlot(${i})"><i class="fa-solid fa-pen"></i></button>
+                <button class="rt-icon-btn clickable danger" title="حذف" onclick="confirmDeleteSlot(${i})"><i class="fa-solid fa-trash"></i></button>
             </div>
         </div>`;
     });
@@ -8467,12 +8546,13 @@ function renderStats(){
 // تفاصيل يوم بعينه: كم مهمة كانت، وما أُنجز منها وما لم يُنجز
 // اليوم الحالي يُقرأ من مهامه الحيّة، والأيام الماضية من سجلّها
 // ================================================================
-let ddIso=null,ddEdit=false;
-function openDayDetail(iso,keepMode){
+let ddIso=null,ddEdit=false,ddReadOnly=false;
+function openDayDetail(iso,keepMode,readOnly){
     if(!iso||typeof iso!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(iso)){
         showToast('لا تفاصيل لهذه النقطة');return;
     }
     ddIso=iso;
+    ddReadOnly=!!readOnly;
     if(!keepMode)ddEdit=false;
     renderDayDetail();
     document.getElementById('day-detail-modal').style.display='flex';
@@ -8563,8 +8643,10 @@ function renderDayDetail(){
         `${ST_DAY_NAMES[d.getDay()]} ${d.getDate()} ${ST_MONTHS[d.getMonth()]}`;
 
     const editBtn=document.getElementById('day-detail-edit');
+    editBtn.style.display=ddReadOnly?'none':'';
     editBtn.innerHTML=ddEdit?'<i class="fa-solid fa-check"></i> تم':'<i class="fa-solid fa-pen"></i> تعديل';
     editBtn.classList.toggle('on',ddEdit);
+    if(ddReadOnly)ddEdit=false;
 
     let list=[],total=0,done=0,legacy=false;
     if(isToday){
@@ -8636,7 +8718,8 @@ function renderDayDetail(){
     document.getElementById('day-detail-rows').innerHTML=
         rows||'<div class="st-empty">لا مهام في هذا اليوم.<br>اضغط «تعديل» لتسجيله.</div>';
     const note=document.getElementById('day-detail-note');
-    if(note)note.innerText=ddEdit?'اضغط أي مهمة لتعديلها':'';
+    if(note)note.innerText=ddReadOnly?'يوم مضى — لتصحيحه افتحه من صفحة الإنجاز'
+                                     :(ddEdit?'اضغط أي مهمة لتعديلها':'');
 }
 
 // ---- تعديل مهمة واحدة داخل يوم ----
@@ -9276,7 +9359,7 @@ function renderPlanCalendar(){
             badge=`<span class="pc-dot">${planned.length}</span>`;
         }
         cells+=`<div class="cm-cell pc-cell ${cls}${isToday?' is-today':''}${past?' is-past':''} clickable"
-             onclick="openPlanDay('${iso}')">${i}${badge}</div>`;
+             onclick="openPlanDay('${iso}')" title="${past?'يوم مضى':''}">${i}${badge}</div>`;
     }
     document.getElementById('plan-cal-grid').innerHTML=pad+cells;
     // شريط الأسابيع: يبيّن أي مدى تواريخ يقابل كل تبويب أسبوع
@@ -9291,7 +9374,8 @@ function openPlanDay(iso){
     const d=dateFromIso(iso);
     const todayIso=isoDay(new Date());
     const past=daysBetween(iso,todayIso)>0;
-    if(past){openDayDetail(iso);return;}
+    // التخطيط للأمام فقط: يوم مضى يُعرض للقراءة، وتصحيحه من صفحة الإنجاز
+    if(past){openDayDetail(iso,false,true);return;}
     planDayIso=iso;
     document.getElementById('plan-day-title').innerText=
         `${ST_DAY_NAMES[d.getDay()]} ${d.getDate()} ${ST_MONTHS[d.getMonth()]}`;
