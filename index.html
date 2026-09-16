@@ -255,6 +255,16 @@
         .metric-hist i.ok { background: rgba(53,183,145,0.55); }
         .metric-hist i.low { background: rgba(238,82,83,0.45); }
         .metric-hist-meta { font-size: 10px; color: var(--ink-3); }
+        .beh-log { display: flex; flex-wrap: wrap; gap: 5px; }
+        .beh-cell {
+            width: 34px; height: 34px; border-radius: var(--r-xs); cursor: pointer;
+            background: var(--surface-2); border: 1px solid var(--line-1); color: var(--ink-3);
+            font-size: 10px; font-family: inherit;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .beh-cell.on { background: rgba(53,183,145,0.22); border-color: rgba(53,183,145,0.45); color: #bdf0df; }
+        .beh-log-meta { font-size: 11px; color: var(--ink-3); margin-top: 10px; }
+        .beh-log-meta b { color: var(--ink-1); }
         .streak-wrap { margin: 4px 0 20px; }
         .streak-row { display: flex; gap: 4px; justify-content: center; }
         .streak-cell { width: 14px; height: 22px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line-1); }
@@ -312,6 +322,27 @@
         .dd-mark.on { background: rgba(53,183,145,0.14); color: var(--status-done); border-color: rgba(53,183,145,0.35); }
         .dd-name { flex: 1; min-width: 0; font-size: 12.5px; color: var(--ink-1); text-align: right; line-height: 1.5; }
         .dd-cat { font-size: 10px; color: var(--ink-3); flex-shrink: 0; }
+        /* بطاقات مهام اليوم داخل نافذة السجلّ */
+        .dd-task {
+            display: flex; align-items: center; gap: 11px; padding: 12px 13px; margin-bottom: 7px;
+            background: var(--surface-2); border: 1px solid var(--line-1);
+            border-radius: var(--r-sm); border-right: 3px solid var(--c, var(--line-2));
+        }
+        .dd-task.is-done .dd-task-title { color: var(--ink-3); text-decoration: line-through; }
+        .dd-task-body { flex: 1; min-width: 0; text-align: right; }
+        .dd-task-title { font-size: 12.5px; color: var(--ink-1); line-height: 1.5; }
+        .dd-task-meta { display: flex; align-items: center; gap: 9px; margin-top: 5px; font-size: 10px; color: var(--ink-3); flex-wrap: wrap; }
+        .dd-task-cat { color: var(--c, var(--ink-3)); }
+        .dd-core { color: #ef7a7b; }
+        .dd-chev { color: var(--ink-3); font-size: 11px; flex-shrink: 0; }
+        .dd-add-task {
+            width: 100%; margin-top: 8px; padding: 13px; cursor: pointer;
+            background: none; border: 1px dashed var(--line-2); border-radius: var(--r-sm);
+            color: var(--ink-3); font-family: inherit; font-size: 12px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .dd-add-task:active { border-color: var(--accent-line); color: var(--accent-color); }
+        .dd-legacy { font-size: 10.5px; color: var(--status-work); margin-bottom: 12px; line-height: 1.7; }
         .dd-edit-btn {
             flex-shrink: 0; background: var(--surface-2); border: 1px solid var(--line-2);
             color: var(--ink-2); border-radius: var(--r-pill); padding: 7px 13px;
@@ -1214,6 +1245,22 @@
             background: var(--accent-tint); color: var(--accent-color);
             border-color: var(--accent-line); font-weight: 600;
         }
+        /* زرّا رأس التخطيط: واضحان ومتمايزان بلونيهما */
+        .plan-head-acts { display: flex; gap: 7px; margin-right: auto; flex-shrink: 0; }
+        .plan-btn {
+            display: flex; align-items: center; gap: 6px; cursor: pointer;
+            border-radius: var(--r-pill); padding: 9px 15px;
+            font-family: inherit; font-size: 12px; font-weight: 600;
+        }
+        .plan-btn i { font-size: 11px; }
+        .plan-btn.cal {
+            background: rgba(166,130,232,0.13); border: 1px solid rgba(166,130,232,0.32); color: #c3a7f2;
+        }
+        .plan-btn.cal:active { background: rgba(166,130,232,0.22); }
+        .plan-btn.add {
+            background: var(--accent-grad); border: none; color: #0f0f16;
+        }
+        .plan-btn.add:active { opacity: 0.85; }
         .pl-add {
             width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; margin-right: auto;
             border: 1px solid var(--line-2); background: var(--surface-2);
@@ -2403,14 +2450,18 @@
         <div class="section-title">
             <i class="fa-solid fa-bullseye"></i>
             <span id="specific-week-pool-header-text">أهداف هذا الأسبوع</span>
-            <button class="pl-add clickable" onclick="openAddGoalToWeekModal()" aria-label="إضافة هدف"><i class="fa-solid fa-plus"></i></button>
+            <div class="plan-head-acts">
+                <button class="plan-btn cal clickable" onclick="openPlanCalendar()">
+                    <i class="fa-solid fa-calendar-days"></i><span>التقويم</span>
+                </button>
+                <button class="plan-btn add clickable" onclick="openAddGoalToWeekModal()">
+                    <i class="fa-solid fa-plus"></i><span>مهمة</span>
+                </button>
+            </div>
         </div>
         <div id="specific-week-pool-container" class="drop-pane"></div>
 
-        <div class="section-title">
-            <i class="fa-solid fa-calendar-week"></i> أيام الأسبوع
-            <button class="pl-add clickable" onclick="openPlanCalendar()" title="تقويم الشهر"><i class="fa-solid fa-calendar-days"></i></button>
-        </div>
+        <div class="section-title"><i class="fa-solid fa-calendar-week"></i> أيام الأسبوع</div>
         <div style="display:flex;flex-direction:column;gap:10px;" id="seven-days-buckets-wrapper"></div>
     </div>
 </div>
@@ -3107,6 +3158,32 @@
     </div>
 </div>
 
+<!-- تعديل مهمة داخل يوم من السجلّ -->
+<div id="day-task-modal" class="custom-modal-overlay" style="z-index:100016;">
+    <div class="custom-modal-content">
+        <h3 class="m-title"><i class="fa-solid fa-pen"></i> <span id="dt-title">المهمة</span></h3>
+        <div class="lib-head-sum" id="dt-cat" style="margin-bottom:14px;"></div>
+        <div class="f-row">
+            <label class="f-label">الاسم</label>
+            <input type="text" id="dt-name" style="width:100%;text-align:right;">
+        </div>
+        <label class="f-label">الحالة</label>
+        <div class="seg-switch" id="dt-status">
+            <button class="seg-opt active" onclick="pickDayTaskStatus(0)">لم تُنجز</button>
+            <button class="seg-opt" onclick="pickDayTaskStatus(1)">أُنجزت</button>
+        </div>
+        <div class="f-row" id="dt-mastery-row" style="display:none;">
+            <label class="f-label">نسبة الإتقان</label>
+            <div class="chips-container" id="dt-mastery" style="margin:0;"></div>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:18px;">
+            <button class="btn-prime clickable" style="flex:2;" onclick="saveDayTaskEdit()">حفظ</button>
+            <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closeDayTaskEdit()">إلغاء</button>
+            <button class="fs-side icon-only danger clickable" style="height:auto;" onclick="deleteDayTask()"><i class="fa-solid fa-trash"></i></button>
+        </div>
+    </div>
+</div>
+
 <!-- خيارات المهمة المنجَزة -->
 <div id="done-action-modal" class="prayer-confirm-modal-overlay">
     <div class="prayer-confirm-box" style="border-color:rgba(53,183,145,0.28);">
@@ -3161,6 +3238,11 @@
         <div class="f-row">
             <label class="f-label">اللون</label>
             <div class="color-swatches-row" id="simple-edit-colors"><div class="color-swatch" data-color="#4a9ee0" style="background:#4a9ee0;" onclick="pickSimpleEditColor('#4a9ee0',this)"></div><div class="color-swatch" data-color="#e0a04a" style="background:#e0a04a;" onclick="pickSimpleEditColor('#e0a04a',this)"></div><div class="color-swatch" data-color="#a682e8" style="background:#a682e8;" onclick="pickSimpleEditColor('#a682e8',this)"></div><div class="color-swatch" data-color="#7bc39a" style="background:#7bc39a;" onclick="pickSimpleEditColor('#7bc39a',this)"></div><div class="color-swatch" data-color="#e0705f" style="background:#e0705f;" onclick="pickSimpleEditColor('#e0705f',this)"></div><div class="color-swatch" data-color="#c08a4e" style="background:#c08a4e;" onclick="pickSimpleEditColor('#c08a4e',this)"></div><div class="color-swatch" data-color="#35b791" style="background:#35b791;" onclick="pickSimpleEditColor('#35b791',this)"></div><div class="color-swatch" data-color="#e06a9e" style="background:#e06a9e;" onclick="pickSimpleEditColor('#e06a9e',this)"></div><div class="color-swatch" data-color="#4cb8d4" style="background:#4cb8d4;" onclick="pickSimpleEditColor('#4cb8d4',this)"></div></div>
+        </div>
+        <div class="f-row" id="simple-edit-log-row" style="display:none;">
+            <label class="f-label">سجلّ آخر ١٤ يوماً — اضغط أي يوم لتبديله</label>
+            <div id="simple-edit-log" class="beh-log"></div>
+            <div class="beh-log-meta" id="simple-edit-log-meta"></div>
         </div>
         <label class="f-label">التصنيف</label>
         <div class="seg-switch" id="core-seg-simpleedit">
@@ -4215,6 +4297,16 @@ function recordTodayStats(){
             if(t.status==='done'){rec.done++;rec.byCat[cat].done++;}
             rec.focusSeconds+=(t.totalSecondsSpent||0);
         });
+        // نحفظ المهام بأسمائها لا أرقاماً فقط، حتى يمكن مراجعة يوم مضى وتصحيحه
+        rec.tasks=storedDailyTasks.filter(t=>taskBelongsToToday(t)&&t.status!=='parking').map(t=>({
+            id:t.id,title:t.title,category:t.category||'noCategory',
+            status:t.status==='done'?'done':'wait',
+            unitKind:t.unitKind||null,
+            libParentId:t.libParentId||t.coreSourceId||null,
+            mastery:(t.masteryPercent!==undefined)?t.masteryPercent:null,
+            isCore:taskIsCore(t),
+            focusSeconds:t.totalSecondsSpent||0
+        }));
         // نخزّن حصّة المهام الرئيسية ليقرأها التعهّد لاحقاً بلا تأشير منفصل
         const core=storedDailyTasks.filter(t=>taskBelongsToToday(t)&&t.status!=='parking'&&taskIsCore(t));
         rec.coreTotal=core.length;
@@ -4516,8 +4608,12 @@ function checkDayTransition(){
         // يوم جديد: المنجزات تختفي، غير المنجزة تنزل للتراكم
         const yesterdayKey=dayKeysMap[(todayDateObj.getDay()+6)%7];
         const idsToUnbind=[]; // معرّفات يجب إزالتها من فترة يوم الأمس (منجزة محذوفة أو مركونة/متعثرة)
+        // تخصّ عملية الإقفال يومَ الأمس وحده: مهام بقية الأسبوع تبقى في أيامها
+        // ولا تنزل لصندوق التراكم قبل أن يحلّ موعدها
+        const belongedToEndedDay=t=>!t.targetDay||t.targetDay===yesterdayKey;
         storedDailyTasks=storedDailyTasks.map(t=>{
             if(t.isPrayerAnchor){t.status='wait';t.withSunnah=false;return t;}
+            if(!belongedToEndedDay(t))return t;                      // يوم قادم: لا نمسّه
             if(t.status==='done'){idsToUnbind.push(t.id);return null;} // تحذف المنجزة
             if(t.status==='wait'||t.status==='work'){idsToUnbind.push(t.id);t.status='parking';return t;}
             return t;
@@ -6289,6 +6385,10 @@ function openSimpleItemEdit(type,id){
     document.getElementById('simple-edit-target').value=(it.target!==undefined)?it.target:'';
     document.getElementById('simple-edit-start').value=(it.startValue!==undefined)?it.startValue:'';
 
+    // سجلّ الالتزام — للسلوك والتمارين لا للأرقام
+    const showLog=(type==='behavior'&&!it.measured)||(type==='sports'&&it.kind==='do');
+    document.getElementById('simple-edit-log-row').style.display=showLog?'block':'none';
+    if(showLog)renderBehaviorLog(id);
     // اللون الحالي
     simpleEditColor=it.color||'var(--cat-sport)';
     document.querySelectorAll('#simple-edit-colors .color-swatch').forEach(c=>
@@ -6299,6 +6399,43 @@ function openSimpleItemEdit(type,id){
     document.getElementById('core-times-simpleedit').value=addCoreState['simpleedit'].times;
 
     document.getElementById('simple-edit-modal').style.display='flex';
+}
+// سجلّ الالتزام لعنصر سلوكي: مربّع لكل يوم يُبدَّل بالضغط
+function renderBehaviorLog(id){
+    const box=document.getElementById('simple-edit-log');if(!box)return;
+    let cells='',done=0,total=0;
+    for(let i=13;i>=0;i--){
+        const d=new Date();d.setDate(d.getDate()-i);
+        const iso=isoDay(d);
+        const e=commitLogDB[iso];
+        const on=!!(e&&e.checks&&e.checks[id]);
+        if(on)done++;
+        total++;
+        cells+=`<button class="beh-cell${on?' on':''}" onclick="toggleBehaviorDay('${id}','${iso}')" title="${iso}">
+            <span>${d.getDate()}</span></button>`;
+    }
+    box.innerHTML=cells;
+    const streak=behaviorStreakFromLog(id);
+    document.getElementById('simple-edit-log-meta').innerHTML=
+        `التزمت <b>${done}</b> من ${total} يوماً${streak>1?` · <b>${streak}</b> متتالية`:''}`;
+}
+function toggleBehaviorDay(id,iso){
+    const e=commitEntry(iso);
+    e.checks[id]=!e.checks[id];
+    saveCommitLog();
+    renderBehaviorLog(id);
+    renderLibrary();
+}
+// أطول سلسلة متتالية منتهية باليوم الحالي
+function behaviorStreakFromLog(id){
+    let n=0;
+    const d=new Date();
+    for(let i=0;i<400;i++){
+        const e=commitLogDB[isoDay(d)];
+        if(e&&e.checks&&e.checks[id])n++;else break;
+        d.setDate(d.getDate()-1);
+    }
+    return n;
 }
 let simpleEditColor=null;
 function pickSimpleEditColor(c,el){
@@ -6462,6 +6599,13 @@ function toggleSimpleTaskDone(){
     const t=storedDailyTasks.find(x=>x.id===simpleTaskId);if(!t)return;
     const done=t.status==='done';
     t.status=done?'wait':'done';
+    // نكتب في سجلّ الالتزام ليظهر في شريط الأيام وفي المكتبة
+    const srcId=t.coreSourceId||t.behaviorId||t.sportId;
+    if(srcId){
+        const e=commitEntry(commitDayKey());
+        e.checks[srcId]=!done;
+        saveCommitLog();
+    }
     if(!done)playSuccessSound();
     saveTasks();closeSimpleTaskConfirm();renderDailyTasks();
     showToast(done?'أُعيدت غير منجزة':'أُنجزت');
@@ -6470,22 +6614,15 @@ function toggleSimpleTaskDone(){
 function renderSimpleStreak(t){
     const srcId=t.coreSourceId||t.behaviorId||t.sportId;
     if(!srcId)return '';
-    const cells=[];let streak=0,counting=true,total=0;
+    const cells=[];let total=0;
     for(let i=13;i>=0;i--){
         const d=new Date();d.setDate(d.getDate()-i);
-        const iso=isoDay(d);
-        let state='none';
-        if(i===0){state=(t.status==='done')?'on':'off';}
-        else{
-            const rec=historyDB[iso];
-            if(rec&&rec.coreTotal>0)state=(rec.coreDone>=rec.coreTotal)?'on':'off';
-        }
-        if(state==='on')total++;
-        cells.push(`<span class="streak-cell ${state}"></span>`);
+        const e=commitLogDB[isoDay(d)];
+        const on=!!(e&&e.checks&&e.checks[srcId]);
+        if(on)total++;
+        cells.push(`<span class="streak-cell ${on?'on':'off'}"></span>`);
     }
-    for(let i=cells.length-1;i>=0;i--){
-        if(cells[i].includes('on'))streak++;else break;
-    }
+    const streak=behaviorStreakFromLog(srcId);
     return `<div class="streak-wrap">
         <div class="streak-row">${cells.join('')}</div>
         <div class="streak-meta">آخر ١٤ يوماً · ${total} يوم التزام${streak>1?` · ${streak} متتالية`:''}</div>
@@ -7586,20 +7723,7 @@ function deleteBehaviorItem(id){
     },{acceptLabel:'<i class="fa-solid fa-trash"></i> حذف',acceptColor:'var(--status-delay)'});
 }
 // عدد الأيام المتتالية التي التزم فيها بهذا السلوك
-function behaviorStreak(id){
-    let n=0;
-    const d=new Date();
-    for(let i=0;i<400;i++){
-        const iso=isoDay(d);
-        const done=storedDailyTasks.some(t=>t.coreSourceId===id&&t.status==='done')&&i===0;
-        const rec=historyDB[iso];
-        if(i===0){if(done)n++;else if(rec&&rec.coreDone>0)n++;else break;}
-        else if(rec&&rec.coreTotal&&rec.coreDone>=rec.coreTotal)n++;
-        else break;
-        d.setDate(d.getDate()-1);
-    }
-    return n;
-}
+function behaviorStreak(id){return behaviorStreakFromLog(id);}
 function renderLibBehavior(){
     const c=document.getElementById('lib-behavior-list');if(!c)return;
     if(!behaviorDatabase.length){
@@ -8362,6 +8486,26 @@ function ensureDayRecord(iso){
     if(!historyDB[iso].byCat)historyDB[iso].byCat={};
     return historyDB[iso];
 }
+// إعادة حساب أرقام اليوم انطلاقاً من مهامه المحفوظة
+function recalcDayFromTasks(iso){
+    const r=ensureDayRecord(iso);
+    const list=r.tasks||[];
+    const byCat={};
+    list.forEach(t=>{
+        const k=t.category||'noCategory';
+        if(!byCat[k])byCat[k]={total:0,done:0};
+        byCat[k].total++;
+        if(t.status==='done')byCat[k].done++;
+    });
+    r.byCat=byCat;
+    r.total=list.length;
+    r.done=list.filter(t=>t.status==='done').length;
+    r.rate=r.total?r.done/r.total:0;
+    r.success=r.total>0&&r.rate>=DAY_SUCCESS_THRESHOLD;
+    r.coreTotal=list.filter(t=>t.isCore).length;
+    r.coreDone=list.filter(t=>t.isCore&&t.status==='done').length;
+    localStorage.setItem('historyDB',JSON.stringify(historyDB));
+}
 function recalcDayRecord(iso){
     const r=ensureDayRecord(iso);
     let t=0,d=0;
@@ -8422,73 +8566,175 @@ function renderDayDetail(){
     editBtn.innerHTML=ddEdit?'<i class="fa-solid fa-check"></i> تم':'<i class="fa-solid fa-pen"></i> تعديل';
     editBtn.classList.toggle('on',ddEdit);
 
-    let total=0,done=0,rows='';
+    let list=[],total=0,done=0,legacy=false;
     if(isToday){
-        const list=todaysTasks().filter(t=>t.status!=='parking');
-        total=list.length;done=list.filter(t=>t.status==='done').length;
-        rows=list.map(t=>{
-            const cat=categoryConfig[t.category]||categoryConfig['noCategory'];
-            const ok=t.status==='done';
-            const clickable=ddEdit?` clickable" onclick="ddToggleTask('${t.id}')`:'"';
-            return `<div class="dd-row${ddEdit?' dd-editable':''}${clickable}>
-                <span class="dd-mark ${ok?'on':''}"><i class="fa-solid fa-${ok?'check':'xmark'}"></i></span>
-                <span class="dd-name">${t.title}</span>
-                <span class="dd-cat" style="color:${cat.color};">${cat.name}</span>
-            </div>`;
-        }).join('');
-    }else{
-        const byCat=(rec&&rec.byCat)||{};
-        total=(rec&&rec.total)||0;done=(rec&&rec.done)||0;
-        rows=Object.keys(byCat).map(k=>{
+        list=todaysTasks().filter(t=>t.status!=='parking').map(t=>({
+            id:t.id,title:t.title,category:t.category||'noCategory',
+            status:t.status==='done'?'done':'wait',
+            focusSeconds:t.totalSecondsSpent||0,isCore:taskIsCore(t),live:true
+        }));
+    }else if(rec&&rec.tasks&&rec.tasks.length){
+        list=rec.tasks;
+    }else if(rec&&rec.total){
+        legacy=true;   // يوم سُجّل قبل حفظ الأسماء
+    }
+    total=legacy?(rec.total||0):list.length;
+    done=legacy?(rec.done||0):list.filter(t=>t.status==='done').length;
+
+    let rows='';
+    if(legacy){
+        rows=Object.keys((rec&&rec.byCat)||{}).map(k=>{
             const cfg=categoryConfig[k]||categoryConfig['noCategory'];
-            const c=byCat[k];
-            const ok=c.done>=c.total;
+            const c=rec.byCat[k];
             if(!ddEdit)return `<div class="dd-row">
-                <span class="dd-mark ${ok?'on':''}"><i class="fa-solid fa-${ok?'check':'xmark'}"></i></span>
-                <span class="dd-name">${cfg.name}</span>
-                <span class="dd-cat">${c.done} من ${c.total}</span>
-            </div>`;
+                <span class="dd-mark ${c.done>=c.total?'on':''}"><i class="fa-solid fa-${c.done>=c.total?'check':'xmark'}"></i></span>
+                <span class="dd-name">${cfg.name}</span><span class="dd-cat">${c.done} من ${c.total}</span></div>`;
             return `<div class="dd-edit-row">
                 <div class="dd-edit-name"><span class="dd-dot" style="background:${cfg.color};"></span>${cfg.name}</div>
                 <div class="dd-steppers">
-                    <div class="dd-step">
-                        <span>أُنجز</span>
-                        <button onclick="ddAdjust('${k}','done',-1)">−</button>
-                        <b>${c.done}</b>
-                        <button onclick="ddAdjust('${k}','done',1)">+</button>
-                    </div>
-                    <div class="dd-step">
-                        <span>الكل</span>
-                        <button onclick="ddAdjust('${k}','total',-1)">−</button>
-                        <b>${c.total}</b>
-                        <button onclick="ddAdjust('${k}','total',1)">+</button>
+                    <div class="dd-step"><span>أُنجز</span>
+                        <button onclick="ddAdjust('${k}','done',-1)">−</button><b>${c.done}</b>
+                        <button onclick="ddAdjust('${k}','done',1)">+</button></div>
+                    <div class="dd-step"><span>الكل</span>
+                        <button onclick="ddAdjust('${k}','total',-1)">−</button><b>${c.total}</b>
+                        <button onclick="ddAdjust('${k}','total',1)">+</button></div>
+                </div></div>`;
+        }).join('');
+        if(ddEdit)rows=`<div class="dd-legacy">هذا اليوم سُجّل قبل حفظ أسماء المهام، فلا تتوفّر إلا أعداده.</div>`+rows;
+    }else{
+        rows=list.map(t=>{
+            const cat=categoryConfig[t.category]||categoryConfig['noCategory'];
+            const ok=t.status==='done';
+            const mins=Math.floor((t.focusSeconds||0)/60);
+            return `<div class="dd-task${ok?' is-done':''}${ddEdit?' clickable':''}"
+                 style="--c:${cat.color};"
+                 ${ddEdit?`onclick="openDayTaskEdit('${t.id}')"`:''}>
+                <span class="dd-mark ${ok?'on':''}"><i class="fa-solid fa-${ok?'check':'xmark'}"></i></span>
+                <div class="dd-task-body">
+                    <div class="dd-task-title">${t.title}</div>
+                    <div class="dd-task-meta">
+                        <span class="dd-task-cat">${cat.name}</span>
+                        ${t.isCore?'<span class="dd-core">رئيسية</span>':''}
+                        ${mins?`<span>${mins} د تركيز</span>`:''}
                     </div>
                 </div>
+                ${ddEdit?'<i class="fa-solid fa-chevron-left dd-chev"></i>':''}
             </div>`;
         }).join('');
         if(ddEdit){
-            const missing=Object.keys(categoryConfig).filter(k=>!byCat[k]);
-            rows+=`<div class="dd-add">
-                <span class="f-label" style="margin:0;">إضافة تصنيف لهذا اليوم</span>
-                <div class="chips-container" style="margin:8px 0 0;">
-                    ${missing.map(k=>`<div class="chip-choice" onclick="ddAddCategory('${k}')">${categoryConfig[k].name}</div>`).join('')}
-                </div>
-                ${rec?`<button class="cw-side danger clickable" style="margin-top:12px;" onclick="ddDeleteRecord()"><i class="fa-solid fa-trash"></i> حذف سجلّ اليوم</button>`:''}
-            </div>`;
+            rows+=`<button class="dd-add-task clickable" onclick="addDayTask()">
+                <i class="fa-solid fa-plus"></i> أضف مهمة نسيتَ تسجيلها</button>`;
         }
     }
+
     const pct=total?Math.round((done/total)*100):0;
     document.getElementById('day-detail-sum').innerHTML=total
         ? `أنجزت <b>${done}</b> من <b>${total}</b> · ${pct}%`
-        : (ddEdit?'أضف تصنيفاً لتسجيل هذا اليوم':'لا سجلّ لهذا اليوم');
+        : (ddEdit?'أضف مهمة لتسجيل هذا اليوم':'لا سجلّ لهذا اليوم');
     document.getElementById('day-detail-ring').style.setProperty('--p',pct);
     document.getElementById('day-detail-pct').innerText=pct+'%';
     document.getElementById('day-detail-rows').innerHTML=
-        rows||'<div class="st-empty">لا تفاصيل محفوظة لهذا اليوم.<br>اضغط «تعديل» لتسجيله يدوياً.</div>';
+        rows||'<div class="st-empty">لا مهام في هذا اليوم.<br>اضغط «تعديل» لتسجيله.</div>';
     const note=document.getElementById('day-detail-note');
-    if(note)note.innerText=ddEdit
-        ? (isToday?'اضغط أي مهمة لتبديل حالتها':'عدّل الأرقام لتصحيح ما سُجّل')
-        : '';
+    if(note)note.innerText=ddEdit?'اضغط أي مهمة لتعديلها':'';
+}
+
+// ---- تعديل مهمة واحدة داخل يوم ----
+let ddTaskId=null;
+function dayTaskList(iso){
+    if(iso===commitDayKey())return null;      // اليوم الحالي يُعدَّل من مهامه الحيّة
+    const r=ensureDayRecord(iso);
+    if(!r.tasks)r.tasks=[];
+    return r.tasks;
+}
+function openDayTaskEdit(id){
+    ddTaskId=id;
+    const isToday=(ddIso===commitDayKey());
+    const t=isToday
+        ? storedDailyTasks.find(x=>x.id===id)
+        : (dayTaskList(ddIso)||[]).find(x=>x.id===id);
+    if(!t)return;
+    document.getElementById('dt-title').innerText=t.title;
+    document.getElementById('dt-name').value=t.title;
+    const cat=categoryConfig[t.category]||categoryConfig['noCategory'];
+    document.getElementById('dt-cat').innerText=cat.name;
+    const st=(t.status==='done');
+    document.querySelectorAll('#dt-status .seg-opt').forEach((b,i)=>b.classList.toggle('active',i===(st?1:0)));
+    // نسبة الإتقان تظهر لما يكون للمهمة نوع يقبلها
+    const hasMastery=['series','newseries','book','subject','worship-memorize','book-memorize'].includes(t.unitKind);
+    document.getElementById('dt-mastery-row').style.display=hasMastery?'block':'none';
+    if(hasMastery){
+        const opts=(t.unitKind==='subject'||String(t.unitKind).includes('memorize'))
+            ? [[0,'لم تُنجز'],[50,'مرة (50%)'],[75,'مرتين (75%)'],[100,'3 مرات (100%)']]
+            : [[0,'لم تكتمل'],[75,'بدون ملاحظات (75%)'],[100,'مع ملاحظات (100%)']];
+        const cur=(t.mastery===null||t.mastery===undefined)?(st?100:0):t.mastery;
+        document.getElementById('dt-mastery').innerHTML=opts.map(([v,l])=>
+            `<div class="chip-choice${v===cur?' selected':''}" onclick="pickDayTaskMastery(${v},this)">${l}</div>`).join('');
+        ddTaskMastery=cur;
+    }else ddTaskMastery=null;
+    document.getElementById('day-task-modal').style.display='flex';
+}
+let ddTaskMastery=null;
+function pickDayTaskMastery(v,el){
+    ddTaskMastery=v;
+    document.querySelectorAll('#dt-mastery .chip-choice').forEach(c=>c.classList.remove('selected'));
+    if(el&&el.classList)el.classList.add('selected');
+    // بلوغ المئة يعني الإنجاز، والصفر يعني عدمه
+    if(v===0)pickDayTaskStatus(0);
+    else if(v>=100)pickDayTaskStatus(1);
+}
+function pickDayTaskStatus(i){
+    document.querySelectorAll('#dt-status .seg-opt').forEach((b,k)=>b.classList.toggle('active',k===i));
+}
+function saveDayTaskEdit(){
+    const isToday=(ddIso===commitDayKey());
+    const name=document.getElementById('dt-name').value.trim();
+    const doneSel=document.querySelectorAll('#dt-status .seg-opt')[1].classList.contains('active');
+    if(isToday){
+        const t=storedDailyTasks.find(x=>x.id===ddTaskId);if(!t)return;
+        if(name)t.title=name;
+        t.status=doneSel?'done':'wait';
+        saveTasks();renderDailyTasks();
+    }else{
+        const arr=dayTaskList(ddIso);
+        const t=arr.find(x=>x.id===ddTaskId);if(!t)return;
+        if(name)t.title=name;
+        t.status=doneSel?'done':'wait';
+        if(ddTaskMastery!==null)t.mastery=ddTaskMastery;
+        recalcDayFromTasks(ddIso);
+    }
+    closeDayTaskEdit();renderDayDetail();refreshStatsViews();
+}
+function deleteDayTask(){
+    const isToday=(ddIso===commitDayKey());
+    showCustomConfirm('حذف هذه المهمة من هذا اليوم؟',()=>{
+        if(isToday){
+            storedDailyTasks=storedDailyTasks.filter(x=>x.id!==ddTaskId);
+            saveTasks();renderDailyTasks();
+        }else{
+            const r=ensureDayRecord(ddIso);
+            r.tasks=(r.tasks||[]).filter(x=>x.id!==ddTaskId);
+            recalcDayFromTasks(ddIso);
+        }
+        closeDayTaskEdit();renderDayDetail();refreshStatsViews();
+    },{acceptLabel:'<i class="fa-solid fa-trash"></i> حذف',acceptColor:'var(--status-delay)'});
+}
+function closeDayTaskEdit(){document.getElementById('day-task-modal').style.display='none';ddTaskId=null;}
+// إضافة مهمة منسيّة إلى يوم مضى
+function addDayTask(){
+    const isToday=(ddIso===commitDayKey());
+    if(isToday){closeDayDetail();openAddTaskModal();return;}
+    const r=ensureDayRecord(ddIso);
+    if(!r.tasks)r.tasks=[];
+    const id='hist-'+Date.now()+Math.floor(Math.random()*1000);
+    r.tasks.push({id,title:'مهمة جديدة',category:'noCategory',status:'done',isCore:false,focusSeconds:0,mastery:null});
+    recalcDayFromTasks(ddIso);
+    renderDayDetail();
+    openDayTaskEdit(id);
+}
+function refreshStatsViews(){
+    if(typeof renderStats==='function'&&statsTab==='stats')renderStats();
+    if(typeof renderCommitment==='function'&&statsTab==='commit')renderCommitment();
 }
 
 function renderStatsDays(buckets){
@@ -9338,6 +9584,23 @@ function driveClientId(){return (driveCfg.clientId||DRIVE_CLIENT_ID||'').trim();
 function driveReady(){return !!driveClientId();}
 function saveDriveCfg(){localStorage.setItem('driveCfg',JSON.stringify(driveCfg));}
 let _driveToken=null,_driveTokenExp=0,_tokenClient=null,_gisReady=false;
+// نستعيد رمز الجلسة إن كان ما يزال صالحاً: يمنع إعادة سؤال "اختر حساباً"
+(function restoreDriveToken(){
+    try{
+        const raw=sessionStorage.getItem('driveTok');
+        if(!raw)return;
+        const o=JSON.parse(raw);
+        if(o&&o.t&&o.e&&Date.now()<o.e-60000){_driveToken=o.t;_driveTokenExp=o.e;}
+    }catch(e){}
+})();
+function cacheDriveToken(tok,expSec){
+    _driveToken=tok;_driveTokenExp=Date.now()+((expSec||3600)*1000);
+    try{sessionStorage.setItem('driveTok',JSON.stringify({t:tok,e:_driveTokenExp}));}catch(e){}
+}
+function clearDriveToken(){
+    _driveToken=null;_driveTokenExp=0;
+    try{sessionStorage.removeItem('driveTok');}catch(e){}
+}
 
 function loadGIS(){
     return new Promise((res,rej)=>{
@@ -9364,14 +9627,17 @@ function getDriveToken(silent){
                 scope:DRIVE_SCOPE,
                 callback:resp=>{
                     if(resp&&resp.access_token){
-                        _driveToken=resp.access_token;
-                        _driveTokenExp=Date.now()+((resp.expires_in||3600)*1000);
+                        cacheDriveToken(resp.access_token,resp.expires_in);
                         resolve(_driveToken);
                     }else reject(new Error('denied'));
                 },
                 error_callback:()=>reject(new Error('denied'))
             });
-            _tokenClient.requestAccessToken({prompt:silent?'':'consent'});
+            // prompt فارغ = محاولة صامتة بلا نافذة اختيار حساب،
+            // وhint يوجّه جوجل للحساب نفسه إن عرفناه من مرة سابقة
+            const req={prompt:silent?'':'consent'};
+            if(driveCfg.email)req.hint=driveCfg.email;
+            _tokenClient.requestAccessToken(req);
         }).catch(reject);
     });
 }
@@ -9379,7 +9645,7 @@ function driveFetch(url,opts){
     opts=opts||{};opts.headers=opts.headers||{};
     opts.headers.Authorization='Bearer '+_driveToken;
     return fetch(url,opts).then(r=>{
-        if(r.status===401){_driveToken=null;throw new Error('expired');}
+        if(r.status===401){clearDriveToken();throw new Error('expired');}
         if(!r.ok)throw new Error('http-'+r.status);
         return r;
     });
@@ -9424,6 +9690,7 @@ function driveConnect(){
     if(!navigator.onLine){showToast('تحتاج اتصالاً بالإنترنت لتسجيل الدخول');return;}
     showToast('جارٍ فتح تسجيل الدخول...');
     getDriveToken(false)
+        .then(()=>rememberDriveAccount())
         .then(()=>{
             driveCfg.connected=true;driveCfg.declined=false;saveDriveCfg();
             updateDriveState();
@@ -9434,10 +9701,20 @@ function driveConnect(){
             showToast(m==='denied'?'أُلغي تسجيل الدخول':'تعذّر الاتصال بجوجل');
         });
 }
+// بريد الحساب يُقرأ من بيانات الملف الذي ننشئه، بلا أي صلاحية إضافية
+function rememberDriveAccount(){
+    return driveFetch('https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)')
+        .then(r=>r.json())
+        .then(j=>{
+            const em=j&&j.user&&j.user.emailAddress;
+            if(em){driveCfg.email=em;saveDriveCfg();}
+        })
+        .catch(()=>{});   // لا يعطّل شيئاً إن فشل
+}
 function driveDisconnect(){
     showCustomConfirm('إيقاف المزامنة على هذا الجهاز؟<br><span style="font-size:11px;color:var(--ink-3);">نسختك في درايف تبقى كما هي، وبياناتك على الجهاز لا تتأثّر.</span>',()=>{
         try{if(_driveToken&&window.google&&google.accounts)google.accounts.oauth2.revoke(_driveToken,()=>{});}catch(e){}
-        _driveToken=null;driveCfg.connected=false;saveDriveCfg();updateDriveState();
+        clearDriveToken();driveCfg.connected=false;driveCfg.email='';saveDriveCfg();updateDriveState();
         showToast('أُوقفت المزامنة');
     },{acceptLabel:'<i class="fa-solid fa-link-slash"></i> أوقف',acceptColor:'var(--status-delay)'});
 }
@@ -9458,6 +9735,13 @@ function maybeOfferDriveOnFirstRun(){
 function driveSyncNow(silent){
     if(!driveReady()){if(!silent)showToast('المزامنة غير مهيّأة في هذه النسخة');return Promise.resolve();}
     if(!navigator.onLine){if(!silent)showToast('لا اتصال بالإنترنت');return Promise.resolve();}
+    // الرفع الصامت لا يجري إلا إن تغيّر شيء فعلاً، وبفاصل عشر دقائق على الأقل
+    if(silent){
+        const changed=driveCfg.lastLocalChange&&(!driveCfg.lastSync||
+            new Date(driveCfg.lastLocalChange)>new Date(driveCfg.lastSync));
+        const recent=driveCfg.lastSync&&(Date.now()-new Date(driveCfg.lastSync).getTime()<600000);
+        if(!changed||recent)return Promise.resolve();
+    }
     if(!silent)showToast('جارٍ الرفع إلى درايف...');
     return getDriveToken(silent)
         .then(()=>uploadToDrive())
