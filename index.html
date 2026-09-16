@@ -9587,19 +9587,22 @@ let _driveToken=null,_driveTokenExp=0,_tokenClient=null,_gisReady=false;
 // نستعيد رمز الجلسة إن كان ما يزال صالحاً: يمنع إعادة سؤال "اختر حساباً"
 (function restoreDriveToken(){
     try{
-        const raw=sessionStorage.getItem('driveTok');
+        const raw=localStorage.getItem('driveTok');
         if(!raw)return;
         const o=JSON.parse(raw);
         if(o&&o.t&&o.e&&Date.now()<o.e-60000){_driveToken=o.t;_driveTokenExp=o.e;}
+        else localStorage.removeItem('driveTok');
     }catch(e){}
 })();
 function cacheDriveToken(tok,expSec){
     _driveToken=tok;_driveTokenExp=Date.now()+((expSec||3600)*1000);
-    try{sessionStorage.setItem('driveTok',JSON.stringify({t:tok,e:_driveTokenExp}));}catch(e){}
+    // نحفظه ليبقى صالحاً عبر فتحات التطبيق داخل مدّته، فلا يتكرّر السؤال
+    try{localStorage.setItem('driveTok',JSON.stringify({t:tok,e:_driveTokenExp}));}catch(e){}
+    driveCfg.needsSignIn=false;saveDriveCfg();
 }
 function clearDriveToken(){
     _driveToken=null;_driveTokenExp=0;
-    try{sessionStorage.removeItem('driveTok');}catch(e){}
+    try{localStorage.removeItem('driveTok');}catch(e){}
 }
 
 function loadGIS(){
@@ -9621,6 +9624,8 @@ function getDriveToken(silent){
     return new Promise((resolve,reject)=>{
         if(_driveToken&&Date.now()<_driveTokenExp-60000)return resolve(_driveToken);
         if(!driveReady())return reject(new Error('no-client-id'));
+        // لا نفتح نافذة جوجل من تلقاء أنفسنا: الطلب الصامت ينتهي هنا
+        if(silent)return reject(new Error('needs-signin'));
         loadGIS().then(()=>{
             _tokenClient=google.accounts.oauth2.initTokenClient({
                 client_id:driveClientId(),
@@ -9635,7 +9640,8 @@ function getDriveToken(silent){
             });
             // prompt فارغ = محاولة صامتة بلا نافذة اختيار حساب،
             // وhint يوجّه جوجل للحساب نفسه إن عرفناه من مرة سابقة
-            const req={prompt:silent?'':'consent'};
+            // تسجيل دخول صريح بطلب المستخدم: نمرّر بريده ليُختار مباشرة
+            const req={};
             if(driveCfg.email)req.hint=driveCfg.email;
             _tokenClient.requestAccessToken(req);
         }).catch(reject);
@@ -9752,9 +9758,18 @@ function driveSyncNow(silent){
         })
         .catch(err=>{
             const m=String(err.message||'');
+            if(m==='needs-signin'||m==='expired'){
+                // انتهت صلاحية الإذن: ننتظر ضغطة المستخدم ولا نقاطعه بنافذة
+                driveCfg.needsSignIn=true;saveDriveCfg();updateDriveState();
+                if(silent&&!_signinToastShown){
+                    _signinToastShown=true;
+                    setTimeout(()=>showToast('المزامنة تحتاج تسجيل دخول — من صفحة الروتين'),2000);
+                }else if(!silent)showToast('سجّل الدخول لإكمال المزامنة');
+                return;
+            }
             if(!silent){
-                if(m==='no-client-id')showToast('أضف معرّف التطبيق أولاً');
-                else if(m==='denied')showToast('لم يُمنح الإذن');
+                if(m==='no-client-id')showToast('المزامنة غير مهيّأة في هذه النسخة');
+                else if(m==='denied')showToast('أُلغي تسجيل الدخول');
                 else if(m==='offline')showToast('تعذّر الاتصال بجوجل');
                 else showToast('تعذّرت المزامنة — حاول لاحقاً');
             }
@@ -9788,28 +9803,36 @@ function driveRestore(){
         .catch(()=>showToast('تعذّر الجلب من درايف'));
 }
 // مزامنة صامتة مؤجّلة بعد أي تغيير، حتى لا نرفع مع كل ضغطة
-let _driveDebounce=null;
+let _driveDebounce=null,_signinToastShown=false;
 function scheduleDriveSync(){
     if(!driveCfg.auto||!driveReady()||!driveCfg.connected)return;
     driveCfg.lastLocalChange=new Date().toISOString();
+    saveDriveCfg();
+    // لا جدوى من محاولة الرفع بلا رمز صالح: ننتظر تسجيل الدخول
+    if(!_driveToken||Date.now()>=_driveTokenExp-60000)return;
     clearTimeout(_driveDebounce);
-    _driveDebounce=setTimeout(()=>driveSyncNow(true),45000);
+    _driveDebounce=setTimeout(()=>driveSyncNow(true),90000);
 }
 function updateDriveState(){
     const el=document.getElementById('drive-state');
     if(el){
         el.innerHTML=driveCfg.connected
-            ?(driveCfg.lastSync
-                ?`<span style="font-size:11px;color:var(--status-done);">محفوظة ${new Date(driveCfg.lastSync).toLocaleDateString('ar-EG')}</span>`
-                :'<span style="font-size:11px;color:var(--status-done);">متصل</span>')
+            ?(driveCfg.needsSignIn
+                ?'<span style="font-size:11px;color:var(--status-work);">تحتاج تسجيل دخول</span>'
+                :(driveCfg.lastSync
+                    ?`<span style="font-size:11px;color:var(--status-done);">محفوظة ${new Date(driveCfg.lastSync).toLocaleDateString('ar-EG')}</span>`
+                    :'<span style="font-size:11px;color:var(--status-done);">متصل</span>'))
             :`<span style="font-size:11px;color:var(--ink-3);">${driveReady()?'غير متصل':'غير متاحة'}</span>`;
     }
     const cbtn=document.getElementById('drive-connect-btn');
     if(cbtn){
-        cbtn.innerHTML=driveCfg.connected
-            ? '<span>إيقاف المزامنة</span><i class="fa-solid fa-link-slash"></i>'
-            : '<span>سجّل الدخول بحساب جوجل</span><i class="fa-brands fa-google"></i>';
-        cbtn.setAttribute('onclick',driveCfg.connected?'driveDisconnect()':'driveConnect()');
+        const needs=driveCfg.connected&&driveCfg.needsSignIn;
+        cbtn.innerHTML=needs
+            ? '<span>جدّد تسجيل الدخول لإكمال المزامنة</span><i class="fa-solid fa-rotate"></i>'
+            : (driveCfg.connected
+                ? '<span>إيقاف المزامنة</span><i class="fa-solid fa-link-slash"></i>'
+                : '<span>سجّل الدخول بحساب جوجل</span><i class="fa-brands fa-google"></i>');
+        cbtn.setAttribute('onclick',(driveCfg.connected&&!needs)?'driveDisconnect()':'driveConnect()');
         cbtn.style.display=driveReady()?'flex':'none';
     }
     const actions=document.getElementById('drive-actions');
@@ -11643,7 +11666,9 @@ function toggleAppNotifications(){
     updateDriveState();
     checkBackupReminder();
     // مزامنة صامتة عند الفتح إن كانت مفعّلة
-    if(driveCfg.connected&&driveCfg.auto&&navigator.onLine)setTimeout(()=>driveSyncNow(true),6000);
+    if(driveCfg.connected&&driveCfg.auto&&navigator.onLine&&_driveToken)
+        setTimeout(()=>driveSyncNow(true),6000);
+    else if(driveCfg.connected&&!_driveToken){driveCfg.needsSignIn=true;saveDriveCfg();}
     maybeOfferDriveOnFirstRun();
     document._weekTaskDeleteMode=null;
     refreshNotificationToggleUI();
