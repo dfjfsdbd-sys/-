@@ -564,6 +564,24 @@
         .rt-slot.is-off { opacity: 0.45; }
         .rt-slot.is-off .rt-slot-name { text-decoration: line-through; }
         .rt-icon-btn.danger { color: rgba(238,82,83,0.7); }
+        .rt-slot-tap { cursor: pointer; -webkit-tap-highlight-color: transparent; transition: border-color 0.18s ease; }
+        .rt-slot-tap:active { border-color: var(--line-3); }
+        .rt-more { color: var(--ink-3); font-size: 13px; padding: 4px 6px; flex-shrink: 0; }
+        /* قائمة إجراءات مختصرة (لوح سفلي) */
+        .act-head { text-align: right; margin-bottom: 14px; }
+        .act-title { font-size: 14.5px; font-weight: 600; color: var(--ink-1); }
+        .act-sub { font-size: 11px; color: var(--ink-3); margin-top: 4px; font-variant-numeric: tabular-nums; }
+        .act-list { display: flex; flex-direction: column; gap: 7px; }
+        .act-btn {
+            display: flex; align-items: center; gap: 12px; width: 100%; text-align: right;
+            background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm);
+            color: var(--ink-1); padding: 13px 14px; font-family: inherit; font-size: 13px; cursor: pointer;
+        }
+        .act-btn i { width: 16px; text-align: center; font-size: 12px; color: var(--accent-color); flex-shrink: 0; }
+        .act-btn span { display: flex; flex-direction: column; gap: 2px; }
+        .act-btn small { font-size: 10px; color: var(--ink-3); }
+        .act-btn.danger { color: rgba(238,82,83,0.92); border-color: rgba(238,82,83,0.2); }
+        .act-btn.danger i { color: rgba(238,82,83,0.85); }
         .rt-line-btn { width: 100%; background: none; border: none; border-bottom: 1px solid var(--line-1); font-family: inherit; cursor: pointer; }
         /* مفتاح تشغيل/إيقاف بدل زر يغيّر لونه بالكامل */
         .rt-switch {
@@ -847,6 +865,93 @@
         .cm-dot.broken { background: rgba(238,82,83,0.35); }
         .cm-dot.rest { background: var(--surface-3); }
         .cm-dot.future { background: var(--surface-2); border: 1px solid var(--line-1); }
+        .cm-dot.pen { background: var(--status-work); }
+        .cm-cell { position: relative; }
+        .cm-pen {
+            position: absolute; top: -5px; left: -4px; font-style: normal; font-size: 8.5px; font-weight: 700;
+            background: var(--status-work); color: #1a1206; border-radius: var(--r-pill); padding: 1px 4px; line-height: 1.3;
+            direction: ltr;
+        }
+        .cm-bar.thin { height: 5px; margin: 7px 0 0; }
+        .cm-week-row { padding: 11px 2px; border-bottom: 1px solid var(--line-1); }
+
+        .cm-week-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+        .cm-week-name { font-size: 12.5px; color: var(--ink-1); font-weight: 500; }
+        .cm-week-val { font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .cm-week-val b { color: var(--ink-1); font-size: 13px; }
+        .cm-week-row.is-full .cm-bar-fill { background: var(--status-done); }
+        .cm-week-carry { font-size: 10px; color: var(--status-work); margin-top: 6px; }
+        .cm-week-policy { font-size: 10.5px; color: var(--ink-3); padding-top: 11px; }
+        .cm-week-policy i { font-size: 10px; margin-left: 4px; }
+        /* إدارة التعهّد */
+        .cmm-summary { background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm); padding: 12px 14px; margin-bottom: 16px; }
+        .cmm-sum-main { font-size: 13px; color: var(--ink-2); }
+        .cmm-sum-main b { color: var(--ink-1); font-size: 17px; font-variant-numeric: tabular-nums; }
+        .cmm-sum-sub { font-size: 10.5px; color: var(--ink-3); margin-top: 4px; line-height: 1.7; }
+        .cmm-section { padding: 16px 0; border-top: 1px solid var(--line-1); }
+        .cmm-section:first-of-type { border-top: none; padding-top: 0; }
+        .cmm-head { font-size: 12.5px; font-weight: 600; color: var(--ink-1); margin-bottom: 5px; text-align: right; }
+        .cmm-hint { font-size: 10.5px; color: var(--ink-3); line-height: 1.7; margin-bottom: 11px; text-align: right; }
+        .cmm-two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .cmm-two .f-row { margin-bottom: 14px; }
+        .custom-modal-content input[type=date] { color-scheme: dark; min-height: 42px; }
+        .cmm-adjust { display: flex; gap: 8px; flex-wrap: wrap; }
+        .cmm-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+            background: var(--surface-2); border: 1px solid var(--line-2); color: var(--ink-1);
+            border-radius: var(--r-sm); padding: 10px 14px; font-family: inherit; font-size: 12px; cursor: pointer; white-space: nowrap;
+        }
+        .cmm-btn i { font-size: 10.5px; color: var(--accent-color); }
+        .cmm-btn:active { border-color: var(--accent-line); }
+        .cmm-add { display: flex; gap: 6px; flex: 1; min-width: 170px; }
+        .cmm-add input { width: 64px !important; text-align: center !important; padding: 9px 6px !important; }
+        .cmm-add .cmm-btn { flex: 1; }
+        .cmm-log { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 11px; }
+        .cmm-log span { font-size: 10px; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-pill); padding: 3px 9px; font-variant-numeric: tabular-nums; }
+        .cmm-undo { background: none; border: none; color: var(--accent-color); font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 3px 4px; }
+        .cmm-options { display: flex; flex-direction: column; gap: 7px; }
+        .cmm-opt {
+            display: flex; align-items: flex-start; gap: 11px; text-align: right; width: 100%;
+            background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm);
+            padding: 11px 12px; font-family: inherit; cursor: pointer; color: var(--ink-2);
+        }
+        .cmm-opt-dot { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid var(--line-3); flex-shrink: 0; margin-top: 2px; }
+        .cmm-opt.active { border-color: var(--accent-line); background: var(--accent-tint); }
+        .cmm-opt.active .cmm-opt-dot { border-color: var(--accent-color); background: radial-gradient(circle, var(--accent-color) 0 4px, transparent 5px); }
+        .cmm-opt-body { display: flex; flex-direction: column; gap: 3px; }
+        .cmm-opt-label { font-size: 12.5px; color: var(--ink-1); font-weight: 500; }
+        .cmm-opt-hint { font-size: 10px; color: var(--ink-3); line-height: 1.6; }
+        .cmm-danger { display: flex; flex-direction: column; gap: 7px; }
+        .cmm-danger-btn {
+            display: flex; align-items: center; gap: 10px; width: 100%; text-align: right;
+            background: none; border: 1px solid rgba(238,82,83,0.22); border-radius: var(--r-sm);
+            color: rgba(238,82,83,0.9); padding: 12px 13px; font-family: inherit; font-size: 12.5px; cursor: pointer;
+        }
+        .cmm-danger-btn i { font-size: 11px; width: 14px; text-align: center; }
+        .cmm-new {
+            display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+            background: none; border: 1px dashed var(--line-3); border-radius: var(--r-sm);
+            color: var(--ink-2); padding: 12px; font-family: inherit; font-size: 12.5px; cursor: pointer; margin-top: 4px;
+        }
+        .st-foot { text-align: center; margin: 22px 0 8px; }
+        .st-foot-btn {
+            display: inline-flex; align-items: center; gap: 8px; background: none;
+            border: 1px solid var(--line-1); border-radius: var(--r-pill); color: var(--ink-3);
+            font-family: inherit; font-size: 11.5px; padding: 9px 16px; cursor: pointer;
+        }
+        .st-foot-btn:active { color: var(--status-delay); border-color: rgba(238,82,83,0.3); }
+        /* شروط التعهّد داخل تفاصيل اليوم */
+        .dd-commit { margin: 12px 0; padding: 12px 12px 4px; border-radius: var(--r-sm); background: var(--surface-2); border: 1px solid var(--line-1); }
+        .dd-commit-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .dd-commit-title { font-size: 12px; font-weight: 600; color: var(--ink-1); }
+        .dd-commit .cm-verdict { margin-top: 0; }
+        .dd-req { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line-1); font-size: 12px; color: var(--ink-2); }
+        .dd-req:first-of-type { border-top: none; }
+        .dd-req .dd-mark { flex-shrink: 0; }
+        .dd-req-name { flex: 1; text-align: right; }
+        .dd-req-sub { font-size: 10px; color: var(--ink-3); }
+        .dd-req.editable { cursor: pointer; }
+        .dd-commit-note { font-size: 10px; color: var(--ink-3); padding: 8px 0 6px; line-height: 1.6; }
 
         .calc-out { background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm); padding: 13px 14px; }
         .calc-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--ink-3); padding: 5px 0; }
@@ -1617,8 +1722,8 @@
 <body>
 
 <!-- مؤشرات التمرير -->
-<div id="dscroll-top" class="drag-scroll-zone top">▲ تمرير للأعلى</div>
-<div id="dscroll-bot" class="drag-scroll-zone bottom">▼ تمرير للأسفل</div>
+<div id="dscroll-top" class="drag-scroll-zone top" aria-hidden="true"></div>
+<div id="dscroll-bot" class="drag-scroll-zone bottom" aria-hidden="true"></div>
 <div id="custom-toast"><span id="toast-text">تم التحديث!</span></div>
 <div id="celebration-overlay" style="display:none;flex-direction:column;">
     <h1 style="font-size:60px;margin:0;"></h1>
@@ -2425,13 +2530,13 @@
             <span class="rt-line-name"><i class="fa-brands fa-google-drive"></i> الحفظ في جوجل درايف</span>
             <span class="rt-line-val" id="drive-state">—</span>
         </button>
+        <button class="rt-line rt-line-btn clickable" onclick="cycleDoneFeedback()">
+            <span class="rt-line-name"><i class="fa-solid fa-bell-concierge"></i> تنبيه الإنجاز</span>
+            <span class="rt-line-val" id="done-feedback-state">—</span>
+        </button>
         <button class="rt-line rt-line-btn clickable" onclick="openPrayerSettings()">
             <span class="rt-line-name"><i class="fa-solid fa-mosque"></i> أوقات الصلاة</span>
             <span class="rt-line-val" id="prayer-settings-state">—</span>
-        </button>
-        <button class="rt-line rt-line-btn clickable" onclick="openResetStats()">
-            <span class="rt-line-name"><i class="fa-solid fa-eraser"></i> تصفير سجلّ الإنجاز</span>
-            <span class="rt-line-val"><i class="fa-solid fa-chevron-left"></i></span>
         </button>
         <div class="rt-line">
             <span class="rt-line-name"><i class="fa-solid fa-database"></i> نسخة احتياطية</span>
@@ -3072,10 +3177,14 @@
         </button>
 
         <div id="drive-actions" style="display:none;">
-            <label class="check-row" style="margin-bottom:12px;">
+            <label class="check-row" style="margin-bottom:8px;">
                 <input type="checkbox" id="drive-auto" onchange="toggleDriveAuto()">
-                <span>مزامنة تلقائية بعد كل تغيير</span>
+                <span>نسخة يومية تلقائية</span>
             </label>
+            <div class="drive-note" style="margin-bottom:12px;">
+                تسجّل الدخول مرة واحدة فقط. بعدها تُرفع نسخة كل يوم تلقائياً مع أول لمسة لك في التطبيق،
+                وقد تومض نافذة جوجل لحظةً وتُغلق وحدها — هذا تجديد صامت للإذن، لا تحتاج فعل شيء.
+            </div>
             <div style="display:flex;gap:9px;">
                 <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="driveSyncNow(false)"><i class="fa-solid fa-cloud-arrow-up"></i> ارفع الآن</button>
                 <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="driveRestore()"><i class="fa-solid fa-cloud-arrow-down"></i> استعد</button>
@@ -3439,11 +3548,87 @@
             </div>
             <input type="number" id="commit-duration" value="90" min="7" max="400" style="width:90px;text-align:center;">
         </div>
-        <div class="rt-hint">يبدأ التعهّد من اليوم. كل يوم تسقط فيه مهمة رئيسية يضيف يوماً على المدة.</div>
+        <div class="rt-hint">يبدأ التعهّد من اليوم. الالتزامات اليومية مطلوبة كل يوم — وأي يوم يسقط فيه شيء منها يضيف يوماً على المدة. والحصص الأسبوعية تُحاسَب بنهاية كل أسبوع. تعدّل كل ذلك لاحقاً من «إدارة».</div>
         <div style="display:flex;gap:9px;">
             <button class="btn-prime clickable" style="flex:2;" onclick="startCommitment()">ابدأ التعهّد</button>
             <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closeCommitSetup()">إلغاء</button>
         </div>
+    </div>
+</div>
+
+<!-- إجراءات بطاقة الروتين -->
+<div id="rt-actions-modal" class="custom-modal-overlay" onclick="if(event.target===this)closeRoutineActions()">
+    <div class="custom-modal-content">
+        <div class="act-head">
+            <div class="act-title" id="rt-act-title">—</div>
+            <div class="act-sub" id="rt-act-sub">—</div>
+        </div>
+        <div class="act-list">
+            <button class="act-btn clickable" onclick="rtActionEdit()"><i class="fa-solid fa-pen"></i><span>تعديل</span></button>
+            <button class="act-btn clickable" id="rt-act-toggle" onclick="rtActionToggle()"><i class="fa-solid fa-pause"></i><span>تعطيلها اليوم</span></button>
+            <button class="act-btn danger clickable" onclick="rtActionDelete()"><i class="fa-solid fa-trash"></i><span>حذف نهائياً</span></button>
+        </div>
+        <button class="btn-prime btn-ghost clickable" style="margin-top:12px;" onclick="closeRoutineActions()">إلغاء</button>
+    </div>
+</div>
+
+<!-- إدارة التعهّد الجاري -->
+<div id="commit-manage-modal" class="custom-modal-overlay">
+    <div class="custom-modal-content">
+        <h3 class="m-title"><i class="fa-solid fa-sliders"></i> إدارة التعهّد</h3>
+        <div class="cmm-summary" id="cmm-summary"></div>
+
+        <div class="cmm-section">
+            <div class="f-row">
+                <label class="f-label">ما الذي تستعدّ له؟</label>
+                <input type="text" id="cmm-reward" style="width:100%;text-align:right;">
+            </div>
+            <div class="cmm-two">
+                <div class="f-row">
+                    <label class="f-label">المدة (أيام سليمة)</label>
+                    <input type="number" id="cmm-duration" min="7" max="400" inputmode="numeric" style="width:100%;text-align:center;">
+                </div>
+                <div class="f-row">
+                    <label class="f-label">تاريخ البداية</label>
+                    <input type="date" id="cmm-start" style="width:100%;">
+                </div>
+            </div>
+            <button class="btn-prime clickable" onclick="saveCommitBasics()">حفظ التعديلات</button>
+        </div>
+
+        <div class="cmm-section">
+            <div class="cmm-head">تعديل الأيام</div>
+            <div class="cmm-hint">«إرجاع يوم» يضيف يوماً على مدتك فيتأخّر موعد النهاية. كل تعديل يُسجَّل ويمكن التراجع عنه.</div>
+            <div class="cmm-adjust">
+                <button class="cmm-btn clickable" onclick="commitStepBack()"><i class="fa-solid fa-rotate-left"></i> إرجاع يوم</button>
+                <div class="cmm-add">
+                    <input type="number" id="cmm-add-days" value="3" min="1" max="120" inputmode="numeric">
+                    <button class="cmm-btn clickable" onclick="commitAddDays()"><i class="fa-solid fa-plus"></i> إضافة أيام</button>
+                </div>
+            </div>
+            <div id="cmm-adjust-log"></div>
+        </div>
+
+        <div class="cmm-section">
+            <div class="cmm-head">إن نقصت حصّة أسبوعية</div>
+            <div class="cmm-hint">مثال: ثلاث حلقات أسبوعياً وأنجزت اثنتين. يسري الخيار على الأسابيع القادمة.</div>
+            <div id="cmm-policy" class="cmm-options"></div>
+        </div>
+
+        <div class="cmm-section">
+            <button class="rt-line rt-line-btn clickable" id="cmm-prayers-toggle" onclick="toggleCommitPrayers()" style="border-bottom:none;">
+                <span class="rt-line-name"><i class="fa-solid fa-mosque"></i> الصلوات الخمس من شروط اليوم</span>
+                <span class="rt-switch"></span>
+            </button>
+        </div>
+
+        <div class="cmm-section cmm-danger">
+            <button class="cmm-danger-btn clickable" onclick="restartCommitment()"><i class="fa-solid fa-rotate"></i> إعادة التعهّد من البداية</button>
+            <button class="cmm-danger-btn clickable" onclick="openResetStats()"><i class="fa-solid fa-eraser"></i> تصفير سجلّ الإنجاز</button>
+            <button class="cmm-danger-btn clickable" onclick="endCommitment()"><i class="fa-solid fa-flag"></i> إنهاء التعهّد</button>
+        </div>
+        <button class="cmm-new clickable" onclick="startNewCommitmentFromManage()"><i class="fa-solid fa-plus"></i> بدء تعهّد جديد</button>
+        <button class="btn-prime btn-ghost clickable" style="margin-top:12px;" onclick="closeCommitManage()">إغلاق</button>
     </div>
 </div>
 
@@ -3545,6 +3730,9 @@
         </div>
         <div id="st-cats"></div>
     </div>
+    <div class="st-foot">
+        <button class="st-foot-btn clickable" onclick="openResetStats()"><i class="fa-solid fa-eraser"></i> تصفير سجلّ الإنجاز</button>
+    </div>
     </div>
 </div>
 
@@ -3574,7 +3762,60 @@
 // ================================================================
 // الصوت
 // ================================================================
-function playSuccessSound(){try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(587.33,c.currentTime);o.frequency.setValueAtTime(880,c.currentTime+0.1);g.gain.setValueAtTime(0.1,c.currentTime);g.gain.exponentialRampToValueAtTime(0.01,c.currentTime+0.4);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.4);}catch(e){}}
+// تنبيه الإنجاز: اهتزاز قصير ناعم، أو نغمة هادئة من نغمتين، أو كلاهما، أو لا شيء.
+// سياق صوت واحد يُعاد استعماله (إنشاء سياق لكل نقرة يستنزف المتصفح).
+const DONE_FEEDBACK_MODES={vibrate:'اهتزاز',chime:'نغمة هادئة',both:'اهتزاز ونغمة',off:'بلا تنبيه'};
+const DONE_FEEDBACK_ORDER=['vibrate','chime','both','off'];
+function canVibrate(){return typeof navigator!=='undefined'&&typeof navigator.vibrate==='function';}
+function doneFeedbackMode(){
+    let m=null;
+    try{m=localStorage.getItem('doneFeedback');}catch(e){}
+    if(DONE_FEEDBACK_MODES[m])return m;
+    return canVibrate()?'vibrate':'chime';
+}
+let _chimeCtx=null;
+function playSoftChime(){
+    try{
+        const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+        if(!_chimeCtx)_chimeCtx=new AC();
+        const c=_chimeCtx;
+        if(c.state==='suspended')c.resume();
+        const t0=c.currentTime+0.01;
+        const master=c.createGain();master.gain.value=0.07;
+        const tone=c.createBiquadFilter();tone.type='lowpass';tone.frequency.value=3600;
+        master.connect(tone);tone.connect(c.destination);
+        // نغمتان صاعدتان (دو ← مي) بهجوم سريع وتلاشٍ طويل، كجرس خشبي صغير
+        [[1046.5,0],[1318.5,0.11]].forEach(([f,dt])=>{
+            [[1,1],[2,0.18]].forEach(([mult,amp])=>{
+                const o=c.createOscillator(),g=c.createGain();
+                o.type='sine';o.frequency.value=f*mult;
+                g.gain.setValueAtTime(0.0001,t0+dt);
+                g.gain.exponentialRampToValueAtTime(amp,t0+dt+0.012);
+                g.gain.exponentialRampToValueAtTime(0.0001,t0+dt+(mult===1?0.75:0.35));
+                o.connect(g);g.connect(master);
+                o.start(t0+dt);o.stop(t0+dt+0.8);
+            });
+        });
+    }catch(e){}
+}
+function playSuccessSound(){
+    const m=doneFeedbackMode();
+    if((m==='vibrate'||m==='both')&&canVibrate()){try{navigator.vibrate([16,60,28]);}catch(e){}}
+    if(m==='chime'||m==='both'||(m==='vibrate'&&!canVibrate()))playSoftChime();
+}
+function cycleDoneFeedback(){
+    const cur=doneFeedbackMode();
+    let next=DONE_FEEDBACK_ORDER[(DONE_FEEDBACK_ORDER.indexOf(cur)+1)%DONE_FEEDBACK_ORDER.length];
+    // جهاز بلا اهتزاز: لا نعرض خيارات لا تعمل عليه
+    if(!canVibrate()&&(next==='vibrate'||next==='both'))next='chime'===cur?'off':'chime';
+    try{localStorage.setItem('doneFeedback',next);}catch(e){}
+    updateDoneFeedbackState();
+    playSuccessSound();
+}
+function updateDoneFeedbackState(){
+    const el=document.getElementById('done-feedback-state');
+    if(el)el.innerText=DONE_FEEDBACK_MODES[doneFeedbackMode()];
+}
 
 // ================================================================
 // نافذة قص وتموضع الصورة المشتركة (تُستخدم من كل نقاط رفع الصور بالتطبيق)
@@ -3939,10 +4180,67 @@ function ensurePrayerLocation(){
     if(prayerSettings.lastLocCheck!==isoDay())requestPrayerLocation(true);
 }
 
-// تحديد اليوم والأسبوع الحاليين من التاريخ الفعلي
-const todayDateObj=new Date();
-const currentActualDayKey=dayKeysMap[todayDateObj.getDay()];
-const currentWeekKey='w'+Math.min(Math.ceil(todayDateObj.getDate()/7),4);
+// ================================================================
+// اليوم المنطقي
+// ----------------------------------------------------------------
+// يبدأ يومك بانتهاء وقت صلاة الفجر (الأذان + مدّة الصلاة) لا عند منتصف الليل:
+// قيام الليل وتسجيل الوزن بعد منتصف الليل يخصّان اليوم السابق.
+// كل ما في التطبيق ("اليوم"، "هذا الأسبوع"، سجلّ الإنجاز، التعهّد) يُقرأ منه.
+// ================================================================
+const DAY_BOUNDARY_FALLBACK=300; // 05:00 إن لم تُضبط أوقات الصلاة ولا فترة الفجر
+function fajrBoundaryMinutes(date){
+    const a=todayAdhanTimes(date);
+    if(a&&a.fajr)return (_toMin(a.fajr)+(prayerSettings.prayerDuration||30))%1440;
+    const t=getStationEffectiveTimes('fajr');
+    return (t&&t.from)?_toMin(t.from):DAY_BOUNDARY_FALLBACK;
+}
+// مفتاح اليوم المنطقي: قبل انتهاء صلاة الفجر نحسبه لليوم السابق.
+// اليوم الذي أُغلق لا يُفتح ثانية ولو تأخّر الحدّ بتعديل إعدادات الصلاة بعده
+var _logicalDayFloor=null;
+function commitDayKey(d){
+    const now=d?new Date(d):new Date();
+    const cur=now.getHours()*60+now.getMinutes();
+    if(cur<fajrBoundaryMinutes(now))now.setDate(now.getDate()-1);
+    const key=isoDay(now);
+    if(!d&&_logicalDayFloor&&key<_logicalDayFloor)return _logicalDayFloor;
+    return key;
+}
+function dateFromIso(k){const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d,12);}
+function daysBetween(aIso,bIso){
+    return Math.round((dateFromIso(bIso)-dateFromIso(aIso))/86400000);
+}
+function addDaysIso(iso,n){const d=dateFromIso(iso);d.setDate(d.getDate()+n);return isoDay(d);}
+// أسابيع التخطيط مربوطة بتاريخ الشهر: w1 = 1-7، w2 = 8-14، w3 = 15-21، w4 = 22 حتى آخره
+function planWeekOf(date){
+    const y=date.getFullYear(),m=date.getMonth(),d=date.getDate();
+    const n=Math.min(Math.ceil(d/7),4);
+    const startDay=(n-1)*7+1;
+    const endDay=(n<4)?n*7:new Date(y,m+1,0).getDate();
+    return{
+        id:`${y}-${String(m+1).padStart(2,'0')}-w${n}`,
+        key:'w'+n,
+        startIso:isoDay(new Date(y,m,startDay,12)),
+        endIso:isoDay(new Date(y,m,endDay,12)),
+        length:endDay-startDay+1
+    };
+}
+
+// تحديد اليوم والأسبوع الحاليين من اليوم المنطقي.
+// قابلة للتحديث: إن بقي التطبيق مفتوحاً عبر حدّ اليوم تُحدَّث في مكانها
+let logicalTodayIso=commitDayKey();
+_logicalDayFloor=logicalTodayIso;
+let todayDateObj=dateFromIso(logicalTodayIso);
+let currentActualDayKey=dayKeysMap[todayDateObj.getDay()];
+let currentWeekKey=planWeekOf(todayDateObj).key;
+function refreshLogicalDayGlobals(){
+    const prevDayKey=currentActualDayKey;
+    logicalTodayIso=commitDayKey();
+    _logicalDayFloor=logicalTodayIso;
+    todayDateObj=dateFromIso(logicalTodayIso);
+    currentActualDayKey=dayKeysMap[todayDateObj.getDay()];
+    currentWeekKey=planWeekOf(todayDateObj).key;
+    if(typeof currentSelectedDay!=='undefined'&&currentSelectedDay===prevDayKey)currentSelectedDay=currentActualDayKey;
+}
 
 let currentSelectedDay=currentActualDayKey;
 let studioActiveTaskIndex=null;
@@ -3960,8 +4258,7 @@ let currentFormType=null,targetGoalIdToSplit=null,splitModeType='to_week',target
 let longPressTimer=null,selectedGoalIdForMenu=null,currentStationPickerKey=null;
 let pendingPrayerTaskId=null;
 let freeTimeDetailOpen=false;
-let isDraggingNow=false,dragScrollInterval=null;
-const SCROLL_EDGE=80,SCROLL_SPD=10;
+let isDraggingNow=false;
 let editingTaskId=null;
 // متغير لحفظ الهدف المختار في نافذة الإجراء
 let actionGoalId=null;
@@ -3982,11 +4279,12 @@ function formatTime12(timeStr){
     h=h%12||12;
     return`${h}:${String(m).padStart(2,'0')} ${ampm}`;
 }
-function getStationTimeLabel(sk){
-    const t=stationTimesDB[sk];
-    if(t&&t.from&&t.to)return`${formatTime12(t.from)} — ${formatTime12(t.to)}`;
-    const def=stationDefaultTimes[sk];
-    return def?`${formatTime12(def.from)} — ${formatTime12(def.to)}`:'اضغط لتحديد الوقت';
+// وقت بطاقة الصلاة: الأذان ونهاية وقت الصلاة المحجوز، لا وقت الفترة كلها
+function prayerTimeLabel(sk){
+    const a=todayAdhanTimes();
+    if(a&&a[sk])return `الأذان ${formatTime12(a[sk])} · حتى ${formatTime12(addMinutesToTime(a[sk],prayerSettings.prayerDuration||30))}`;
+    const t=getStationEffectiveTimes(sk);
+    return (t&&t.from)?formatTime12(t.from):'';
 }
 // ---- أزرار اختيار الوقت المتوقع السريعة (ربع ساعة/نصف ساعة/ساعة/ساعة ونصف/ساعتان) ----
 function setQuickTime(hoursId,minutesId,totalMinutes,el){
@@ -4091,16 +4389,36 @@ function _toMin(hhmm){
     const[h,m]=hhmm.split(':').map(Number);
     return (h||0)*60+(m||0);
 }
+function _fromMin(t){
+    t=((Math.round(t)%1440)+1440)%1440;
+    return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+}
+// المسافة بالدقائق من الوقت a إلى الوقت b على مدار الساعة (0..1439)
+function _circDiff(a,b){return(((_toMin(b)-_toMin(a))%1440)+1440)%1440;}
+// يطبّق قاعدة "لا تبدأ الفترة قبل انتهاء الصلاة".
+// إن رُفعت البداية وصارت النهاية قبلها، تُزاح النهاية بنفس الفرق فيبقى طول الفترة كما هو
+// (دون هذا تنقلب الفترة 5:32←5:30 فتُحسب كأنها 24 ساعة)
+function clampStationRange(sk,from,to){
+    const WINDOW=360; // تأخّر أكثر من 6 ساعات يعني أن البداية في الجهة الأخرى من اليوم لا قبل الحدّ
+    const floor=earliestStationStart(sk);
+    if(!floor||!from)return{from:from,to:to,clamped:false};
+    const lag=_circDiff(from,floor);
+    if(lag===0||lag>WINDOW)return{from:from,to:to,clamped:false};
+    let newTo=to;
+    if(to){
+        const dur=_circDiff(from,to);
+        const remaining=_circDiff(floor,to);
+        if(remaining===0||remaining>dur)newTo=_fromMin(_toMin(to)+lag);
+    }
+    return{from:floor,to:newTo,clamped:true,floor:floor};
+}
 function getStationEffectiveTimes(sk){
     const derived=derivedStationTimes();
     const auto=(derived&&derived[sk])?derived[sk]:null;
     const manual=(stationTimesDB[sk]&&stationTimesDB[sk].from)?stationTimesDB[sk]:null;
     if(!manual)return auto||stationDefaultTimes[sk]||{from:'',to:''};
-    // نهايتك اليدوية محترمة دائماً، أما البداية فلا تنزل قبل انتهاء وقت الصلاة
-    const floor=earliestStationStart(sk);
-    let from=manual.from;
-    if(floor&&_toMin(from)<_toMin(floor))from=floor;
-    return{from:from,to:manual.to||(auto?auto.to:'')};
+    const r=clampStationRange(sk,manual.from,manual.to||(auto?auto.to:''));
+    return{from:r.from,to:r.to};
 }
 // نصف ساعة محجوزة لكل صلاة من الصلوات الخمس، تبدأ من وقت أذانها (بداية فترتها الخاصة: فجر/ظهر/عصر/مغرب/عشاء)
 // "الضحى" ليست صلاة مفروضة فلا تُحسب هنا. هذا المجموع (5×نصف ساعة=2.5 ساعة) هو نفسه المحجوز أصلاً بإجمالي اليوم (calcPureFree)
@@ -4125,34 +4443,95 @@ function renderTodayDateLabel(){
     const el=document.getElementById('today-date-label');if(!el)return;
     const dayNames=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
     const monthNames=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-    const now=new Date();
+    const now=todayDateObj;   // اليوم المنطقي: بعد منتصف الليل وقبل الفجر ما زلنا في يومنا
     el.innerHTML=`<strong>${dayNames[now.getDay()]}</strong> · ${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
 }
 
 // ================================================================
-// التمرير التلقائي أثناء السحب
+// التمرير التلقائي أثناء السحب — محرّك واحد لكل الصفحات
+// ----------------------------------------------------------------
+// كل محرّكات السحب (المهام، التخطيط، الفترات، ترتيب المكتبة) تبلّغه بموضع
+// الإصبع/الفأرة. يبدأ التمرير عند الاقتراب من حافّة منطقة التمرير ويتسارع كلما
+// اقترب منها، ويستمر والإصبع ثابت، ثم يخبر محرّك السحب بعد كل خطوة ليعيد
+// تحديد الهدف تحت الإصبع (فالصفحة تحرّكت والإصبع لم يتحرّك).
 // ================================================================
+const DRAG_EDGE_PX=96;          // عمق منطقة الحافّة
+const DRAG_MAX_SPEED=22;        // أقصى إزاحة لكل إطار
+const DragScroll={
+    active:false,x:0,y:0,raf:0,onStep:null,scroller:null,
+    // أقرب حاوية قابلة للتمرير للعنصر المسحوب (لوح سفلي مثلاً)، وإلا الصفحة نفسها
+    _findScroller(el){
+        for(let n=el;n&&n!==document.body&&n!==document.documentElement;n=n.parentElement){
+            const st=getComputedStyle(n);
+            if(/(auto|scroll)/.test(st.overflowY)&&n.scrollHeight>n.clientHeight+4)return n;
+        }
+        return null;
+    },
+    begin(sourceEl,onStep){
+        this.active=true;
+        this.onStep=onStep||null;
+        this.scroller=sourceEl?this._findScroller(sourceEl):null;
+    },
+    update(x,y){
+        this.x=x;this.y=y;
+        if(this.active&&!this.raf&&this._speed())this._loop();
+    },
+    end(){
+        this.active=false;this.onStep=null;this.scroller=null;
+        if(this.raf){cancelAnimationFrame(this.raf);this.raf=0;}
+        this._zones(0);
+    },
+    _bounds(){
+        if(this.scroller){const r=this.scroller.getBoundingClientRect();return{top:r.top,bottom:r.bottom};}
+        const nav=document.querySelector('.bottom-nav');
+        // الشريط السفلي ثابت (fixed) فلا offsetParent له؛ نقيس ارتفاعه إن كان ظاهراً
+        const navH=(nav&&getComputedStyle(nav).display!=='none')?nav.getBoundingClientRect().height:0;
+        return{top:0,bottom:window.innerHeight-navH};
+    },
+    _speed(){
+        const b=this._bounds();
+        const depthTop=(b.top+DRAG_EDGE_PX)-this.y, depthBot=this.y-(b.bottom-DRAG_EDGE_PX);
+        const ease=d=>Math.max(2,Math.round(DRAG_MAX_SPEED*Math.min(1,d/DRAG_EDGE_PX)**1.4));
+        if(depthTop>0&&this._canScroll(-1))return -ease(depthTop);
+        if(depthBot>0&&this._canScroll(1))return ease(depthBot);
+        return 0;
+    },
+    _canScroll(dir){
+        const sc=this.scroller||document.scrollingElement||document.documentElement;
+        return dir<0?sc.scrollTop>0:(sc.scrollTop+sc.clientHeight<sc.scrollHeight-1);
+    },
+    _zones(v){
+        const t=document.getElementById('dscroll-top'),b=document.getElementById('dscroll-bot');
+        if(t)t.classList.toggle('visible',v<0);
+        if(b)b.classList.toggle('visible',v>0);
+    },
+    _loop(){
+        const step=()=>{
+            const v=this.active?this._speed():0;
+            this._zones(v);
+            if(!v){this.raf=0;return;}
+            if(this.scroller)this.scroller.scrollTop+=v;else window.scrollBy(0,v);
+            if(this.onStep)this.onStep(this.x,this.y);
+            this.raf=requestAnimationFrame(step);
+        };
+        this.raf=requestAnimationFrame(step);
+    }
+};
+// أسماء قديمة تستدعيها معالجات dragend المتفرقة
+function stopAutoScroll(){DragScroll.end();}
+let _lastPointerType='mouse';
 function initDragAutoScroll(){
-    document.addEventListener('dragover',e=>{if(isDraggingNow)handleScrollEdge(e.clientY);},{passive:true});
-    document.addEventListener('dragend',stopAutoScroll,{passive:true});
-    document.addEventListener('touchmove',e=>{if(isDraggingNow)handleScrollEdge(e.touches[0].clientY);},{passive:true});
-    document.addEventListener('touchend',stopAutoScroll,{passive:true});
-}
-function handleScrollEdge(y){
-    const wh=window.innerHeight;
-    const topZ=document.getElementById('dscroll-top'),botZ=document.getElementById('dscroll-bot');
-    if(y<SCROLL_EDGE){
-        topZ.classList.add('visible');botZ.classList.remove('visible');
-        if(!dragScrollInterval)dragScrollInterval=setInterval(()=>window.scrollBy(0,-SCROLL_SPD),16);
-    } else if(y>wh-SCROLL_EDGE-60){
-        botZ.classList.add('visible');topZ.classList.remove('visible');
-        if(!dragScrollInterval)dragScrollInterval=setInterval(()=>window.scrollBy(0,SCROLL_SPD),16);
-    } else stopAutoScroll();
-}
-function stopAutoScroll(){
-    clearInterval(dragScrollInterval);dragScrollInterval=null;
-    document.getElementById('dscroll-top').classList.remove('visible');
-    document.getElementById('dscroll-bot').classList.remove('visible');
+    document.addEventListener('pointerdown',e=>{_lastPointerType=e.pointerType||'mouse';},{capture:true,passive:true});
+    document.addEventListener('touchstart',()=>{_lastPointerType='touch';},{capture:true,passive:true});
+    // باللمس نستعمل محرّكنا (ضغطة مطوّلة ثم سحب) — السحب الأصلي في متصفح الهاتف
+    // يتعارض معه ويلغي أحداث اللمس، فنمنعه
+    document.addEventListener('dragstart',e=>{
+        if(_lastPointerType==='touch'){e.preventDefault();return;}
+        DragScroll.begin(e.target);
+    },true);
+    document.addEventListener('dragover',e=>DragScroll.update(e.clientX,e.clientY),true);
+    document.addEventListener('dragend',()=>{DragScroll.end();isDraggingNow=false;},true);
+    document.addEventListener('drop',()=>{DragScroll.end();isDraggingNow=false;},true);
 }
 
 // ================================================================
@@ -4162,6 +4541,33 @@ function addTouchDrag(card,getTaskId,onDropCb){
     let active=false,startX=0,startY=0,ghost=null,curZone=null,curInsertBeforeId=null,pressTimer=null,cancelled=false;
     const LONGPRESS_DRAG_MS=420; // ضغطة معتدلة: ليست سريعة خاطفة ولا طويلة جداً
     const MOVE_CANCEL_THRESHOLD=12; // إذا تحرك الإصبع أكثر من هذا قبل انتهاء المؤقت، يُعتبر سكرول ويُلغى السحب
+    const ZONES='.station-tasks-drop-zone,#parking-lot-tasks-container,#done-tasks-container,.day-period-drop-zone,.day-bucket-card,#specific-week-pool-container,[id^="day-main-drop-"]';
+    // تحديد منطقة الإفلات وموضع الإدراج تحت نقطة معيّنة — يُستدعى مع الحركة ومع كل خطوة تمرير
+    const detectAt=(cx,cy)=>{
+        if(ghost){ghost.style.left=(cx-card.offsetWidth/2)+'px';ghost.style.top=(cy-30)+'px';}
+        const el=document.elementFromPoint(cx,cy);
+        const z=el&&el.closest(ZONES);
+        if(z!==curZone){
+            if(curZone)curZone.classList.remove('drag-over','drag-over-period');
+            curZone=z;
+            if(z){z.classList.add(z.classList.contains('day-period-drop-zone')?'drag-over-period':'drag-over');}
+        }
+        curInsertBeforeId=null;
+        if(z&&z.classList.contains('station-tasks-drop-zone')){
+            const draggedId=getTaskId();
+            const siblings=[...z.querySelectorAll('[id^="task-dom-"]')].filter(el=>el.id!=='task-dom-'+draggedId);
+            for(const s of siblings){
+                const r=s.getBoundingClientRect();
+                if(cy<r.top+r.height/2){curInsertBeforeId=s.id.replace('task-dom-','');break;}
+            }
+        }
+    };
+    const finish=()=>{
+        active=false;isDraggingNow=false;
+        card.style.opacity='';
+        if(ghost){ghost.remove();ghost=null;}
+        DragScroll.end();
+    };
 
     card.addEventListener('touchstart',e=>{
         startX=e.touches[0].clientX;startY=e.touches[0].clientY;
@@ -4171,58 +4577,35 @@ function addTouchDrag(card,getTaskId,onDropCb){
             if(cancelled)return;
             active=true;isDraggingNow=true;
             card.style.opacity='0.35';
-            // إنشاء ghost
             ghost=card.cloneNode(true);
+            ghost.removeAttribute('id');
             ghost.style.cssText=`position:fixed;opacity:0.7;pointer-events:none;z-index:99999;width:${card.offsetWidth}px;transform:scale(1.03);transition:none;border:2px dashed var(--accent-color);border-radius:12px;`;
             ghost.style.left=(startX-card.offsetWidth/2)+'px';
             ghost.style.top=(startY-30)+'px';
             document.body.appendChild(ghost);
-            if(navigator.vibrate)navigator.vibrate(15); // اهتزاز خفيف اختياري كتأكيد بصري/حسي لبدء السحب
+            DragScroll.begin(card,(x,y)=>detectAt(x,y));
+            DragScroll.update(startX,startY);
+            if(navigator.vibrate)navigator.vibrate(15); // تأكيد حسّي لبدء السحب
         },LONGPRESS_DRAG_MS);
     },{passive:true});
     card.addEventListener('touchmove',e=>{
-        const dx=Math.abs(e.touches[0].clientX-startX),dy=Math.abs(e.touches[0].clientY-startY);
+        const cx=e.touches[0].clientX,cy=e.touches[0].clientY;
         if(!active){
-            // لسا ما بدأ السحب: إذا تحرك الإصبع بشكل واضح قبل انتهاء المؤقت، هذا سكرول عادي وليس سحب → ألغِ المؤقت
-            if(dx>MOVE_CANCEL_THRESHOLD||dy>MOVE_CANCEL_THRESHOLD){
-                cancelled=true;
-                clearTimeout(pressTimer);
+            // لم يبدأ السحب بعد: حركة واضحة قبل انتهاء المؤقت = تمرير عادي
+            if(Math.abs(cx-startX)>MOVE_CANCEL_THRESHOLD||Math.abs(cy-startY)>MOVE_CANCEL_THRESHOLD){
+                cancelled=true;clearTimeout(pressTimer);
             }
-            return; // لا تفعّل السحب، واسمح بالتمرير الطبيعي للصفحة
+            return;
         }
         e.preventDefault();
-        const cx=e.touches[0].clientX,cy=e.touches[0].clientY;
-        if(ghost){ghost.style.left=(cx-card.offsetWidth/2)+'px';ghost.style.top=(cy-30)+'px';}
-        handleScrollEdge(cy);
-        const el=document.elementFromPoint(cx,cy);
-        const selectors='.station-tasks-drop-zone,#parking-lot-tasks-container,#done-tasks-container,.day-period-drop-zone,#specific-week-pool-container,#day-main-drop-'+Object.keys(dayNamesArabic).join(',#day-main-drop-');
-        const z=el&&(el.matches(selectors)?el:el.closest('.station-tasks-drop-zone,#parking-lot-tasks-container,#done-tasks-container,.day-period-drop-zone,.day-bucket-card,#specific-week-pool-container,[id^="day-main-drop-"]'));
-        if(z!==curZone){
-            if(curZone)curZone.classList.remove('drag-over','drag-over-period');
-            curZone=z;
-            if(z){z.classList.add(z.classList.contains('day-period-drop-zone')?'drag-over-period':'drag-over');}
-        }
-        // تحديد أقرب بطاقة لحساب موضع الإدراج (لدعم إعادة الترتيب صعوداً/نزولاً داخل نفس المحطة فقط)
-        if(z&&z.classList.contains('station-tasks-drop-zone')){
-            const draggedId=getTaskId();
-            const siblings=[...z.querySelectorAll('[id^="task-dom-"]')].filter(el=>el.id!=='task-dom-'+draggedId);
-            curInsertBeforeId=null;
-            for(const s of siblings){
-                const r=s.getBoundingClientRect();
-                if(cy<r.top+r.height/2){curInsertBeforeId=s.id.replace('task-dom-','');break;}
-            }
-        } else {
-            curInsertBeforeId=null;
-        }
+        detectAt(cx,cy);
+        DragScroll.update(cx,cy);
     },{passive:false});
-    card.addEventListener('touchend',e=>{
+    card.addEventListener('touchend',()=>{
         clearTimeout(pressTimer);
         cancelled=true;
-        if(!active){active=false;return;}
-        active=false;isDraggingNow=false;
-        card.style.opacity='';
-        if(ghost){ghost.remove();ghost=null;}
-        stopAutoScroll();
+        if(!active)return;
+        finish();
         if(curZone){
             curZone.classList.remove('drag-over','drag-over-period');
             if(onDropCb)onDropCb(getTaskId(),curZone,curInsertBeforeId);
@@ -4231,8 +4614,8 @@ function addTouchDrag(card,getTaskId,onDropCb){
         }
     },{passive:true});
     card.addEventListener('touchcancel',()=>{
-        clearTimeout(pressTimer);cancelled=true;active=false;isDraggingNow=false;
-        card.style.opacity='';if(ghost){ghost.remove();ghost=null;}
+        clearTimeout(pressTimer);cancelled=true;
+        if(active)finish();
         if(curZone){curZone.classList.remove('drag-over','drag-over-period');curZone=null;}
     },{passive:true});
 }
@@ -4290,31 +4673,41 @@ function isoDay(d){
     const x=d||new Date();
     return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;
 }
-function recordTodayStats(){
+// معرّف عنصر المكتبة الذي تتبعه المهمة (إن وُجد)
+function taskLibraryId(t){
+    const f=(typeof taskLibrarySource==='function')?taskLibrarySource(t):null;
+    return f?f.item.id:(t.libParentId||t.coreSourceId||null);
+}
+// حالة المهمة كما تُحتسب ليومٍ بعينه.
+// صلاة الفجر تُؤدّى قبل حدّ اليوم بدقائق، فتُنسب لليوم الذي تبدأ به لا للذي ينتهي
+function taskStatusForDay(t,dayIso){
+    if(t.isPrayerAnchor&&t.doneLog)return t.doneLog[dayIso]?'done':'wait';
+    return t.status==='done'?'done':'wait';
+}
+function recordTodayStats(dayIso){
     try{
-        const key=isoDay();
+        const key=dayIso||commitDayKey();
         const rec={total:0,done:0,focusSeconds:0,byCat:{}};
-        storedDailyTasks.filter(taskBelongsToToday).forEach(t=>{
-            // المهام المركونة (تراكم) ليست جزءاً من حِمل اليوم
-            if(t.status==='parking')return;
+        const list=storedDailyTasks.filter(t=>taskBelongsToToday(t)&&t.status!=='parking');
+        list.forEach(t=>{
             const cat=t.isPrayerAnchor?'god':(t.category||'noCategory');
             if(!rec.byCat[cat])rec.byCat[cat]={total:0,done:0};
             rec.total++;rec.byCat[cat].total++;
-            if(t.status==='done'){rec.done++;rec.byCat[cat].done++;}
+            if(taskStatusForDay(t,key)==='done'){rec.done++;rec.byCat[cat].done++;}
             rec.focusSeconds+=(t.totalSecondsSpent||0);
         });
         // نحفظ المهام بأسمائها لا أرقاماً فقط، حتى يمكن مراجعة يوم مضى وتصحيحه
-        rec.tasks=storedDailyTasks.filter(t=>taskBelongsToToday(t)&&t.status!=='parking').map(t=>({
+        rec.tasks=list.map(t=>({
             id:t.id,title:t.title,category:t.category||'noCategory',
-            status:t.status==='done'?'done':'wait',
+            status:taskStatusForDay(t,key),
             unitKind:t.unitKind||null,
-            libParentId:t.libParentId||t.coreSourceId||null,
+            libParentId:taskLibraryId(t),
+            prayer:t.isPrayerAnchor?(t.station||true):undefined,
             mastery:(t.masteryPercent!==undefined)?t.masteryPercent:null,
             isCore:taskIsCore(t),
             focusSeconds:t.totalSecondsSpent||0
         }));
-        // نخزّن حصّة المهام الرئيسية ليقرأها التعهّد لاحقاً بلا تأشير منفصل
-        const core=storedDailyTasks.filter(t=>taskBelongsToToday(t)&&t.status!=='parking'&&taskIsCore(t));
+        const core=rec.tasks.filter(t=>t.isCore);
         rec.coreTotal=core.length;
         rec.coreDone=core.filter(t=>t.status==='done').length;
         rec.rate=rec.total?rec.done/rec.total:0;
@@ -4602,41 +4995,124 @@ function confirmUnitCompletion(withNotes){
 }
 
 // ================================================================
-// انتقال اليوم التلقائي
+// إغلاق اليوم
+// ----------------------------------------------------------------
+// بانتهاء وقت صلاة الفجر يُغلق اليوم المنطقي: المنجزات تختفي، وغير المنجزة
+// تنزل لصندوق التراكم، والالتزامات اليومية تسقط (لا تُقضى في يوم آخر)،
+// ويُحسم حكم اليوم في التعهّد. يعمل عند الفتح، وكل نصف دقيقة والتطبيق مفتوح.
 // ================================================================
-function checkDayTransition(){
-    const savedDay=localStorage.getItem('lastKnownDay');
-    // اليوم "المنطقي" ينتهي عند أذان الفجر: قيام الليل وتسجيل الوزن
-    // يقعان بعد منتصف الليل ويخصّان اليوم السابق، فلا يُغلق اليوم قبلهما.
-    const logical=commitDayKey();
-    const todayStr='L'+logical;
-    if(savedDay&&savedDay!==todayStr){
-        // يوم جديد: المنجزات تختفي، غير المنجزة تنزل للتراكم
-        const yesterdayKey=dayKeysMap[(todayDateObj.getDay()+6)%7];
-        const idsToUnbind=[]; // معرّفات يجب إزالتها من فترة يوم الأمس (منجزة محذوفة أو مركونة/متعثرة)
-        // تخصّ عملية الإقفال يومَ الأمس وحده: مهام بقية الأسبوع تبقى في أيامها
-        // ولا تنزل لصندوق التراكم قبل أن يحلّ موعدها
-        const belongedToEndedDay=t=>!t.targetDay||t.targetDay===yesterdayKey;
-        storedDailyTasks=storedDailyTasks.map(t=>{
-            if(t.isPrayerAnchor){t.status='wait';t.withSunnah=false;return t;}
-            if(!belongedToEndedDay(t))return t;                      // يوم قادم: لا نمسّه
-            if(t.status==='done'){idsToUnbind.push(t.id);return null;} // تحذف المنجزة
-            if(t.status==='wait'||t.status==='work'){idsToUnbind.push(t.id);t.status='parking';return t;}
-            return t;
-        }).filter(Boolean);
-        // تحرير فترات يوم الأمس (الربط الكامل بين المحطة والفترة): المهمة المحذوفة/المركونة لم تعد تشغل أي فترة
-        if(idsToUnbind.length&&periodTasksDB[yesterdayKey]){
-            Object.keys(periodTasksDB[yesterdayKey]).forEach(sk=>{
-                periodTasksDB[yesterdayKey][sk]=periodTasksDB[yesterdayKey][sk].filter(id=>!idsToUnbind.includes(id));
-            });
-            savePeriodTasks();
-        }
-        saveTasks();
-        showToast('بدأ يوم جديد — المهام المتعثّرة نزلت لصندوق التراكم');
+const DAY_CLOSE_MAX_SPAN=40;   // أقصى عدد أيام تُغلق دفعة واحدة بعد غياب طويل
+function readLastKnownDay(){
+    const raw=localStorage.getItem('lastKnownDay')||'';
+    if(/^L\d{4}-\d{2}-\d{2}$/.test(raw))return raw.slice(1);
+    if(raw){const d=new Date(raw);if(!isNaN(d.getTime()))return isoDay(d);}   // صيغة قديمة
+    return null;
+}
+// كل (يوم، أسبوع تخطيط) انقضى بين آخر يوم معروف واليوم الجديد
+function endedDaySlots(fromIso,toIso){
+    const slots=[];
+    let iso=fromIso;
+    for(let i=0;i<DAY_CLOSE_MAX_SPAN&&iso<toIso;i++){
+        const d=dateFromIso(iso);
+        slots.push({dayKey:dayKeysMap[d.getDay()],weekKey:planWeekOf(d).key});
+        iso=addDaysIso(iso,1);
     }
-    localStorage.setItem('lastKnownDay',todayStr);
+    return slots;
+}
+// مهمة التزام يومي (أذكار، سلوك، صلاة…) — تُولد كل يوم ولا تُرحَّل
+function isDailyCoreTask(t){
+    const f=taskLibrarySource(t);
+    if(!f||!f.item.isCore)return false;
+    return coreRecurrenceOf(f.item,f.type).type==='daily';
+}
+function closeEndedDays(lastIso,newIso){
+    const slots=endedDaySlots(lastIso,newIso);
+    const ended=t=>!t.targetDay||slots.some(sl=>sl.dayKey===t.targetDay&&
+        (!t.targetWeek||t.targetWeek==='all'||t.targetWeek===sl.weekKey));
+    const unbind={};
+    let moved=0;
+    storedDailyTasks=storedDailyTasks.map(t=>{
+        if(t.isPrayerAnchor||t.status==='parking'||!ended(t))return t;
+        if(t.targetDay)(unbind[t.targetDay]=unbind[t.targetDay]||[]).push(t.id);
+        if(t.status==='done')return null;
+        if(isDailyCoreTask(t))return null;
+        t.status='parking';moved++;
+        return t;
+    }).filter(Boolean);
+    // المهمة المحذوفة أو المركونة لم تعد تشغل فترة يومها
+    Object.keys(unbind).forEach(dk=>{
+        if(!periodTasksDB[dk])return;
+        Object.keys(periodTasksDB[dk]).forEach(sk=>{
+            periodTasksDB[dk][sk]=(periodTasksDB[dk][sk]||[]).filter(id=>!unbind[dk].includes(id));
+        });
+    });
+    savePeriodTasks();
+    syncPrayerAnchors();
+    saveTasks();
+    freezeCommitDaysBefore(newIso);
+    showToast(moved?`بدأ يوم جديد — ${moved} ${moved===1?'مهمة نزلت':'مهام نزلت'} لصندوق التراكم`:'بدأ يوم جديد');
+}
+function checkDayTransition(){
+    const newIso=commitDayKey();
+    const lastIso=readLastKnownDay();
+    if(lastIso&&lastIso<newIso)closeEndedDays(lastIso,newIso);
+    localStorage.setItem('lastKnownDay','L'+newIso);
     rolloverParkingToWeekPool();
     cleanupDuplicateCoreTasks();
+}
+// ما يلزم كل يوم جديد: الصلوات، والالتزامات اليومية، والتذكيرات المستحقّة
+function startOfDayRoutines(){
+    refreshRoutineSuspensions();
+    injectDailyPrayerTasks();
+    if(syncPrayerAnchors())saveTasks();
+    ensureDailyCoreTasks();
+    injectScheduledForToday();
+}
+// ---- مراقبة حدّ اليوم والتطبيق مفتوح ----
+const DAY_WATCH_INTERVAL_MS=30000;
+let _dayWatchTimer=null;
+// لا نُغلق اليوم من تحت نافذة مفتوحة أو مؤقّت يعمل: نؤجّل للدورة التالية
+function dayCloseWouldInterrupt(){
+    if(isPomoRunning||isWmPomoRunning)return true;
+    return [...document.querySelectorAll('.custom-modal-overlay,.prayer-confirm-modal-overlay,.edit-task-overlay,.goal-action-modal-overlay,.image-cropper-overlay,.focus-studio')]
+        .some(el=>el.style.display&&el.style.display!=='none');
+}
+function rerenderAfterDayChange(){
+    renderTodayDateLabel();
+    markCurrentWeekTab();
+    highlightCurrentDayInGrid();
+    renderDailyTasks();
+    const active=document.querySelector('.app-screen.active-screen');
+    const id=active?active.id:'';
+    if(id==='screen-plan')switchHierarchicalViewContext(currentWeekKey);
+    else if(id==='screen-routine')renderCurrentDaySlots();
+    else if(id==='screen-library')renderLibrary();
+    else if(id==='screen-stats'){if(statsTab==='commit')renderCommitment();else renderStats();}
+}
+function rollToNewLogicalDay(){
+    recordTodayStats(logicalTodayIso);     // لقطة أخيرة لليوم المنتهي
+    refreshLogicalDayGlobals();
+    activePlanWeekContext=currentWeekKey;
+    checkDayTransition();
+    startOfDayRoutines();
+    rerenderAfterDayChange();
+    armDailyDriveBackup();
+}
+function watchLogicalDay(){
+    // إلى الأمام فقط: تعديل إعدادات الصلاة بعد الفجر قد يُرجع الحدّ، ولا نعيد فتح يوم أُغلق
+    if(commitDayKey()>logicalTodayIso){
+        if(dayCloseWouldInterrupt())return;
+        rollToNewLogicalDay();
+        return;
+    }
+    // بعد أذان الفجر تُنسب صلاة الفجر لليوم الجديد ولو لم يُغلق السابق بعد
+    if(syncPrayerAnchors()){saveTasks();if(!dayCloseWouldInterrupt())renderDailyTasks();}
+}
+function startDayWatcher(){
+    clearInterval(_dayWatchTimer);
+    _dayWatchTimer=setInterval(watchLogicalDay,DAY_WATCH_INTERVAL_MS);
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')watchLogicalDay();});
+    window.addEventListener('focus',watchLogicalDay);
 }
 
 // ================================================================
@@ -4667,10 +5143,32 @@ function cleanupDuplicateCoreTasks(){
     }
 }
 
+// أهداف بقيت في صندوق أسبوع انقضى (لم تُسحب لأي يوم) تصعد للأسبوع الجديد.
+// بدونها تبقى الحلقة الناقصة عالقة في أسبوع مضى، ويقفز التوزيع للحلقة التي بعدها.
+function carryLeftoverWeekGoals(savedWeekId){
+    const keys=['w1','w2','w3','w4'];
+    const cur=keys.indexOf(currentWeekKey);
+    const m=/^(\d{4}-\d{2})-w\d$/.exec(savedWeekId||'');
+    const monthChanged=m?(m[1]!==planWeekOf(todayDateObj).id.slice(0,7)):false;
+    const past=keys.filter((k,i)=>monthChanged?k!==currentWeekKey:i<cur);
+    let moved=0;
+    hierarchicalGoalsDatabase.forEach(g=>{
+        if(past.includes(g.targetContext)){g.targetContext=currentWeekKey;g.carriedOver=true;moved++;}
+    });
+    if(moved){
+        localStorage.setItem('hGoalsDB',JSON.stringify(hierarchicalGoalsDatabase));
+        setTimeout(()=>showToast(`صعد ${moved} ${moved===1?'هدف':'أهداف'} من الأسبوع الماضي إلى هذا الأسبوع`),2400);
+    }
+}
 function rolloverParkingToWeekPool(){
-    const savedWeek=localStorage.getItem('lastKnownWeek');
-    if(savedWeek===currentWeekKey){return;}
-    if(savedWeek){
+    // المفتاح يحمل الشهر: 'w1' وحدها تتكرّر كل شهر فلا تكشف انتقال الأسبوع
+    const curId=planWeekOf(todayDateObj).id;
+    const saved=localStorage.getItem('lastKnownWeek');
+    if(saved===curId)return;
+    // ترقية الصيغة القديمة دون تحريك شيء إن كنّا في الأسبوع نفسه
+    if(saved&&/^w\d$/.test(saved)&&saved===currentWeekKey){localStorage.setItem('lastKnownWeek',curId);return;}
+    if(saved){
+        carryLeftoverWeekGoals(saved);
         const stuck=storedDailyTasks.filter(t=>t.status==='parking'&&!t.isPrayerAnchor);
         if(stuck.length){
             stuck.forEach(t=>{
@@ -4695,7 +5193,7 @@ function rolloverParkingToWeekPool(){
             setTimeout(()=>showToast(`انتقلت ${stuck.length} مهمة متراكمة إلى أهداف الأسبوع`),1200);
         }
     }
-    localStorage.setItem('lastKnownWeek',currentWeekKey);
+    localStorage.setItem('lastKnownWeek',curId);
 }
 
 // إرجاع المهام المنجزة يتم الآن بالسحب مباشرة - لا حاجة لدالة منفصلة
@@ -5627,15 +6125,15 @@ function openStationTimePicker(sk){
 function closeStationTimePicker(){document.getElementById('station-time-picker-overlay').style.display='none';currentStationPickerKey=null;}
 function saveStationTime(){
     if(!currentStationPickerKey)return;
-    let from=document.getElementById('station-tp-from').value;
-    const to=document.getElementById('station-tp-to').value;
-    const floor=earliestStationStart(currentStationPickerKey);
-    let clamped=false;
-    if(floor&&from&&_toMin(from)<_toMin(floor)){from=floor;clamped=true;}
-    stationTimesDB[currentStationPickerKey]={from:from,to:to};
+    const rawFrom=document.getElementById('station-tp-from').value;
+    const rawTo=document.getElementById('station-tp-to').value;
+    if(!rawFrom||!rawTo){showToast('حدّد البداية والنهاية','var(--status-delay)');return;}
+    if(rawFrom===rawTo){showToast('البداية والنهاية متطابقتان','var(--status-delay)');return;}
+    const r=clampStationRange(currentStationPickerKey,rawFrom,rawTo);
+    stationTimesDB[currentStationPickerKey]={from:r.from,to:r.to};
     localStorage.setItem('stationTimesDB',JSON.stringify(stationTimesDB));
     closeStationTimePicker();
-    showToast(clamped?`ضُبطت البداية على ${formatTime12(floor)} — لا تبدأ الفترة قبل انتهاء الصلاة`:'تم تحديد الوقت');
+    showToast(r.clamped?`ضُبطت الفترة على ${formatTime12(r.from)} — ${formatTime12(r.to)} · لا تبدأ قبل انتهاء الصلاة`:'تم تحديد الوقت');
     renderDailyTasks();
 }
 function startStationLongPress(sk,e){e.preventDefault();stationLongPressTimer=setTimeout(()=>openStationTimePicker(sk),600);}
@@ -5800,9 +6298,76 @@ function injectDailyPrayerTasks(){
     });
     if(storedDailyTasks.filter(t=>t.isPrayerAnchor).length<5){storedDailyTasks=storedDailyTasks.filter(t=>!t.isPrayerAnchor);prayers.forEach(p=>storedDailyTasks.push({id:'prayer-'+p.station+'-'+Date.now()+Math.floor(Math.random()*100),title:p.title,category:'god',status:'wait',notes:'',totalSecondsSpent:0,isPrayerAnchor:true,station:p.station,prayerName:p.prayerName,withSunnah:false}));saveTasks();}
 }
-function openPrayerConfirm(id){const t=storedDailyTasks.find(x=>x.id===id);if(!t)return;pendingPrayerTaskId=id;document.getElementById('prayer-confirm-title').innerText=`صلاة ${t.prayerName||''}`;document.getElementById('prayer-confirm-modal').style.display='flex';}
+// ================================================================
+// حالة الصلوات
+// كل صلاة مهمة واحدة ثابتة، وحالتها محفوظة لكل يوم في doneLog
+// ({تاريخ: 'done'|'sunnah'}) فلا تمحو صلاةُ اليوم صلاةَ الأمس.
+// ================================================================
+// العصر لا رواتب له، فلا يُعرض خيار السنن فيه
+const PRAYERS_WITHOUT_SUNNAH=['asr'];
+// اليوم الذي تُنسب إليه الصلاة الآن: بعد أذان الفجر وقبل حدّ اليوم
+// نكون في آخر دقائق اليوم المنطقي السابق، لكن الفجر فجرُ اليوم الجديد
+function prayerCreditDay(station){
+    const logical=commitDayKey();
+    if(station!=='fajr')return logical;
+    const now=new Date();
+    const cal=isoDay(now);
+    if(cal===logical)return logical;
+    const a=todayAdhanTimes(now);
+    if(!a||!a.fajr)return logical;
+    return (now.getHours()*60+now.getMinutes()>=_toMin(a.fajr))?cal:logical;
+}
+// يحوّل الصلاة القديمة (status فقط) إلى سجلّ أيام، مرة واحدة
+function migratePrayerAnchor(t){
+    if(t.doneLog)return;
+    t.doneLog={};
+    if(t.status==='done')t.doneLog[t.doneDay||commitDayKey()]=t.withSunnah?'sunnah':'done';
+}
+// يضبط الحالة الظاهرة لكل صلاة من سجلّها، ويقصّ ما مضى عليه أسبوع
+function syncPrayerAnchors(){
+    let changed=false;
+    const cutoff=addDaysIso(commitDayKey(),-7);
+    storedDailyTasks.forEach(t=>{
+        if(!t.isPrayerAnchor)return;
+        if(!t.doneLog){migratePrayerAnchor(t);changed=true;}
+        Object.keys(t.doneLog).forEach(k=>{if(k<cutoff){delete t.doneLog[k];changed=true;}});
+        const day=prayerCreditDay(t.station);
+        const st=t.doneLog[day];
+        const status=st?'done':'wait',sunnah=(st==='sunnah');
+        if(t.status!==status||!!t.withSunnah!==sunnah||t.doneDay!==(st?day:undefined)){
+            t.status=status;t.withSunnah=sunnah;
+            if(st)t.doneDay=day;else delete t.doneDay;
+            t.notes=st?(sunnah?'تمت مع السنن':'تمت الفريضة'):'';
+            changed=true;
+        }
+    });
+    return changed;
+}
+function setPrayerState(t,type){
+    if(!t||!t.isPrayerAnchor)return;
+    migratePrayerAnchor(t);
+    const day=prayerCreditDay(t.station);
+    if(type)t.doneLog[day]=type;else delete t.doneLog[day];
+    syncPrayerAnchors();
+}
+function openPrayerConfirm(id){
+    const t=storedDailyTasks.find(x=>x.id===id);if(!t)return;
+    pendingPrayerTaskId=id;
+    document.getElementById('prayer-confirm-title').innerText=`صلاة ${t.prayerName||''}`;
+    const sunnahBtn=document.querySelector('#prayer-confirm-modal .prayer-btn-sunnah');
+    if(sunnahBtn)sunnahBtn.style.display=PRAYERS_WITHOUT_SUNNAH.includes(t.station)?'none':'';
+    const doneBtn=document.querySelector('#prayer-confirm-modal .prayer-btn-done');
+    if(doneBtn)doneBtn.innerText=PRAYERS_WITHOUT_SUNNAH.includes(t.station)?'أدّيت الصلاة':'الفريضة فقط';
+    document.getElementById('prayer-confirm-modal').style.display='flex';
+}
 function closePrayerConfirm(){document.getElementById('prayer-confirm-modal').style.display='none';pendingPrayerTaskId=null;}
-function confirmPrayer(type){if(!pendingPrayerTaskId)return;const t=storedDailyTasks.find(x=>x.id===pendingPrayerTaskId);if(!t)return;t.status='done';t.withSunnah=(type==='sunnah');t.notes=type==='sunnah'?"تمت مع السنن":"تمت الفريضة";saveTasks();closePrayerConfirm();playSuccessSound();showToast(type==='sunnah'?"ماشاء الله! الفريضة + السنن":"تقبل الله طاعتك","var(--cat-god)");renderDailyTasks();}
+function confirmPrayer(type){
+    if(!pendingPrayerTaskId)return;
+    const t=storedDailyTasks.find(x=>x.id===pendingPrayerTaskId);if(!t)return;
+    if(type==='sunnah'&&PRAYERS_WITHOUT_SUNNAH.includes(t.station))type='done';
+    setPrayerState(t,type==='sunnah'?'sunnah':'done');
+    saveTasks();closePrayerConfirm();playSuccessSound();renderDailyTasks();
+}
 
 // ================================================================
 // أدوات استوديو التركيز المشتركة (تصميم واحد لشاشتَي الدراسة والحفظ)
@@ -6411,8 +6976,8 @@ function renderBehaviorLog(id){
     const box=document.getElementById('simple-edit-log');if(!box)return;
     let cells='',done=0,total=0;
     for(let i=13;i>=0;i--){
-        const d=new Date();d.setDate(d.getDate()-i);
-        const iso=isoDay(d);
+        const iso=addDaysIso(commitDayKey(),-i);
+        const d=dateFromIso(iso);
         const e=commitLogDB[iso];
         const on=!!(e&&e.checks&&e.checks[id]);
         if(on)done++;
@@ -6429,17 +6994,21 @@ function toggleBehaviorDay(id,iso){
     const e=commitEntry(iso);
     e.checks[id]=!e.checks[id];
     saveCommitLog();
+    if(iso<commitDayKey())invalidateCommitDay(iso);
     renderBehaviorLog(id);
     renderLibrary();
 }
 // أطول سلسلة متتالية منتهية باليوم الحالي
 function behaviorStreakFromLog(id){
     let n=0;
-    const d=new Date();
+    let iso=commitDayKey();
+    // اليوم الجاري لا يقطع السلسلة قبل أن ينتهي
+    const t=commitLogDB[iso];
+    if(!(t&&t.checks&&t.checks[id]))iso=addDaysIso(iso,-1);
     for(let i=0;i<400;i++){
-        const e=commitLogDB[isoDay(d)];
+        const e=commitLogDB[iso];
         if(e&&e.checks&&e.checks[id])n++;else break;
-        d.setDate(d.getDate()-1);
+        iso=addDaysIso(iso,-1);
     }
     return n;
 }
@@ -6557,8 +7126,8 @@ function openDoneTaskActions(taskId,event){
 function closeDoneTaskActions(){document.getElementById('done-action-modal').style.display='none';doneActionTaskId=null;}
 function undoDoneTask(){
     const t=storedDailyTasks.find(x=>x.id===doneActionTaskId);if(!t)return;
-    t.status='wait';
-    if(t.isPrayerAnchor)t.withSunnah=false;
+    if(t.isPrayerAnchor)setPrayerState(t,null);
+    else t.status='wait';
     saveTasks();closeDoneTaskActions();renderDailyTasks();showToast('أُعيدت غير منجزة');
 }
 function editDoneTask(){
@@ -6622,8 +7191,7 @@ function renderSimpleStreak(t){
     if(!srcId)return '';
     const cells=[];let total=0;
     for(let i=13;i>=0;i--){
-        const d=new Date();d.setDate(d.getDate()-i);
-        const e=commitLogDB[isoDay(d)];
+        const e=commitLogDB[addDaysIso(commitDayKey(),-i)];
         const on=!!(e&&e.checks&&e.checks[srcId]);
         if(on)total++;
         cells.push(`<span class="streak-cell ${on?'on':'off'}"></span>`);
@@ -6649,7 +7217,7 @@ function openFocusStudio(taskId,event){
     if(event)event.stopPropagation();
     const idx=storedDailyTasks.findIndex(t=>t.id===taskId);if(idx===-1)return;
     const task=storedDailyTasks[idx];
-    if(task.isPrayerAnchor){if(task.status==='done'){task.status='wait';task.withSunnah=false;saveTasks();showToast("تمت إعادة تعيين حالة الصلاة");renderDailyTasks();}else openPrayerConfirm(taskId);return;}
+    if(task.isPrayerAnchor){if(task.status==='done'){setPrayerState(task,null);saveTasks();showToast("أُعيدت الصلاة غير مؤدّاة");renderDailyTasks();}else openPrayerConfirm(taskId);return;}
     const route=resolveTaskRoute(task);
     if(route==='metric'){openMetricEntry(taskId,taskSportId(task));return;}
     if(route==='simple'){openSimpleTaskConfirm(taskId);return;}
@@ -7047,7 +7615,7 @@ function renderDailyTasks(){
 
         let activeCard;
         if(task.isPrayerAnchor){
-            const pt=getStationTimeLabel(task.station);
+            const pt=prayerTimeLabel(task.station);
             activeCard=`<div class="prayer-card clickable${task.station===nowStation?' is-now':''}" id="task-dom-${task.id}" onclick="openFocusStudio('${task.id}',event)">
                 <span class="prayer-mark"><i class="fa-solid fa-mosque"></i></span>
                 <div class="prayer-body">
@@ -7274,7 +7842,7 @@ function calcOverlap(a1,a2,b1,b2){
 let sleepDraft=[];
 function openSleepModal(){
     const sp=fixedSleepDatabase[currentSelectedDay]||[];
-    sleepDraft=sp.filter(x=>x&&x.from&&x.to).map(x=>({from:x.from,to:x.to,label:x.label||''}));
+    sleepDraft=sp.filter(x=>x&&x.from&&x.to).map(x=>({from:x.from,to:x.to,label:x.label||'',suspendedOn:x.suspendedOn||null}));
     if(!sleepDraft.length)sleepDraft=[{from:'23:00',to:'06:30',label:'نوم الليل'}];
     renderSleepRows();
     document.getElementById('sleep-modal-picker').style.display='flex';
@@ -7344,25 +7912,111 @@ function refreshFreeTimeAcrossPages(){
     renderDailyTasks();
     renderHierarchicalTopDownSystem();
 }
-function toggleSleepSuspension(i){
-    const arr=fixedSleepDatabase[currentSelectedDay]||[];
-    if(!arr[i])return;
-    arr[i].isSuspended=!arr[i].isSuspended;
+// ================================================================
+// تعطيل فترة روتين ليوم واحد
+// الروتين قالب أسبوعي؛ "تعطيل اليوم" يخصّ تاريخاً بعينه (أقرب يوم بهذا الاسم)
+// ويعود تلقائياً بعده. suspendedOn هو المرجع، وisSuspended نسخة محسوبة
+// تُحدَّث مع بداية كل يوم ليقرأها حساب الفراغ في كل الصفحات.
+// ================================================================
+// تاريخ أقرب يوم (من اليوم فصاعداً) يحمل اسم dk
+function upcomingIsoFor(dk){
+    for(let i=0;i<7;i++){
+        const iso=addDaysIso(logicalTodayIso,i);
+        if(dayKeysMap[dateFromIso(iso).getDay()]===dk)return iso;
+    }
+    return logicalTodayIso;
+}
+// ترقية لمرة واحدة: كان التعطيل علَماً دائماً بلا تاريخ رغم أن زرّه "تعطيل اليوم".
+// نُبقيه لليوم الجاري فقط إن كان هو يومه، وما سواه يعود فعّالاً
+function migrateRoutineSuspensions(){
+    if(localStorage.getItem('routineSuspSchema')==='2')return;
+    const fix=(dk,list)=>(list||[]).forEach(x=>{
+        if(x&&x.isSuspended&&!x.suspendedOn)x.suspendedOn=(dk===currentActualDayKey)?logicalTodayIso:null;
+    });
+    Object.keys(fixedSleepDatabase).forEach(dk=>fix(dk,fixedSleepDatabase[dk]));
+    Object.keys(routineDatabase).forEach(dk=>fix(dk,routineDatabase[dk]));
     localStorage.setItem('sleepFixedDB',JSON.stringify(fixedSleepDatabase));
+    localStorage.setItem('routineDB',JSON.stringify(routineDatabase));
+    localStorage.setItem('routineSuspSchema','2');
+}
+function refreshRoutineSuspensions(){
+    migrateRoutineSuspensions();
+    let changed=false;
+    const sync=(dk,list)=>(list||[]).forEach(x=>{
+        if(!x)return;
+        const off=!!x.suspendedOn&&x.suspendedOn===upcomingIsoFor(dk);
+        if(x.suspendedOn&&x.suspendedOn<logicalTodayIso){x.suspendedOn=null;changed=true;}
+        if(!!x.isSuspended!==off){x.isSuspended=off;changed=true;}
+    });
+    Object.keys(fixedSleepDatabase).forEach(dk=>sync(dk,fixedSleepDatabase[dk]));
+    Object.keys(routineDatabase).forEach(dk=>sync(dk,routineDatabase[dk]));
+    if(changed){
+        localStorage.setItem('sleepFixedDB',JSON.stringify(fixedSleepDatabase));
+        localStorage.setItem('routineDB',JSON.stringify(routineDatabase));
+    }
+}
+function toggleRoutineItemSuspension(kind,dk,i){
+    const arr=(kind==='sleep')?(fixedSleepDatabase[dk]||[]):(routineDatabase[dk]||[]);
+    const x=arr[i];if(!x)return;
+    const target=upcomingIsoFor(dk);
+    x.suspendedOn=(x.suspendedOn===target)?null:target;
+    refreshRoutineSuspensions();
+    localStorage.setItem(kind==='sleep'?'sleepFixedDB':'routineDB',JSON.stringify(kind==='sleep'?fixedSleepDatabase:routineDatabase));
     renderCurrentDaySlots();refreshFreeTimeAcrossPages();
-    showToast(arr[i].isSuspended?'عُطّلت اليوم — عادت ساعاتها لفراغك':'أُعيد تفعيلها');
+    const when=(target===logicalTodayIso)?'اليوم':`${dayNamesArabic[dk]} ${fmtDayMonth(target)}`;
+    showToast(x.isSuspended?`عُطّلت ${when} فقط — عادت ساعاتها لفراغك`:'أُعيد تفعيلها');
 }
 function deleteSleepPeriod(i){
     const arr=fixedSleepDatabase[currentSelectedDay]||[];
     const p=arr[i];if(!p)return;
     showCustomConfirm(
         `حذف «${p.label||'فترة النوم'}» نهائياً من ${dayNamesArabic[currentSelectedDay]}؟<br>
-         <span style="font-size:11px;color:var(--ink-3);">إن كنت تريد إلغاءها اليوم فقط، استعمل زر التعطيل بدل الحذف.</span>`,
+         <span style="font-size:11px;color:var(--ink-3);">إن كنت تريد إلغاءها اليوم فقط، اختر «تعطيلها اليوم» بدل الحذف.</span>`,
         ()=>{
             arr.splice(i,1);
             localStorage.setItem('sleepFixedDB',JSON.stringify(fixedSleepDatabase));
             renderCurrentDaySlots();refreshFreeTimeAcrossPages();showToast('حُذفت الفترة');
         },{acceptLabel:'<i class="fa-solid fa-trash"></i> حذف',acceptColor:'var(--status-delay)'});
+}
+// اسم فترة النوم كما يظهر في البطاقة: اسمها إن وُجد، وإلا ترتيبها بين الفترات الصالحة
+function sleepPeriodName(arr,i){
+    const p=arr[i];if(!p)return 'فترة النوم';
+    if(p.label)return p.label;
+    const n=arr.slice(0,i).filter(x=>x&&x.from&&x.to).length;
+    return n===0?'نوم الليل':'فترة نوم '+(n+1);
+}
+function routineSlotName(s){
+    return s.type==='جامعة'?(s.subjectLabel?`محاضرة: ${s.subjectLabel}`:'محاضرة جامعية'):(s.type==='عمل'?'فترة عمل':'فراغ/راحة');
+}
+// ---- قائمة إجراءات بطاقة الروتين ----
+let rtActionCtx=null;   // {kind:'sleep'|'slot', index, dayKey}
+function openRoutineActions(kind,i){
+    const dk=currentSelectedDay;
+    const arr=(kind==='sleep')?(fixedSleepDatabase[dk]||[]):(routineDatabase[dk]||[]);
+    const x=arr[i];if(!x)return;
+    rtActionCtx={kind,index:i,dayKey:dk};
+    const name=(kind==='sleep')?sleepPeriodName(arr,i):routineSlotName(x);
+    document.getElementById('rt-act-title').innerText=name;
+    document.getElementById('rt-act-sub').innerText=`${dayNamesArabic[dk]} · ${formatTime12(x.from)} — ${formatTime12(x.to)}`;
+    const target=upcomingIsoFor(dk);
+    const when=(target===logicalTodayIso)?'اليوم':`يوم ${dayNamesArabic[dk]} ${fmtDayMonth(target)}`;
+    document.getElementById('rt-act-toggle').innerHTML=x.isSuspended
+        ? `<i class="fa-solid fa-play"></i><span>إعادة تفعيلها ${when}</span>`
+        : `<i class="fa-solid fa-pause"></i><span>تعطيلها ${when} فقط<small>تعود تلقائياً بعده</small></span>`;
+    document.getElementById('rt-actions-modal').style.display='flex';
+}
+function closeRoutineActions(){document.getElementById('rt-actions-modal').style.display='none';rtActionCtx=null;}
+function rtActionEdit(){
+    const c=rtActionCtx;closeRoutineActions();if(!c)return;
+    if(c.kind==='sleep')openSleepModal();else editRoutineSlot(c.index);
+}
+function rtActionToggle(){
+    const c=rtActionCtx;closeRoutineActions();if(!c)return;
+    toggleRoutineItemSuspension(c.kind,c.dayKey,c.index);
+}
+function rtActionDelete(){
+    const c=rtActionCtx;closeRoutineActions();if(!c)return;
+    if(c.kind==='sleep')deleteSleepPeriod(c.index);else confirmDeleteSlot(c.index);
 }
 function confirmDeleteSlot(i){
     const arr=routineDatabase[currentSelectedDay]||[];
@@ -7370,7 +8024,7 @@ function confirmDeleteSlot(i){
     const name=sl.type==='جامعة'?(sl.subjectLabel?`محاضرة ${sl.subjectLabel}`:'المحاضرة'):'فترة العمل';
     showCustomConfirm(
         `حذف «${name}» نهائياً من ${dayNamesArabic[currentSelectedDay]}؟<br>
-         <span style="font-size:11px;color:var(--ink-3);">إن كانت ملغاة اليوم فقط، استعمل زر التعطيل بدل الحذف.</span>`,
+         <span style="font-size:11px;color:var(--ink-3);">إن كانت ملغاة اليوم فقط، اختر «تعطيلها اليوم» بدل الحذف.</span>`,
         ()=>{deleteSlot(i);},
         {acceptLabel:'<i class="fa-solid fa-trash"></i> حذف',acceptColor:'var(--status-delay)'});
 }
@@ -7397,7 +8051,8 @@ function editRoutineSlot(i){
 }
 function saveFixedSleepSettings(){
     fixedSleepDatabase[currentSelectedDay]=sleepDraft.filter(p=>p.from&&p.to)
-        .map(p=>({from:p.from,to:p.to,label:p.label||''}));
+        .map(p=>({from:p.from,to:p.to,label:p.label||'',suspendedOn:p.suspendedOn||null}));
+    refreshRoutineSuspensions();
     localStorage.setItem('sleepFixedDB',JSON.stringify(fixedSleepDatabase));
     closeSleepModal();showToast('حُفظ روتين النوم');
     renderCurrentDaySlots();
@@ -7481,23 +8136,24 @@ function finalizeInlineRoutineSlot(f,t,h){
         const s=subjectsDatabase.find(x=>x.id===selectedRoutineSubjectId);
         if(s)label=s.name;
     }
-    const entry={type:currentFormType,from:f,to:t,hours:h,isSuspended:false,
+    const entry={type:currentFormType,from:f,to:t,hours:h,isSuspended:false,suspendedOn:null,
                  subjectLabel:label,subjectId:selectedRoutineSubjectId||null};
     const editing=(editingSlotIndex!==null&&editingSlotIndex!==undefined);
+    if(!routineDatabase[currentSelectedDay])routineDatabase[currentSelectedDay]=[];
     if(editing){
         const prev=routineDatabase[currentSelectedDay][editingSlotIndex]||{};
-        entry.isSuspended=!!prev.isSuspended;             // نحتفظ بحالة التعطيل
+        entry.suspendedOn=prev.suspendedOn||null;         // نحتفظ بحالة التعطيل
         routineDatabase[currentSelectedDay][editingSlotIndex]=entry;
     }else{
         routineDatabase[currentSelectedDay].push(entry);
     }
+    refreshRoutineSuspensions();
     localStorage.setItem('routineDB',JSON.stringify(routineDatabase));
     closeRoutineSlotModal();
     currentFormType=null;selectedRoutineSubjectId=null;
     showToast(editing?"حُفظ التعديل":"تم تثبيت الفترة");
     renderCurrentDaySlots();if(freeTimeDetailOpen)renderFreeTimeDetail();refreshFreeTimeAcrossPages();
 }
-function toggleSlotSuspension(d,i){routineDatabase[d][i].isSuspended=!routineDatabase[d][i].isSuspended;localStorage.setItem('routineDB',JSON.stringify(routineDatabase));renderCurrentDaySlots();refreshFreeTimeAcrossPages();}
 function deleteSlot(i){routineDatabase[currentSelectedDay].splice(i,1);localStorage.setItem('routineDB',JSON.stringify(routineDatabase));renderCurrentDaySlots();if(freeTimeDetailOpen)renderFreeTimeDetail();refreshFreeTimeAcrossPages();}
 
 function renderCurrentDaySlots(){
@@ -7505,19 +8161,21 @@ function renderCurrentDaySlots(){
     const slots=routineDatabase[currentSelectedDay]||[];let html='',tu=0,ts=0,tocc=2.5;
     const sleepList=(fixedSleepDatabase[currentSelectedDay]||[]).filter(p=>p&&p.from&&p.to);
     sleepList.forEach(p=>{if(p.isSuspended)return;const h=calcHDiff(p.from,p.to);ts+=h;tocc+=h;});
-    // نعرض فترات النوم ضمن قائمة الروتين نفسها فتظهر الصورة كاملة
-    sleepList.forEach((p,i)=>{
+    // نعرض فترات النوم ضمن قائمة الروتين نفسها فتظهر الصورة كاملة.
+    // البطاقة كلها تفتح قائمة إجراءاتها (تعديل / تعطيل اليوم / حذف) — لا أزرار مكشوفة تُضغط خطأً
+    const offLabel=dk=>(upcomingIsoFor(dk)===logicalTodayIso)?'معطّلة اليوم':`معطّلة ${fmtDayMonth(upcomingIsoFor(dk))}`;
+    const allSleep=fixedSleepDatabase[currentSelectedDay]||[];
+    allSleep.forEach((p,i)=>{
+        if(!p||!p.from||!p.to)return;
         const off=!!p.isSuspended;
-        html+=`<div class="rt-slot${off?' is-off':''}" style="--c:var(--status-wait);">
+        const name=sleepPeriodName(allSleep,i);
+        html+=`<div class="rt-slot rt-slot-tap${off?' is-off':''} clickable" style="--c:var(--status-wait);"
+                    data-rt-kind="sleep" data-rt-index="${i}" onclick="openRoutineActions('sleep',${i})">
             <div class="rt-slot-main">
-                <div class="rt-slot-name"><i class="fa-solid fa-bed rt-kind"></i> ${p.label||(i===0?'نوم الليل':'فترة نوم '+(i+1))}</div>
-                <div class="rt-slot-time">${formatTime12(p.from)} — ${formatTime12(p.to)} · ${calcHDiff(p.from,p.to)} ساعة${off?' · معطّلة اليوم':''}</div>
+                <div class="rt-slot-name"><i class="fa-solid fa-bed rt-kind"></i> ${name}</div>
+                <div class="rt-slot-time">${formatTime12(p.from)} — ${formatTime12(p.to)} · ${calcHDiff(p.from,p.to)} ساعة${off?' · '+offLabel(currentSelectedDay):''}</div>
             </div>
-            <div class="rt-slot-acts">
-                <button class="rt-icon-btn clickable" title="${off?'تفعيل':'تعطيل اليوم'}" onclick="toggleSleepSuspension(${i})"><i class="fa-solid fa-${off?'play':'pause'}"></i></button>
-                <button class="rt-icon-btn clickable" title="تعديل" onclick="openSleepModal()"><i class="fa-solid fa-pen"></i></button>
-                <button class="rt-icon-btn clickable danger" title="حذف" onclick="deleteSleepPeriod(${i})"><i class="fa-solid fa-trash"></i></button>
-            </div>
+            <span class="rt-more"><i class="fa-solid fa-ellipsis"></i></span>
         </div>`;
     });
     slots.forEach((s,i)=>{
@@ -7528,22 +8186,17 @@ function renderCurrentDaySlots(){
             const linkedSub=subjectsDatabase.find(x=>x.id===s.subjectId);
             if(linkedSub)bc=linkedSub.color;
         }
-        // إظهار اسم المادة إذا وُجد
         const icon=s.type==='جامعة'?'graduation-cap':s.type==='عمل'?'briefcase':'mug-hot';
-        const lt=`<i class="fa-solid fa-${icon} rt-kind"></i> `+
-            (s.type==='جامعة'?(s.subjectLabel?`محاضرة: ${s.subjectLabel}`:'محاضرة جامعية'):s.type==='عمل'?'فترة عمل':'فراغ/راحة');
+        const lt=`<i class="fa-solid fa-${icon} rt-kind"></i> `+routineSlotName(s);
         if(!sp){if(s.type==='جامعة')tu+=s.hours;tocc+=s.hours;}
         const fromF=formatTime12(s.from),toF=formatTime12(s.to);
-        html+=`<div class="rt-slot${sp?' is-off':''}" style="--c:${bc};">
+        html+=`<div class="rt-slot rt-slot-tap${sp?' is-off':''} clickable" style="--c:${bc};"
+                    data-rt-kind="slot" data-rt-index="${i}" onclick="openRoutineActions('slot',${i})">
             <div class="rt-slot-main">
                 <div class="rt-slot-name">${lt}</div>
-                <div class="rt-slot-time">${fromF} — ${toF}${sp?' · معطّلة اليوم':''}</div>
+                <div class="rt-slot-time">${fromF} — ${toF}${sp?' · '+offLabel(currentSelectedDay):''}</div>
             </div>
-            <div class="rt-slot-acts">
-                <button class="rt-icon-btn clickable" title="${sp?'تفعيل':'تعطيل اليوم'}" onclick="toggleSlotSuspension('${currentSelectedDay}',${i})"><i class="fa-solid fa-${sp?'play':'pause'}"></i></button>
-                <button class="rt-icon-btn clickable" title="تعديل" onclick="editRoutineSlot(${i})"><i class="fa-solid fa-pen"></i></button>
-                <button class="rt-icon-btn clickable danger" title="حذف" onclick="confirmDeleteSlot(${i})"><i class="fa-solid fa-trash"></i></button>
-            </div>
+            <span class="rt-more"><i class="fa-solid fa-ellipsis"></i></span>
         </div>`;
     });
     c.innerHTML=html||`<div class="empty-zone-hint">لا يوجد روتين مخصص لهذا اليوم</div>`;
@@ -7848,24 +8501,6 @@ function saveSports(){localStorage.setItem('sportsDB',JSON.stringify(sportsDatab
 function saveCommitment(){localStorage.setItem('commitmentDB',JSON.stringify(commitmentDB));}
 function saveCommitLog(){localStorage.setItem('commitLogDB',JSON.stringify(commitLogDB));}
 
-// حدّ اليوم: وقت أذان الفجر المسجّل في محطة الفجر
-function fajrBoundaryMinutes(){
-    const t=(typeof getStationEffectiveTimes==='function')?getStationEffectiveTimes('fajr'):null;
-    const from=(t&&t.from)||'05:00';
-    const[h,m]=from.split(':').map(Number);
-    return (h*60+m)||300;
-}
-// مفتاح اليوم المنطقي: قبل الفجر نحسبه لليوم السابق
-function commitDayKey(d){
-    const now=d?new Date(d):new Date();
-    const cur=now.getHours()*60+now.getMinutes();
-    if(cur<fajrBoundaryMinutes())now.setDate(now.getDate()-1);
-    return isoDay(now);
-}
-function dateFromIso(k){const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d,12);}
-function daysBetween(aIso,bIso){
-    return Math.round((dateFromIso(bIso)-dateFromIso(aIso))/86400000);
-}
 
 // ---- المهام الرئيسية: عناصر المكتبة المعلَّمة بنجمة، من أي تبويب ----
 const CORE_SOURCES=[
@@ -7877,6 +8512,17 @@ const CORE_SOURCES=[
     {db:()=>sportsDatabase,type:'sports',color:'var(--cat-sport)'},
     {db:()=>behaviorDatabase,type:'behavior',color:'var(--cat-series)'}
 ];
+// الإيقاع الفعلي لعنصر رئيسي: الحصّة لعنصر بلا وحدات (أذكار، تمرين) تُعامل كعدد مرات أسبوعي
+function coreRecurrenceOf(item,type){
+    const r=item.recurrence||{type:'daily'};
+    if(r.type==='quota'){
+        const per=Math.max(1,parseInt(r.perWeek)||3);
+        if((type==='worship'&&item.type==='simple')||!allUnitsOf(item))return{type:'weekly',times:Math.min(7,per)};
+        return{type:'quota',perWeek:per};
+    }
+    if(r.type==='weekly')return{type:'weekly',times:Math.min(7,Math.max(1,parseInt(r.times)||3))};
+    return{type:'daily'};
+}
 function getCoreItems(){
     const out=[];
     CORE_SOURCES.forEach(src=>{
@@ -7885,14 +8531,12 @@ function getCoreItems(){
             kind:x.kind||x.pledgeKind||'do',
             unit:x.unit,target:x.target,startValue:x.startValue,
             recurrence:x.recurrence||{type:'daily'},
+            rec:coreRecurrenceOf(x,src.type),
             color:x.color||src.color
         }));
     });
     return out;
 }
-// أُبقيت باسمها القديم لتوافق النداءات
-function getPledges(){return getCoreItems();}
-function coreItemById(id){return getCoreItems().find(x=>x.id===id)||null;}
 // يعيد عنصر المكتبة نفسه (قابل للتعديل) أياً كان تبويبه
 function findLibraryItem(id){
     for(const src of CORE_SOURCES){
@@ -7933,64 +8577,293 @@ function commitEntry(iso){
     return commitLogDB[iso];
 }
 
-// حالة اليوم تُقرأ من المهام نفسها: لا سجلّ منفصل ولا تأشير مزدوج
-// 'done' | 'broken' | 'rest' | 'future' | 'pending'
-function coreCountsFor(iso){
-    const today=commitDayKey();
-    if(iso===today){
-        const list=storedDailyTasks.filter(t=>taskBelongsToToday(t)&&t.status!=='parking'&&taskIsCore(t));
-        return{total:list.length,done:list.filter(t=>t.status==='done').length};
+// ================================================================
+// التعهّد — المحرّك
+// ----------------------------------------------------------------
+// لكل نوع من الالتزام منطقه:
+//  • اليومي (سلوك، أذكار، صلوات…): مطلوب كل يوم ولو لم يُوضع في المهام.
+//    إن سقط شيء منه فاليوم مكسور، وكل يوم مكسور يضيف يوماً على المدة.
+//  • الأسبوعي (حصّة وحدات أو عدد مرات): يُحاسَب بنهاية أسبوع التخطيط،
+//    والنقص إمّا يُرحَّل للأسبوع التالي، أو يكسر يوماً، أو يوماً لكل وحدة.
+// حكم اليوم والأسبوع يُحسم عند انقضائه ويُحفظ، فتغيير المهام الرئيسية
+// لاحقاً لا يعيد كتابة الماضي — إلا إن صحّحتَ ذلك اليوم بنفسك.
+// ================================================================
+const COMMIT_SCHEMA=2;
+const PRAYERS_REQ_ID='__prayers';
+const QUOTA_POLICIES={
+    carry:{label:'ترحيل النقص للأسبوع التالي',hint:'لا يُكسر يوم؛ ما نقص يُضاف لحصّة الأسبوع القادم ويتراكم.'},
+    breakOne:{label:'يوم مكسور عن الأسبوع',hint:'أي نقص في الأسبوع يضيف يوماً واحداً على مدتك.'},
+    breakPerUnit:{label:'يوم مكسور لكل وحدة ناقصة',hint:'كل وحدة لم تُنجز تضيف يوماً على مدتك.'}
+};
+// ترقية التعهّد المحفوظ بصيغته القديمة دون فقد شيء منه
+function migrateCommitment(){
+    if(!commitmentDB||typeof commitmentDB!=='object')return;
+    let changed=false;
+    if(commitmentDB.schema!==COMMIT_SCHEMA){commitmentDB.schema=COMMIT_SCHEMA;changed=true;}
+    if(!QUOTA_POLICIES[commitmentDB.quotaPolicy]){commitmentDB.quotaPolicy='carry';changed=true;}
+    if(typeof commitmentDB.includePrayers!=='boolean'){commitmentDB.includePrayers=true;changed=true;}
+    if(!Array.isArray(commitmentDB.adjustments)){commitmentDB.adjustments=[];changed=true;}
+    if(!commitmentDB.weeks||typeof commitmentDB.weeks!=='object'){commitmentDB.weeks={};changed=true;}
+    if(!Array.isArray(commitmentDB.archive)){commitmentDB.archive=[];changed=true;}
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(commitmentDB.startDate||'')){commitmentDB.startDate=commitDayKey();changed=true;}
+    const dur=parseInt(commitmentDB.durationDays);
+    if(!(dur>=1)){commitmentDB.durationDays=90;changed=true;}
+    if(changed)saveCommitment();
+}
+migrateCommitment();
+
+let _commitLogSaveQueued=false;
+function queueCommitLogSave(){
+    if(_commitLogSaveQueued)return;
+    _commitLogSaveQueued=true;
+    setTimeout(()=>{_commitLogSaveQueued=false;saveCommitLog();},0);
+}
+// تأشير صريح لعنصر في يوم (من سجلّ السلوك أو نافذة الإنجاز أو التصحيح) — يتقدّم على المهام
+function explicitCheck(iso,id){
+    const e=commitLogDB[iso];
+    if(!e||!e.checks||!Object.prototype.hasOwnProperty.call(e.checks,id))return undefined;
+    return !!e.checks[id];
+}
+// مهام اليوم كما يقرؤها التعهّد: اليوم من مهامه الحيّة، وما مضى من سجلّه
+function commitDayEntries(iso){
+    if(iso===commitDayKey()){
+        return storedDailyTasks.filter(t=>taskBelongsToToday(t)&&t.status!=='parking').map(t=>({
+            id:t.id,status:taskStatusForDay(t,iso),libParentId:taskLibraryId(t),
+            prayer:t.isPrayerAnchor?(t.station||true):undefined}));
     }
     const rec=historyDB[iso];
-    if(rec&&rec.coreTotal!==undefined)return{total:rec.coreTotal,done:rec.coreDone||0};
-    return{total:0,done:0};
+    return (rec&&Array.isArray(rec.tasks))?rec.tasks:[];
 }
+function isPrayerEntry(x){return !!x.prayer||String(x.id||'').startsWith('prayer-');}
+// فهرس يومٍ واحد يُبنى مرة ويُقرأ لكل الشروط
+function dayIndex(iso){
+    const idx={prayers:0,units:{}};
+    commitDayEntries(iso).forEach(x=>{
+        if(x.status!=='done')return;
+        if(isPrayerEntry(x)){idx.prayers++;return;}
+        if(x.libParentId)idx.units[x.libParentId]=(idx.units[x.libParentId]||0)+1;
+    });
+    return idx;
+}
+function requirementMetOn(req,iso,idx){
+    const ex=explicitCheck(iso,req.id);
+    if(ex!==undefined)return ex;
+    if(req.kind==='prayers')return idx.prayers>=5;
+    return (idx.units[req.id]||0)>0;
+}
+// الالتزامات المطلوبة كل يوم
+function dailyRequirements(){
+    const reqs=getCoreItems().filter(p=>p.rec.type==='daily')
+        .map(p=>({id:p.id,name:p.name,kind:'item',source:p.source,color:p.color,measure:p.kind}));
+    if(!commitmentDB||commitmentDB.includePrayers!==false)
+        reqs.unshift({id:PRAYERS_REQ_ID,name:'الصلوات الخمس',kind:'prayers'});
+    return reqs;
+}
+function liveDayVerdict(iso){
+    const idx=dayIndex(iso);
+    const items=dailyRequirements().map(r=>({
+        id:r.id,name:r.name,ok:requirementMetOn(r,iso,idx),
+        detail:(r.kind==='prayers')?`${Math.min(idx.prayers,5)} من 5`:undefined
+    }));
+    return{v:items.every(x=>x.ok)?'done':'broken',items};
+}
+// حكم يوم مضى: يُحسب مرة عند انقضائه ثم يُحفظ
+function frozenDayVerdict(iso){
+    const e=commitEntry(iso);
+    if(!e.verdict||!e.verdict.v){
+        const lv=liveDayVerdict(iso);
+        e.verdict={v:lv.v,items:lv.items,at:Date.now()};
+        queueCommitLogSave();
+    }
+    return e.verdict;
+}
+function inCommitment(iso){
+    return !!(commitmentDB&&commitmentDB.active&&iso>=commitmentDB.startDate&&iso<=commitDayKey());
+}
+// 'done' | 'broken' | 'pending' | 'future'
 function dayVerdict(iso){
-    if(!commitmentDB||!commitmentDB.active)return 'future';
-    const today=commitDayKey();
-    if(daysBetween(commitmentDB.startDate,iso)<0)return 'future';
-    if(daysBetween(iso,today)<0)return 'future';
-    const c=coreCountsFor(iso);
-    if(!c.total)return 'rest';                       // يوم بلا مهام رئيسية = راحة
-    if(c.done>=c.total)return 'done';
-    if(iso===today)return 'pending';
-    return 'broken';
+    if(!inCommitment(iso))return 'future';
+    if(iso===commitDayKey())return liveDayVerdict(iso).v==='done'?'done':'pending';
+    return frozenDayVerdict(iso).v;
 }
-// كل يوم مكسور يضيف يوماً على المدة
+function dayVerdictDetail(iso){
+    if(!inCommitment(iso))return null;
+    if(iso===commitDayKey()){const lv=liveDayVerdict(iso);return{v:lv.v==='done'?'done':'pending',items:lv.items};}
+    return frozenDayVerdict(iso);
+}
+// تصحيح يوم مضى يُسقط حكمه المحفوظ وأحكام أسابيعه، فتُعاد بالمعطيات الجديدة
+function invalidateCommitDay(iso){
+    const e=commitLogDB[iso];
+    if(e&&e.verdict){delete e.verdict;saveCommitLog();}
+    if(commitmentDB&&commitmentDB.weeks){
+        let ch=false;
+        Object.keys(commitmentDB.weeks).forEach(id=>{
+            const w=commitmentDB.weeks[id];
+            if(!w||w.endIso>=iso){delete commitmentDB.weeks[id];ch=true;}
+        });
+        if(ch)saveCommitment();
+    }
+}
+// يُستدعى عند إغلاق اليوم: يحسم ما انقضى بمعايير وقته
+function freezeCommitDaysBefore(iso){
+    if(!commitmentDB||!commitmentDB.active)return;
+    let d=commitmentDB.startDate;
+    const floor=addDaysIso(iso,-DAY_CLOSE_MAX_SPAN);
+    if(d<floor)d=floor;
+    for(;d<iso;d=addDaysIso(d,1))frozenDayVerdict(d);
+    commitWeekChain();
+    saveCommitLog();
+}
+
+// ---------------- الأسابيع ----------------
+function weeklyCoreItems(){return getCoreItems().filter(p=>p.rec.type!=='daily');}
+function weekTarget(p){return p.rec.type==='quota'?p.rec.perWeek:p.rec.times;}
+// المطلوب (مع الترحيل والأسبوع الجزئي) والمُنجز حتى upToIso
+function evaluateWeek(W,carryIn,upToIso){
+    const start=commitmentDB.startDate;
+    const from=(W.startIso<start)?start:W.startIso;
+    const effDays=daysBetween(from,W.endIso)+1;
+    const items=weeklyCoreItems();
+    const got={};items.forEach(p=>got[p.id]=0);
+    const last=(upToIso<W.endIso)?upToIso:W.endIso;
+    for(let d=from;d<=last;d=addDaysIso(d,1)){
+        const idx=dayIndex(d);
+        items.forEach(p=>{
+            if(p.rec.type==='quota')got[p.id]+=Math.max(idx.units[p.id]||0,explicitCheck(d,p.id)?1:0);
+            else got[p.id]+=requirementMetOn({id:p.id,kind:'item'},d,idx)?1:0;
+        });
+    }
+    const out={};
+    items.forEach(p=>{
+        const base=weekTarget(p);
+        const prorated=(effDays>=W.length)?base:Math.ceil(base*effDays/W.length);
+        const carried=carryIn[p.id]||0;
+        let required=prorated+carried;
+        if(p.rec.type==='weekly')required=Math.min(required,effDays);   // مرة في اليوم على الأكثر
+        out[p.id]={name:p.name,type:p.rec.type,required,got:got[p.id],carried,
+                   shortfall:Math.max(0,required-got[p.id])};
+    });
+    return{from,effDays,items:out};
+}
+function weekPenaltyFor(items,policy){
+    const short=Object.values(items).reduce((a,x)=>a+(x.shortfall||0),0);
+    if(policy==='breakOne')return short>0?1:0;
+    if(policy==='breakPerUnit')return short;
+    return 0;
+}
+// سلسلة أسابيع التعهّد: المنتهية تُحسم وتُحفظ، والجارية تُحسب حيّة
+function commitWeekChain(){
+    const out={closed:[],current:null};
+    if(!commitmentDB||!commitmentDB.active)return out;
+    const today=commitDayKey();
+    if(!commitmentDB.weeks)commitmentDB.weeks={};
+    const store=commitmentDB.weeks;
+    let W=planWeekOf(dateFromIso(commitmentDB.startDate));
+    let carry={},dirty=false,guard=0;
+    while(W.endIso<today&&guard++<400){
+        let rec=store[W.id];
+        if(!rec){
+            const ev=evaluateWeek(W,carry,W.endIso);
+            const policy=commitmentDB.quotaPolicy||'carry';
+            rec={startIso:W.startIso,endIso:W.endIso,policy,items:ev.items,penalty:weekPenaltyFor(ev.items,policy)};
+            store[W.id]=rec;dirty=true;
+        }
+        out.closed.push({W,rec});
+        carry={};
+        if(rec.policy==='carry')Object.keys(rec.items).forEach(id=>{if(rec.items[id].shortfall>0)carry[id]=rec.items[id].shortfall;});
+        W=planWeekOf(dateFromIso(addDaysIso(W.endIso,1)));
+    }
+    const ev=evaluateWeek(W,carry,today);
+    out.current={W,items:ev.items,daysLeft:daysBetween(today,W.endIso)+1};
+    if(dirty)saveCommitment();
+    return out;
+}
+// حصّة هذا الأسبوع الفعلية لعنصر (تشمل المرحَّل) — يقرؤها التوزيع
+function currentWeekRequirement(itemId){
+    if(!commitmentDB||!commitmentDB.active)return null;
+    const ch=commitWeekChain();
+    return (ch.current&&ch.current.items[itemId])||null;
+}
+
+// ---------------- الأرقام ----------------
+function commitAdjustTotal(){
+    return (commitmentDB&&commitmentDB.adjustments||[]).reduce((a,x)=>a+(parseInt(x.days)||0),0);
+}
 function commitmentStats(){
     if(!commitmentDB||!commitmentDB.active)return null;
-    const today=commitDayKey();
-    const start=commitmentDB.startDate;
+    const today=commitDayKey(),start=commitmentDB.startDate;
     const elapsed=Math.max(0,daysBetween(start,today));
-    let doneDays=0,brokenDays=0,restDays=0;
+    let doneDays=0,brokenDays=0,best=0,run=0;
     for(let i=0;i<elapsed;i++){
-        const d=dateFromIso(start);d.setDate(d.getDate()+i);
-        const v=dayVerdict(isoDay(d));
-        if(v==='done')doneDays++;else if(v==='broken')brokenDays++;else if(v==='rest')restDays++;
+        const v=dayVerdict(addDaysIso(start,i));
+        if(v==='done'){doneDays++;run++;if(run>best)best=run;}
+        else{brokenDays++;run=0;}
     }
-    const total=commitmentDB.durationDays+brokenDays;
-    const passed=doneDays+restDays;
-    const endDate=dateFromIso(start);endDate.setDate(endDate.getDate()+total);
+    const chain=commitWeekChain();
+    const weekPenalty=chain.closed.reduce((a,c)=>a+(c.rec.penalty||0),0);
+    const adjust=commitAdjustTotal();
+    // الأيام السليمة المطلوبة: المدة + ما فرضته الأسابيع + تعديلاتك اليدوية
+    const goodNeeded=Math.max(1,(parseInt(commitmentDB.durationDays)||90)+weekPenalty+adjust);
+    const remaining=Math.max(0,goodNeeded-doneDays);
     return{
-        today,start,elapsed,doneDays,brokenDays,restDays,
-        totalDays:total,passed,
-        remaining:Math.max(0,total-passed),
-        dayNumber:Math.min(elapsed+1,total),
-        percent:total?Math.round((passed/total)*100):0,
-        endIso:isoDay(endDate)
+        today,start,elapsed,doneDays,brokenDays,weekPenalty,adjust,goodNeeded,remaining,
+        totalDays:Math.max(elapsed+1,goodNeeded+brokenDays),
+        dayNumber:elapsed+1,
+        percent:Math.min(100,Math.round((doneDays/goodNeeded)*100)),
+        completed:doneDays>=goodNeeded,
+        endIso:addDaysIso(today,Math.max(0,remaining-1)),
+        streak:best,chain
     };
 }
-// أطول سلسلة أيام متتالية غير مكسورة
-function commitStreak(){
-    if(!commitmentDB||!commitmentDB.active)return 0;
-    const st=commitmentStats();if(!st)return 0;
-    let best=0,cur=0;
-    for(let i=0;i<st.elapsed;i++){
-        const d=dateFromIso(st.start);d.setDate(d.getDate()+i);
-        const v=dayVerdict(isoDay(d));
-        if(v==='broken'){cur=0;}else if(v==='done'){cur++;best=Math.max(best,cur);}
-    }
-    return best;
+function commitStreak(){const st=commitmentStats();return st?st.streak:0;}
+
+// ---------------- الالتزامات اليومية في صفحة المهام ----------------
+function buildCoreDayTask(p,f,dk,wk){
+    const it=f.item;
+    return{
+        id:'task-core-'+p.id+'-'+dk+'-'+Date.now()+'-'+Math.floor(Math.random()*10000),
+        title:p.name,category:coreTaskCategoryFor(f.type),status:'wait',notes:'',
+        totalSecondsSpent:0,station:stationForCore(f.type,0,it),
+        targetWeek:wk,targetDay:dk,
+        isCoreTask:true,coreSourceId:p.id,libParentId:p.id,
+        linkedUnitId:null,unitKind:(f.type==='behavior')?'behavior':(f.type==='sports'?'sports':null),
+        progressCounted:false,expectedSeconds:0,simpleDone:true,
+        subjectColor:(it.color&&String(it.color).startsWith('#'))?it.color:null,
+        worshipId:f.type==='worship'?p.id:null,
+        sportId:f.type==='sports'?p.id:null,
+        behaviorId:f.type==='behavior'?p.id:null
+    };
+}
+// كل التزام يومي رئيسي يظهر في مهام اليوم تلقائياً وفي فترته — مرة واحدة في اليوم:
+// إن حذفتَه بنفسك لا يعود إلا غداً (ويبقى شرطاً في التعهّد)
+function readCoreInjectLog(){
+    try{
+        const o=JSON.parse(localStorage.getItem('coreInjectLog'));
+        if(o&&o.day===logicalTodayIso&&Array.isArray(o.ids))return o;
+    }catch(e){}
+    return{day:logicalTodayIso,ids:[]};
+}
+function ensureDailyCoreTasks(){
+    const daily=getCoreItems().filter(p=>p.rec.type==='daily');
+    const dailyIds=new Set(daily.map(p=>p.id));
+    // التزام يومي في صندوق التراكم لا معنى له: يومه مضى وحُسب
+    const before=storedDailyTasks.length;
+    storedDailyTasks=storedDailyTasks.filter(t=>!(t.status==='parking'&&t.isCoreTask&&dailyIds.has(taskLibraryId(t))));
+    let changed=storedDailyTasks.length!==before;
+    const log=readCoreInjectLog();
+    const today=todaysTasks().filter(t=>t.status!=='parking');
+    daily.forEach(p=>{
+        const present=today.some(t=>taskLibraryId(t)===p.id);
+        if(present||log.ids.includes(p.id)){if(!log.ids.includes(p.id))log.ids.push(p.id);return;}
+        const f=findLibraryItem(p.id);if(!f)return;
+        const t=buildCoreDayTask(p,f,currentActualDayKey,currentWeekKey);
+        storedDailyTasks.push(t);
+        assignTaskToPeriod(currentActualDayKey,t.station,t.id);
+        log.ids.push(p.id);
+        changed=true;
+    });
+    try{localStorage.setItem('coreInjectLog',JSON.stringify(log));}catch(e){}
+    if(changed)saveTasks();
 }
 
 // ================================================================
@@ -8005,12 +8878,30 @@ function switchStatsTab(t){
     document.getElementById('stats-pane-commit').style.display=(t==='commit')?'':'none';
     if(t==='commit')renderCommitment();else renderStats();
 }
+function fmtDayMonth(iso){const d=dateFromIso(iso);return `${d.getDate()} ${ST_MONTHS[d.getMonth()]}`;}
+function daysWord(n){n=Math.abs(n);return n===1?'يوم':(n===2?'يومان':(n<=10?'أيام':'يوماً'));}
+// "85 يوماً متبقياً" / "7 أيام متبقية" / "يومان متبقيان"
+function daysLeftText(n){
+    n=Math.max(0,n|0);
+    if(n===0)return 'لا أيام متبقية';
+    if(n===1)return 'يوم واحد متبقٍّ';
+    if(n===2)return 'يومان متبقيان';
+    if(n<=10)return `${n} أيام متبقية`;
+    return `${n} يوماً متبقياً`;
+}
+// تأكيد على خطوتين للتغييرات التي تمسّ حساب التعهّد كله
+function confirmTwice(message,finalMessage,onConfirm,finalLabel){
+    showCustomConfirm(message,()=>{
+        showCustomConfirm(finalMessage,onConfirm,
+            {acceptLabel:finalLabel||'<i class="fa-solid fa-check"></i> نعم، نفّذ',acceptColor:'var(--status-delay)'});
+    },{acceptLabel:'<i class="fa-solid fa-arrow-left"></i> تابع',acceptColor:'var(--cat-work)'});
+}
+
+// ---------------- بدء تعهّد جديد ----------------
 function openCommitSetup(){
-    if(commitmentDB){
-        document.getElementById('commit-reward').value=commitmentDB.reward||'';
-        document.getElementById('commit-duration').value=commitmentDB.durationDays||90;
-    }
-    setCommitDuration(parseInt(document.getElementById('commit-duration').value)||90);
+    document.getElementById('commit-reward').value='';
+    document.getElementById('commit-duration').value=90;
+    setCommitDuration(90);
     document.getElementById('commit-setup-modal').style.display='flex';
 }
 function closeCommitSetup(){document.getElementById('commit-setup-modal').style.display='none';}
@@ -8018,64 +8909,180 @@ function setCommitDuration(d){
     document.getElementById('commit-duration').value=d;
     document.querySelectorAll('#commit-duration-chips .chip-choice').forEach(c=>c.classList.toggle('selected',parseInt(c.dataset.d)===d));
 }
+// ملخّص تعهّد منتهٍ يُحفظ في الأرشيف قبل أن يُستبدل
+function archiveSummaryOf(db){
+    if(!db||!db.startDate)return null;
+    const wasActive=db.active;
+    let st=null;
+    if(wasActive){st=commitmentStats();}
+    return{reward:db.reward||'',startDate:db.startDate,endedAt:commitDayKey(),durationDays:db.durationDays,
+        doneDays:st?st.doneDays:(db.finalDone||0),brokenDays:st?st.brokenDays:(db.finalBroken||0)};
+}
 function startCommitment(){
     const reward=document.getElementById('commit-reward').value.trim();
     const dur=Math.max(7,Math.min(400,parseInt(document.getElementById('commit-duration').value)||90));
     if(!reward){showToast('اكتب ما تستعدّ له');return;}
-    const running=commitmentDB&&commitmentDB.active;
-
-    const apply=()=>{
-        commitmentDB={active:true,reward,durationDays:dur,startDate:running?commitmentDB.startDate:commitDayKey()};
-        saveCommitment();closeCommitSetup();renderCommitment();
-        showToast(running?'حُدّث التعهّد':'بدأ التعهّد — بالتوفيق');
+    const begin=()=>{
+        const prev=commitmentDB;
+        const archive=(prev&&Array.isArray(prev.archive))?prev.archive.slice():[];
+        const sum=archiveSummaryOf(prev);
+        if(sum&&prev.active)archive.push(sum);
+        commitmentDB={schema:COMMIT_SCHEMA,active:true,reward,durationDays:dur,startDate:commitDayKey(),
+            quotaPolicy:(prev&&QUOTA_POLICIES[prev.quotaPolicy])?prev.quotaPolicy:'carry',
+            includePrayers:prev?prev.includePrayers!==false:true,
+            adjustments:[],weeks:{},archive};
+        saveCommitment();closeCommitSetup();
+        ensureDailyCoreTasks();renderDailyTasks();renderCommitment();
+        showToast('بدأ التعهّد — بالتوفيق');
     };
-
-    // تغيير المدة أثناء مسار جارٍ يعيد حساب كل النسب، فلا يمرّ بضغطة واحدة
-    if(running&&dur!==commitmentDB.durationDays){
+    // تعهّد جارٍ لا يُستبدل بضغطة واحدة
+    if(commitmentDB&&commitmentDB.active){
         const st=commitmentStats();
-        const newTotal=dur+st.brokenDays;
-        const diff=newTotal-st.totalDays;
-        showCustomConfirm(
-            `تغيير المدة من ${commitmentDB.durationDays} إلى ${dur} يوماً.<br>
-             <span style="font-size:11px;color:var(--ink-3);">
-             إجمالي أيامك سيصبح ${newTotal} بدل ${st.totalDays} (${diff>0?'+':''}${diff})،
-             ونسبة تقدّمك ستتغيّر من ${st.percent}٪ إلى ${newTotal?Math.round((st.passed/newTotal)*100):0}٪.<br>
-             أيامك المنجَزة والمكسورة تبقى كما هي.</span>`,
-            ()=>{
-                showCustomConfirm('تأكيد أخير: هل تريد فعلاً تغيير مدة التعهّد؟',apply,
-                    {acceptLabel:'<i class="fa-solid fa-check"></i> نعم، غيّر المدة',acceptColor:'var(--status-delay)'});
-            },
-            {acceptLabel:'<i class="fa-solid fa-arrow-left"></i> تابع',acceptColor:'var(--cat-work)'}
-        );
+        confirmTwice(`لديك تعهّد جارٍ «${commitmentDB.reward}» — اليوم ${st.dayNumber} من ${st.totalDays}.<br>
+            <span style="font-size:11px;color:var(--ink-3);">بدء تعهّد جديد يُنهي الحالي ويحفظ ملخّصه. سجلّ أيامك لا يُحذف.</span>`,
+            'تأكيد أخير: إنهاء التعهّد الحالي وبدء تعهّد جديد؟',begin,
+            '<i class="fa-solid fa-flag-checkered"></i> نعم، ابدأ الجديد');
         return;
     }
-    apply();
+    begin();
+}
+
+// ---------------- إدارة التعهّد الجاري ----------------
+let cmmPolicy='carry';
+function openCommitManage(){
+    if(!commitmentDB||!commitmentDB.active){openCommitSetup();return;}
+    document.getElementById('cmm-reward').value=commitmentDB.reward||'';
+    document.getElementById('cmm-duration').value=commitmentDB.durationDays||90;
+    const sd=document.getElementById('cmm-start');
+    sd.value=commitmentDB.startDate;sd.max=commitDayKey();
+    cmmPolicy=commitmentDB.quotaPolicy||'carry';
+    renderCommitManage();
+    document.getElementById('commit-manage-modal').style.display='flex';
+}
+function closeCommitManage(){document.getElementById('commit-manage-modal').style.display='none';}
+function renderCommitManage(){
+    const st=commitmentStats();if(!st)return;
+    const extra=[];
+    if(st.brokenDays)extra.push(`${st.brokenDays} مكسور`);
+    if(st.weekPenalty)extra.push(`${st.weekPenalty} نقص أسبوعي`);
+    if(st.adjust)extra.push(`${st.adjust>0?'+':''}${st.adjust} يدوي`);
+    document.getElementById('cmm-summary').innerHTML=
+        `<div class="cmm-sum-main">اليوم <b>${st.dayNumber}</b> من ${st.totalDays}</div>
+         <div class="cmm-sum-sub">بدأ ${fmtDayMonth(st.start)} · ينتهي ${fmtDayMonth(st.endIso)}${extra.length?' · '+extra.join(' · '):''}</div>`;
+    // سجلّ التعديلات اليدوية
+    const adj=commitmentDB.adjustments||[];
+    document.getElementById('cmm-adjust-log').innerHTML=adj.length
+        ? `<div class="cmm-log">${adj.slice(-4).map(a=>`<span>${a.days>0?'+':''}${a.days} · ${fmtDayMonth(a.at)}</span>`).join('')}
+            <button class="cmm-undo clickable" onclick="undoLastCommitAdjust()"><i class="fa-solid fa-rotate-left"></i> تراجع عن آخر تعديل</button></div>`
+        : '';
+    document.getElementById('cmm-policy').innerHTML=Object.keys(QUOTA_POLICIES).map(k=>{
+        const p=QUOTA_POLICIES[k];
+        return `<button class="cmm-opt${k===cmmPolicy?' active':''} clickable" onclick="pickCommitPolicy('${k}')">
+            <span class="cmm-opt-dot"></span>
+            <span class="cmm-opt-body"><span class="cmm-opt-label">${p.label}</span><span class="cmm-opt-hint">${p.hint}</span></span>
+        </button>`;
+    }).join('');
+    document.getElementById('cmm-prayers-toggle').classList.toggle('is-on',commitmentDB.includePrayers!==false);
+}
+function saveCommitBasics(){
+    const reward=document.getElementById('cmm-reward').value.trim();
+    const dur=Math.max(7,Math.min(400,parseInt(document.getElementById('cmm-duration').value)||0));
+    const start=document.getElementById('cmm-start').value;
+    if(!reward){showToast('اكتب ما تستعدّ له');return;}
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(start)){showToast('اختر تاريخ بداية صحيحاً');return;}
+    if(start>commitDayKey()){showToast('البداية لا تكون في المستقبل');return;}
+    if(daysBetween(start,commitDayKey())>400){showToast('البداية بعيدة جداً');return;}
+    const durChanged=dur!==commitmentDB.durationDays, startChanged=start!==commitmentDB.startDate;
+    const apply=()=>{
+        commitmentDB.reward=reward;
+        commitmentDB.durationDays=dur;
+        if(startChanged){commitmentDB.startDate=start;commitmentDB.weeks={};}
+        saveCommitment();renderCommitManage();renderCommitment();
+        showToast('حُفظ التعهّد');
+    };
+    if(!durChanged&&!startChanged){apply();return;}
+    const st=commitmentStats();
+    const lines=[];
+    if(durChanged)lines.push(`المدة: ${commitmentDB.durationDays} ← <b>${dur}</b> يوماً`);
+    if(startChanged)lines.push(`البداية: ${fmtDayMonth(commitmentDB.startDate)} ← <b>${fmtDayMonth(start)}</b>`);
+    confirmTwice(`${lines.join('<br>')}<br><span style="font-size:11px;color:var(--ink-3);">
+        يُعاد حساب الأيام والنِّسب${startChanged?' والأسابيع من التاريخ الجديد':''}. أنت الآن في اليوم ${st.dayNumber} من ${st.totalDays}.</span>`,
+        'تأكيد أخير: تطبيق التعديل على التعهّد؟',apply,'<i class="fa-solid fa-check"></i> نعم، طبّق');
+}
+function pushCommitAdjust(days,label){
+    commitmentDB.adjustments=commitmentDB.adjustments||[];
+    commitmentDB.adjustments.push({days,at:commitDayKey(),label:label||''});
+    saveCommitment();renderCommitManage();renderCommitment();
+}
+// "إرجاع يوم": يومك الحالي لا يُحتسب ويعود العدّ خطوة — يضيف يوماً على المدة
+function commitStepBack(){
+    showCustomConfirm(`إرجاع يوم: يُضاف يوم واحد على مدتك ويتأخّر موعد النهاية يوماً.<br>
+        <span style="font-size:11px;color:var(--ink-3);">يظهر في سجلّ التعديلات ويمكنك التراجع عنه.</span>`,
+        ()=>{pushCommitAdjust(1,'إرجاع يوم');showToast('أُضيف يوم على مدتك');},
+        {acceptLabel:'<i class="fa-solid fa-rotate-left"></i> أرجِع يوماً',acceptColor:'var(--cat-work)'});
+}
+function commitAddDays(){
+    const n=parseInt(document.getElementById('cmm-add-days').value);
+    if(!(n>=1&&n<=120)){showToast('اكتب عدداً بين 1 و120');return;}
+    showCustomConfirm(`إضافة ${n} ${daysWord(n)} على مدة التعهّد؟`,
+        ()=>{pushCommitAdjust(n,'إضافة أيام');showToast(`أُضيف ${n} ${daysWord(n)}`);},
+        {acceptLabel:'<i class="fa-solid fa-plus"></i> أضِف',acceptColor:'var(--cat-work)'});
+}
+function undoLastCommitAdjust(){
+    const adj=commitmentDB.adjustments||[];
+    if(!adj.length)return;
+    const last=adj[adj.length-1];
+    showCustomConfirm(`التراجع عن تعديل ${last.days>0?'+':''}${last.days} (${fmtDayMonth(last.at)})؟`,()=>{
+        adj.pop();saveCommitment();renderCommitManage();renderCommitment();showToast('تُرُوجِع عن التعديل');
+    },{acceptLabel:'<i class="fa-solid fa-rotate-left"></i> تراجع',acceptColor:'var(--cat-work)'});
+}
+function pickCommitPolicy(k){
+    if(!QUOTA_POLICIES[k]||k===commitmentDB.quotaPolicy)return;
+    cmmPolicy=k;
+    commitmentDB.quotaPolicy=k;
+    saveCommitment();renderCommitManage();renderCommitment();
+    showToast('يسري على الأسابيع القادمة؛ ما انتهى يبقى بحكمه');
+}
+function toggleCommitPrayers(){
+    commitmentDB.includePrayers=(commitmentDB.includePrayers===false);
+    saveCommitment();renderCommitManage();renderCommitment();
+    showToast(commitmentDB.includePrayers?'الصلوات الخمس من شروط اليوم بدءاً من اليوم':'لم تعد الصلوات شرطاً لليوم');
+}
+function restartCommitment(){
+    const st=commitmentStats();
+    confirmTwice(`إعادة التعهّد من البداية: يبدأ العدّ من اليوم (اليوم 1 من ${commitmentDB.durationDays}).<br>
+        <span style="font-size:11px;color:var(--ink-3);">تُمسح تعديلاتك اليدوية وأحكام الأسابيع. سجلّ أيامك السابقة (${st.doneDays} منجَز، ${st.brokenDays} مكسور) يبقى في صفحة الإنجاز.</span>`,
+        'تأكيد أخير: إعادة التعهّد من اليوم الأول؟',()=>{
+            commitmentDB.startDate=commitDayKey();
+            commitmentDB.adjustments=[];commitmentDB.weeks={};
+            saveCommitment();closeCommitManage();renderCommitment();
+            showToast('بدأ التعهّد من جديد — اليوم الأول');
+        },'<i class="fa-solid fa-rotate"></i> نعم، من البداية');
 }
 function endCommitment(){
     const st=commitmentStats();
-    showCustomConfirm(
-        `أنت في اليوم ${st.dayNumber} من ${st.totalDays}، وأنجزت ${st.doneDays} يوماً.<br>
-         <span style="font-size:11px;color:var(--ink-3);">إنهاء التعهّد الآن يوقف العدّ. السجلّ يبقى محفوظاً ويمكنك بدء تعهّد جديد لاحقاً، لكن لن تعود لهذا التعهّد نفسه.</span>`,
-        ()=>{
-            showCustomConfirm('تأكيد أخير: إنهاء التعهّد؟',()=>{
-                commitmentDB.active=false;saveCommitment();renderCommitment();showToast('أُنهي التعهّد');
-            },{acceptLabel:'<i class="fa-solid fa-flag"></i> نعم، أنهِ التعهّد',acceptColor:'var(--status-delay)'});
-        },
-        {acceptLabel:'<i class="fa-solid fa-arrow-left"></i> تابع',acceptColor:'var(--cat-work)'}
-    );
+    confirmTwice(`أنت في اليوم ${st.dayNumber} من ${st.totalDays}، وأنجزت ${st.doneDays} يوماً.<br>
+         <span style="font-size:11px;color:var(--ink-3);">إنهاء التعهّد يوقف العدّ. السجلّ يبقى محفوظاً ويمكنك بدء تعهّد جديد لاحقاً.</span>`,
+        'تأكيد أخير: إنهاء التعهّد؟',()=>{
+            const sum=archiveSummaryOf(commitmentDB);
+            if(sum){commitmentDB.archive=commitmentDB.archive||[];commitmentDB.archive.push(sum);}
+            commitmentDB.finalDone=st.doneDays;commitmentDB.finalBroken=st.brokenDays;
+            commitmentDB.active=false;commitmentDB.endedAt=commitDayKey();
+            saveCommitment();closeCommitManage();renderCommitment();showToast('أُنهي التعهّد');
+        },'<i class="fa-solid fa-flag"></i> نعم، أنهِ التعهّد');
 }
-function togglePledgeToday(id){
-    const iso=commitDayKey();
-    const e=commitEntry(iso);
-    e.checks[id]=!e.checks[id];
-    saveCommitLog();renderCommitment();
+function startNewCommitmentFromManage(){
+    closeCommitManage();
+    openCommitSetup();
 }
+
+// ---------------- تسجيل رقم يومي (وزن / سعرات) ----------------
 let commitValueTarget=null;
 function openCommitValue(id){
-    const pl=getPledges().find(p=>p.id===id);if(!pl)return;
+    const pl=getCoreItems().find(p=>p.id===id);if(!pl)return;
     commitValueTarget=id;
     document.getElementById('commit-value-title').innerText=pl.name;
-    document.getElementById('commit-value-label').innerText=pl.kind==='track'?`الوزن اليوم (${pl.unit})`:`القيمة اليوم (${pl.unit})`;
+    document.getElementById('commit-value-label').innerText=pl.kind==='track'?`الوزن اليوم (${pl.unit||'كغ'})`:`القيمة اليوم (${pl.unit||''})`;
     const e=commitEntry(commitDayKey());
     document.getElementById('commit-value-input').value=e.values[id]!==undefined?e.values[id]:'';
     document.getElementById('commit-value-modal').style.display='flex';
@@ -8085,99 +9092,115 @@ function saveCommitValue(){
     if(!commitValueTarget)return;
     const v=parseFloat(document.getElementById('commit-value-input').value);
     if(isNaN(v)){showToast('أدخل رقماً');return;}
-    const iso=commitDayKey();
-    const e=commitEntry(iso);
+    const e=commitEntry(commitDayKey());
     e.values[commitValueTarget]=v;
-    const pl=getPledges().find(p=>p.id===commitValueTarget);
-    // الرقم بحدّ يُعلَّم منجزاً تلقائياً عند بلوغ الحد
+    const pl=getCoreItems().find(p=>p.id===commitValueTarget);
     if(pl&&pl.kind==='number')e.checks[pl.id]=(v>=(pl.target||0));
     if(pl&&pl.kind==='track')e.checks[pl.id]=true;   // التسجيل نفسه هو المطلوب
     saveCommitLog();closeCommitValue();renderCommitment();showToast('سُجّل');
 }
-// عدّ مرات إنجاز تعهّد أسبوعي داخل أسبوع اليوم
-function weeklyProgress(pl){
-    const today=dateFromIso(commitDayKey());
-    const start=new Date(today);
-    start.setDate(start.getDate()-((start.getDay()+2)%7));   // الأسبوع يبدأ الجمعة
-    let n=0;
-    for(let i=0;i<7;i++){
-        const d=new Date(start);d.setDate(start.getDate()+i);
-        const e=commitLogDB[isoDay(d)];
-        if(e&&e.checks&&e.checks[pl.id])n++;
+
+// فتح الالتزام من صفحة التعهّد: يذهب لمهمته في اليوم بنافذتها المعتادة
+function openCommitRequirement(id){
+    if(id===PRAYERS_REQ_ID){
+        const next=storedDailyTasks.find(t=>t.isPrayerAnchor&&t.status!=='done');
+        if(next)openPrayerConfirm(next.id);else showToast('أدّيت الصلوات الخمس اليوم');
+        return;
     }
-    return n;
+    const task=todaysTasks().find(t=>t.status!=='parking'&&taskLibraryId(t)===id);
+    if(task){openFocusStudio(task.id);return;}
+    const p=getCoreItems().find(x=>x.id===id);
+    if(p&&(p.kind==='number'||p.kind==='track')){openCommitValue(id);return;}
+    const e=commitEntry(commitDayKey());
+    e.checks[id]=!e.checks[id];
+    saveCommitLog();renderCommitment();
 }
 
 function renderCommitment(){
     const pane=document.getElementById('stats-pane-commit');if(!pane)return;
-    const core=getCoreItems();
-
     if(!commitmentDB||!commitmentDB.active){
+        const arch=(commitmentDB&&commitmentDB.archive)||[];
+        const last=commitmentDB&&commitmentDB.endedAt?commitmentDB:null;
         pane.innerHTML=`
         <div class="st-head"><div><div class="hero-label">فترة تركيز محدَّدة</div><h2 class="st-title">التعهّد</h2></div></div>
         <div class="st-card" style="text-align:center;padding:26px 18px;">
             <div class="cm-big-icon"><i class="fa-solid fa-route"></i></div>
-            <div style="font-size:14px;font-weight:600;color:var(--ink-1);margin-bottom:8px;">لم تبدأ تعهّداً بعد</div>
+            <div style="font-size:14px;font-weight:600;color:var(--ink-1);margin-bottom:8px;">${last?'انتهى تعهّدك السابق':'لم تبدأ تعهّداً بعد'}</div>
             <div style="font-size:12px;color:var(--ink-3);line-height:1.8;margin-bottom:18px;">
-                حدّد مدة وما تستعدّ له، ثم علّم مهامك الرئيسية بنجمة من المكتبة.<br>
-                كل يوم تسقط فيه مهمة رئيسية يضيف يوماً على المدة.
+                حدّد مدة وما تستعدّ له، وعلّم مهامك الرئيسية من المكتبة.<br>
+                الالتزام اليومي مطلوب كل يوم، والحصص الأسبوعية تُحاسَب بنهاية الأسبوع.
             </div>
-            <button class="btn-prime clickable" onclick="openCommitSetup()">ابدأ تعهّداً</button>
-        </div>`;
+            <button class="btn-prime clickable" onclick="openCommitSetup()">ابدأ تعهّداً جديداً</button>
+        </div>
+        ${arch.length?`<div class="section-title"><i class="fa-solid fa-box-archive"></i> تعهّدات سابقة</div>
+            <div class="st-card">${arch.slice().reverse().map(a=>`<div class="cm-row" style="cursor:default;">
+                <span class="cm-check on"><i class="fa-solid fa-flag-checkered"></i></span>
+                <div class="cm-row-body"><div class="cm-row-name">${a.reward}</div>
+                <div class="cm-row-sub">${fmtDayMonth(a.startDate)} — ${fmtDayMonth(a.endedAt)} · ${a.doneDays} منجَز · ${a.brokenDays} مكسور</div></div></div>`).join('')}</div>`:''}`;
         return;
     }
 
     const st=commitmentStats();
     const iso=st.today;
+    const live=liveDayVerdict(iso);
+    const doneN=live.items.filter(x=>x.ok).length,totalN=live.items.length;
     const verdict=dayVerdict(iso);
-    const counts=coreCountsFor(iso);
+    const verdictText=st.completed?'اكتمل التعهّد':(verdict==='done'?'يوم مكتمل':(totalN?`${doneN} من ${totalN}`:'لا شروط يومية'));
+    const verdictCls=(st.completed||verdict==='done')?'good':'soft';
 
-    // مهام اليوم الرئيسية كما هي في صفحة المهام — لا قائمة منفصلة
-    const todayCore=storedDailyTasks.filter(t=>taskBelongsToToday(t)&&t.status!=='parking'&&taskIsCore(t));
-    const rows=todayCore.map(t=>{
-        const on=t.status==='done';
-        const cat=categoryConfig[t.category]||categoryConfig['noCategory'];
-        return `<div class="cm-row clickable" onclick="openFocusStudio('${t.id}',event)">
-            <span class="cm-check ${on?'on':''}"><i class="fa-solid fa-check"></i></span>
-            <div class="cm-row-body"><div class="cm-row-name">${t.title}</div><div class="cm-row-sub">${cat.name}${on?' · مُنجزة':''}</div></div>
-        </div>`;
-    }).join('');
-
-    // العناصر الرقمية (وزن / سعرات) تُسجَّل هنا مباشرة
-    const numeric=core.filter(x=>x.kind==='number'||x.kind==='track');
-    const numRows=numeric.map(p=>{
-        const e=commitEntry(iso);
-        const v=e.values[p.id];
-        let sub='لم تسجّل اليوم';
+    // شروط اليوم: كل الالتزامات اليومية، موضوعةً في المهام أو لا
+    const core=getCoreItems();
+    const rows=live.items.map(x=>{
+        const p=core.find(c=>c.id===x.id);
+        let sub=x.ok?'مُنجز':'لم يُنجز بعد';
+        if(x.detail)sub=x.detail;
+        // ما له رقم (وزن، سعرات، ساعات هاتف) يعرض قيمته المسجّلة
+        const v=p?(commitLogDB[iso]&&commitLogDB[iso].values||{})[p.id]:undefined;
         if(v!==undefined&&v!==''){
-            sub=`${v} ${p.unit}`;
-            if(p.kind==='number')sub+= (v>=(p.target||0))?' · فوق الحد':' · دون الحد';
-            if(p.kind==='track'){
-                const diff=(v-(p.startValue||0));
-                sub+= ` · ${diff>=0?'+':''}${diff.toFixed(1)} عن البداية`;
-            }
+            const m=measurableById(p.id);
+            const unit=(m&&m.unit)||(p.kind==='track'?'كغ':'');
+            sub=`${v} ${unit}`.trim()+(p.kind==='track'?'':(x.ok?' · ضمن الهدف':' · خارج الهدف'));
         }
-        return `<div class="cm-row clickable" onclick="openCommitValue('${p.id}')">
-            <span class="cm-check"><i class="fa-solid fa-pen"></i></span>
-            <div class="cm-row-body"><div class="cm-row-name">${p.name}</div><div class="cm-row-sub">${sub}</div></div>
-            <span class="cm-tag soft">متابعة</span>
+        return `<div class="cm-row clickable" onclick="openCommitRequirement('${x.id}')">
+            <span class="cm-check ${x.ok?'on':''}"><i class="fa-solid fa-${x.id===PRAYERS_REQ_ID?'mosque':'check'}"></i></span>
+            <div class="cm-row-body"><div class="cm-row-name">${x.name}</div><div class="cm-row-sub">${sub}</div></div>
+            ${x.ok?'':'<span class="cm-tag">مطلوب</span>'}
         </div>`;
     }).join('');
 
-    const verdictText={done:'يوم مُنجز',broken:'يوم مكسور',rest:'يوم راحة',pending:`${counts.done} من ${counts.total}`,future:''}[verdict]||'';
-    const verdictCls={done:'good',broken:'bad',rest:'soft',pending:'soft'}[verdict]||'soft';
+    // حصص الأسبوع
+    const cur=st.chain.current;
+    const wItems=cur?Object.keys(cur.items).map(id=>({id,...cur.items[id]})):[];
+    const policy=QUOTA_POLICIES[commitmentDB.quotaPolicy||'carry'];
+    const weekRows=wItems.map(x=>{
+        const pct=x.required?Math.min(100,Math.round((x.got/x.required)*100)):100;
+        const unitWord=x.type==='quota'?'وحدة':'مرة';
+        return `<div class="cm-week-row${x.got>=x.required?' is-full':''}">
+            <div class="cm-week-top">
+                <span class="cm-week-name">${x.name}</span>
+                <span class="cm-week-val"><b>${x.got}</b> / ${x.required} ${unitWord}</span>
+            </div>
+            <div class="cm-bar thin"><div class="cm-bar-fill" style="width:${pct}%;"></div></div>
+            ${x.carried?`<div class="cm-week-carry">منها ${x.carried} مرحَّلة من الأسبوع الماضي</div>`:''}
+        </div>`;
+    }).join('');
+
+    const extras=[];
+    if(st.brokenDays)extras.push(`${st.brokenDays} ${st.brokenDays===1?'يوم مكسور':'أيام مكسورة'}`);
+    if(st.weekPenalty)extras.push(`${st.weekPenalty} بنقص الحصص الأسبوعية`);
+    if(st.adjust)extras.push(`${st.adjust>0?'+':''}${st.adjust} تعديل يدوي`);
 
     pane.innerHTML=`
     <div class="st-head">
         <div><div class="hero-label">تستعدّ لـ</div><h2 class="st-title">${commitmentDB.reward}</h2></div>
-        <button class="st-range-btn" onclick="openCommitSetup()"><i class="fa-solid fa-sliders"></i></button>
+        <button class="st-range-btn" onclick="openCommitManage()" aria-label="إدارة التعهّد"><i class="fa-solid fa-sliders"></i> إدارة</button>
     </div>
 
     <div class="st-card cm-hero">
         <div class="cm-hero-top">
             <div>
                 <div class="cm-day">اليوم ${st.dayNumber}<span class="cm-of"> من ${st.totalDays}</span></div>
-                <div class="st-card-sub">${st.remaining} يوماً متبقياً · حتى ${dateFromIso(st.endIso).getDate()} ${ST_MONTHS[dateFromIso(st.endIso).getMonth()]}</div>
+                <div class="st-card-sub">${st.completed?'أتممت المدة — بارك الله لك':`${daysLeftText(st.remaining)} · حتى ${fmtDayMonth(st.endIso)}`}</div>
             </div>
             <div class="cm-verdict ${verdictCls}">${verdictText}</div>
         </div>
@@ -8185,16 +9208,18 @@ function renderCommitment(){
         <div class="cm-stats">
             <span><b>${st.doneDays}</b> منجَز</span>
             <span><b>${st.brokenDays}</b> مكسور</span>
-            <span><b>${commitStreak()}</b> أطول سلسلة</span>
+            <span><b>${st.streak}</b> أطول سلسلة</span>
         </div>
-        ${st.brokenDays?`<div class="cm-penalty">أُضيفت ${st.brokenDays} ${st.brokenDays===1?'يوم':'أيام'} على مدتك بسبب الأيام المكسورة.</div>`:''}
+        ${extras.length?`<div class="cm-penalty">أُضيف على مدتك: ${extras.join(' · ')}</div>`:''}
     </div>
 
-    <div class="section-title"><i class="fa-solid fa-bolt"></i> رئيسيات اليوم <span class="sec-count">${counts.done}/${counts.total}</span></div>
+    <div class="section-title"><i class="fa-solid fa-bolt"></i> شروط اليوم <span class="sec-count">${doneN}/${totalN}</span></div>
     <div class="st-card">
-        ${todayCore.length?rows:'<div class="st-empty">لا مهام رئيسية اليوم.<br>وزّعها من صفحة التخطيط أو علّمها بنجمة في المكتبة.</div>'}
-        ${numRows}
+        ${rows||'<div class="st-empty">لا التزامات يومية.<br>علّم من المكتبة ما تريده «رئيسية — كل يوم».</div>'}
     </div>
+
+    ${wItems.length?`<div class="section-title"><i class="fa-solid fa-calendar-week"></i> حصص الأسبوع <span class="sec-count">${daysLeftText(cur.daysLeft)}</span></div>
+    <div class="st-card">${weekRows}<div class="cm-week-policy"><i class="fa-solid fa-circle-info"></i> إن نقصت: ${policy.label}</div></div>`:''}
 
     <div class="section-title"><i class="fa-solid fa-wave-square"></i> منحنى التعهّد</div>
     <div class="st-card st-chart-card">
@@ -8212,17 +9237,13 @@ function renderCommitment(){
     <div class="st-card">${renderCommitCalendar(st)}</div>
 
     <div class="section-title"><i class="fa-solid fa-chart-line"></i> تقدّم الأهداف</div>
-    <div class="st-card">${renderCoreProgress()}</div>
-
-    <div style="text-align:center;margin:18px 0 6px;">
-        <button class="fs-side clickable" style="display:inline-flex;" onclick="endCommitment()">إنهاء التعهّد</button>
-    </div>`;
+    <div class="st-card">${renderCoreProgress(st)}</div>`;
 }
 
 // أشرطة تقدّم لكل هدف رئيسي طويل الأمد، مقروءة من المكتبة نفسها
-function renderCoreProgress(){
+function renderCoreProgress(st){
     const items=getCoreItems();
-    if(!items.length)return '<div class="st-empty">علّم مهامك الرئيسية بنجمة من المكتبة لتظهر هنا.</div>';
+    if(!items.length)return '<div class="st-empty">علّم مهامك الرئيسية من المكتبة لتظهر هنا.</div>';
     return items.map(p=>{
         const f=findLibraryItem(p.id);if(!f)return '';
         const it=f.item;
@@ -8232,13 +9253,16 @@ function renderCoreProgress(){
             const cur=last?last.value:(p.startValue||0);
             const span=((p.target||0)-(p.startValue||0))||1;
             pct=Math.max(0,Math.min(100,Math.round(((cur-(p.startValue||0))/span)*100)));
-            label=`${cur} من ${p.target} ${p.unit}`;
-        }else if(f.type==='worship'&&it.type==='simple'){
-            // امتناع يومي: نقيس الاستمرارية داخل التعهّد
-            const st=commitmentStats();
-            pct=st?st.percent:0;label=`${st?st.doneDays:0} يوم التزام`;
+            label=`${cur} من ${p.target} ${p.unit||''}`;
+        }else if((f.type==='worship'&&it.type==='simple')||f.type==='behavior'||(f.type==='sports'&&p.kind!=='number')){
+            // التزام بلا وحدات: نقيس الاستمرارية داخل التعهّد
+            let ok=0,tot=0;
+            if(st){for(let i=0;i<st.elapsed;i++){const d=dayVerdictDetail(addDaysIso(st.start,i));
+                const r=d&&d.items&&d.items.find(x=>x.id===p.id);if(r){tot++;if(r.ok)ok++;}}}
+            pct=tot?Math.round((ok/tot)*100):0;
+            label=tot?`${ok} من ${tot} يوماً`:'يبدأ العدّ من الغد';
         }else{
-            const units=it.lectures||it.lessons||it.episodes||it.pages||[];
+            const units=allUnitsOf(it)||[];
             const done=units.filter(u=>u.completed||(u.masteryPercent||0)>=100).length;
             pct=units.length?Math.round((done/units.length)*100):0;
             label=units.length?`${done} من ${units.length}`:'لا وحدات';
@@ -8253,6 +9277,13 @@ function renderCoreProgress(){
     }).join('');
 }
 
+// نسبة شروط اليوم المتحققة (لمنحنى التعهّد)
+function dayRequirementRate(iso){
+    const d=dayVerdictDetail(iso);
+    if(!d||!d.items||!d.items.length)return d?1:null;
+    return d.items.filter(x=>x.ok).length/d.items.length;
+}
+
 // منحنى التعهّد: نسبة إنجاز الرئيسيات يوماً بيوم.
 // النافذة لا تقل عن ١٤ يوماً حتى لا يظهر المنحنى نقطة واحدة في البداية،
 // والأيام القادمة تُرسم باهتة ليظهر الطريق المتبقّي.
@@ -8264,10 +9295,9 @@ function renderCommitCurve(st){
         const d=dateFromIso(st.start);d.setDate(d.getDate()+i);
         const iso=isoDay(d);
         const isPast=daysBetween(iso,st.today)>=0;
-        const c=isPast?coreCountsFor(iso):{total:0,done:0};
         days.push({date:d,iso,isPast,
-            rate:(isPast&&c.total)?c.done/c.total:(isPast?null:undefined),
-            counts:c,isToday:iso===st.today});
+            rate:isPast?dayRequirementRate(iso):undefined,
+            isToday:iso===st.today});
     }
     const n=days.length;
     const STEP=n<=10?42:n<=20?34:28;
@@ -8276,8 +9306,10 @@ function renderCommitCurve(st){
     const yOf=r=>padT+innerH-(r*innerH);
     const xOf=i=>padX+innerW-(n===1?innerW/2:(innerW*i)/(n-1));   // الأقدم يميناً
 
-    // نرسم الخط على الأيام الماضية فقط
-    const past=days.map((b,i)=>({...b,x:xOf(i),y:yOf(b.rate===null?0:(b.rate||0))})).filter(b=>b.isPast);
+    // نرسم الخط على الأيام المنقضية فقط؛ اليوم الجاري نقطة مفرغة لأن حكمه لم يُحسم
+    const allPts=days.map((b,i)=>({...b,x:xOf(i),y:yOf(b.rate===null?0:(b.rate||0))}));
+    const todayPt=allPts.find(b=>b.isToday);
+    const past=allPts.filter(b=>b.isPast&&!b.isToday);
     let path='';
     past.forEach((pt,i)=>{
         if(i===0){path+=`M ${pt.x} ${pt.y}`;return;}
@@ -8305,9 +9337,11 @@ function renderCommitCurve(st){
         if(pt.rate===null||pt.rate===undefined)
             return hit+`<circle cx="${pt.x}" cy="${yOf(0)}" r="2.5" fill="#454553" pointer-events="none"/>`;
         const full=pt.rate>=1;
-        return hit+`<circle cx="${pt.x}" cy="${pt.y}" r="${pt.isToday?4.5:3.2}" fill="${full?'var(--status-done)':'var(--status-delay)'}" pointer-events="none"/>`
-            +(pt.isToday?`<circle cx="${pt.x}" cy="${pt.y}" r="9" fill="none" stroke="var(--accent-color)" stroke-opacity="0.4" pointer-events="none"/>`:'');
-    }).join('');
+        return hit+`<circle cx="${pt.x}" cy="${pt.y}" r="3.2" fill="${full?'var(--status-done)':'var(--status-delay)'}" pointer-events="none"/>`;
+    }).join('')+(todayPt?
+        `<circle cx="${todayPt.x}" cy="${todayPt.y}" r="16" fill="transparent" style="cursor:pointer;" onclick="openDayDetail('${todayPt.iso}')"/>`
+        +`<circle cx="${todayPt.x}" cy="${todayPt.y}" r="4.5" fill="var(--surface-1)" stroke="var(--accent-color)" stroke-width="2" pointer-events="none"/>`
+        +`<circle cx="${todayPt.x}" cy="${todayPt.y}" r="9" fill="none" stroke="var(--accent-color)" stroke-opacity="0.35" pointer-events="none"/>`:'');
 
     const every=n>18?Math.ceil(n/9):n>10?2:1;
     const labels=days.map((b,i)=>{
@@ -8335,31 +9369,29 @@ function renderCommitCurve(st){
     </svg>`;
 }
 
-// تقويم شهري بمربعات كبيرة: أخضر منجَز، أحمر باهت مكسور، رمادي قادم
+// تقويم شهري بمربعات كبيرة: أخضر منجَز، أحمر باهت مكسور، رمادي قادم.
+// نهاية الأسبوع الذي نقصت حصّته تحمل علامة بعدد الأيام المضافة.
 function renderCommitCalendar(st){
-    const start=dateFromIso(st.start);
     const total=st.totalDays;
-    const days=[];
-    for(let i=0;i<total;i++){
-        const d=new Date(start);d.setDate(start.getDate()+i);
-        days.push(d);
-    }
-    // نجمّع حسب الشهر
+    const penalties={};
+    (st.chain&&st.chain.closed||[]).forEach(c=>{if(c.rec.penalty)penalties[c.rec.endIso]=c.rec.penalty;});
     const months={};
-    days.forEach(d=>{
+    for(let i=0;i<total;i++){
+        const iso=addDaysIso(st.start,i);
+        const d=dateFromIso(iso);
         const k=`${d.getFullYear()}-${d.getMonth()}`;
-        if(!months[k])months[k]={label:`${ST_MONTHS[d.getMonth()]} ${d.getFullYear()}`,first:d.getDay(),cells:[]};
-        months[k].cells.push(d);
-    });
+        if(!months[k])months[k]={label:`${ST_MONTHS[d.getMonth()]} ${d.getFullYear()}`,cells:[]};
+        months[k].cells.push({d,iso});
+    }
     const todayIso=st.today;
     return Object.values(months).map(m=>{
-        const pad=Array.from({length:(m.cells[0].getDay()+2)%7},()=>'<div class="cm-cell empty"></div>').join('');
-        const cells=m.cells.map(d=>{
-            const iso=isoDay(d);
+        const pad=Array.from({length:(m.cells[0].d.getDay()+2)%7},()=>'<div class="cm-cell empty"></div>').join('');
+        const cells=m.cells.map(({d,iso})=>{
             const v=dayVerdict(iso);
-            const cls=v==='done'?'done':v==='broken'?'broken':v==='rest'?'rest':v==='pending'?'today':'future';
+            const cls=v==='done'?'done':v==='broken'?'broken':v==='pending'?'today':'future';
             const isToday=iso===todayIso?' is-today':'';
-            return `<div class="cm-cell ${cls}${isToday} clickable" onclick="openDayDetail('${iso}')">${d.getDate()}</div>`;
+            const pen=penalties[iso]?`<i class="cm-pen">+${penalties[iso]}</i>`:'';
+            return `<div class="cm-cell ${cls}${isToday}${pen?' has-pen':''} clickable" onclick="openDayDetail('${iso}')">${d.getDate()}${pen}</div>`;
         }).join('');
         return `<div class="cm-month">
             <div class="cm-month-label">${m.label}</div>
@@ -8370,7 +9402,7 @@ function renderCommitCalendar(st){
     <div class="cm-legend">
         <span><i class="cm-dot done"></i> منجَز</span>
         <span><i class="cm-dot broken"></i> مكسور</span>
-        <span><i class="cm-dot rest"></i> راحة</span>
+        ${Object.keys(penalties).length?'<span><i class="cm-dot pen"></i> نقص أسبوعي</span>':''}
         <span><i class="cm-dot future"></i> قادم</span>
     </div>`;
 }
@@ -8407,7 +9439,7 @@ function firstRecordedDate(){
 
 // يبني قائمة النقاط (أيام أو شهور) حسب النطاق المختار
 function buildStatsBuckets(){
-    const now=new Date();now.setHours(12,0,0,0);
+    const now=dateFromIso(commitDayKey());   // اليوم المنطقي لا التقويمي
     const buckets=[];
     const pushDay=d=>buckets.push({
         label:ST_DAY_NAMES[d.getDay()],
@@ -8608,6 +9640,7 @@ function ddAdjust(cat,field,delta){
     if(field==='total'&&r.byCat[cat].done>r.byCat[cat].total)r.byCat[cat].done=r.byCat[cat].total;
     if(field==='done'&&r.byCat[cat].done>r.byCat[cat].total)r.byCat[cat].total=r.byCat[cat].done;
     recalcDayRecord(ddIso);
+    invalidateCommitDay(ddIso);
     renderDayDetail();
     if(typeof renderStats==='function'&&statsTab==='stats')renderStats();
     if(typeof renderCommitment==='function'&&statsTab==='commit')renderCommitment();
@@ -8620,13 +9653,15 @@ function ddAddCategory(cat){
 }
 function ddToggleTask(taskId){
     const t=storedDailyTasks.find(x=>x.id===taskId);if(!t)return;
-    t.status=(t.status==='done')?'wait':'done';
+    if(t.isPrayerAnchor)setPrayerState(t,t.status==='done'?null:'done');
+    else t.status=(t.status==='done')?'wait':'done';
     saveTasks();renderDayDetail();renderDailyTasks();
 }
 function ddDeleteRecord(){
     showCustomConfirm('حذف سجلّ هذا اليوم بالكامل؟',()=>{
         delete historyDB[ddIso];
         localStorage.setItem('historyDB',JSON.stringify(historyDB));
+        invalidateCommitDay(ddIso);
         renderDayDetail();
         if(typeof renderStats==='function')renderStats();
         showToast('حُذف سجلّ اليوم');
@@ -8715,11 +9750,47 @@ function renderDayDetail(){
         : (ddEdit?'أضف مهمة لتسجيل هذا اليوم':'لا سجلّ لهذا اليوم');
     document.getElementById('day-detail-ring').style.setProperty('--p',pct);
     document.getElementById('day-detail-pct').innerText=pct+'%';
-    document.getElementById('day-detail-rows').innerHTML=
-        rows||'<div class="st-empty">لا مهام في هذا اليوم.<br>اضغط «تعديل» لتسجيله.</div>';
+    // من صفحة التعهّد تأتي شروطه أولاً، ومن غيرها بعد المهام
+    const listHtml=rows||'<div class="st-empty">لا مهام في هذا اليوم.<br>اضغط «تعديل» لتسجيله.</div>';
+    const commitHtml=renderDayCommitBlock(iso,isToday);
+    const fromCommit=(statsTab==='commit')&&document.getElementById('screen-stats').classList.contains('active-screen');
+    document.getElementById('day-detail-rows').innerHTML=fromCommit?(commitHtml+listHtml):(listHtml+commitHtml);
     const note=document.getElementById('day-detail-note');
     if(note)note.innerText=ddReadOnly?'يوم مضى — لتصحيحه افتحه من صفحة الإنجاز'
                                      :(ddEdit?'اضغط أي مهمة لتعديلها':'');
+}
+
+// شروط التعهّد ليوم بعينه: ما كان مطلوباً وما تحقّق، مع إمكان تصحيح يوم مضى
+function renderDayCommitBlock(iso,isToday){
+    const d=dayVerdictDetail(iso);
+    if(!d)return '';
+    const editable=ddEdit&&!isToday&&!ddReadOnly;
+    const rows=(d.items||[]).map(x=>`<div class="dd-req${editable?' editable clickable':''}"${editable?` onclick="ddToggleRequirement('${x.id}')"`:''}>
+            <span class="dd-mark ${x.ok?'on':''}"><i class="fa-solid fa-${x.ok?'check':'xmark'}"></i></span>
+            <span class="dd-req-name">${x.name}</span>${x.detail?`<span class="dd-req-sub">${x.detail}</span>`:''}
+        </div>`).join('');
+    const wk=Object.values((commitmentDB&&commitmentDB.weeks)||{}).find(w=>w&&w.endIso===iso&&w.penalty>0);
+    const vText=d.v==='done'?'يوم مكتمل':(d.v==='pending'?'جارٍ':'يوم مكسور');
+    const vCls=d.v==='done'?'good':(d.v==='pending'?'soft':'bad');
+    return `<div class="dd-commit">
+        <div class="dd-commit-head">
+            <span class="dd-commit-title"><i class="fa-solid fa-route" style="color:var(--accent-color);font-size:11px;"></i> شروط التعهّد</span>
+            <span class="cm-verdict ${vCls}">${vText}</span>
+        </div>
+        ${rows||'<div class="dd-commit-note">لا شروط يومية في هذا اليوم.</div>'}
+        ${wk?`<div class="dd-commit-note" style="color:var(--status-work);">انتهى هنا أسبوعٌ نقصت حصّته: أُضيف ${wk.penalty} ${daysWord(wk.penalty)} على المدة.</div>`:''}
+        ${editable?'<div class="dd-commit-note">اضغط أي شرط لتصحيح حالته في هذا اليوم.</div>':''}
+    </div>`;
+}
+function ddToggleRequirement(id){
+    if(!ddIso||ddIso===commitDayKey())return;
+    const d=dayVerdictDetail(ddIso);if(!d)return;
+    const cur=(d.items||[]).find(x=>x.id===id);
+    const e=commitEntry(ddIso);
+    e.checks[id]=!(cur&&cur.ok);
+    saveCommitLog();
+    invalidateCommitDay(ddIso);
+    renderDayDetail();refreshStatsViews();
 }
 
 // ---- تعديل مهمة واحدة داخل يوم ----
@@ -8775,8 +9846,12 @@ function saveDayTaskEdit(){
     const doneSel=document.querySelectorAll('#dt-status .seg-opt')[1].classList.contains('active');
     if(isToday){
         const t=storedDailyTasks.find(x=>x.id===ddTaskId);if(!t)return;
-        if(name)t.title=name;
-        t.status=doneSel?'done':'wait';
+        if(t.isPrayerAnchor){
+            if((t.status==='done')!==doneSel)setPrayerState(t,doneSel?'done':null);
+        }else{
+            if(name)t.title=name;
+            t.status=doneSel?'done':'wait';
+        }
         saveTasks();renderDailyTasks();
     }else{
         const arr=dayTaskList(ddIso);
@@ -8784,12 +9859,19 @@ function saveDayTaskEdit(){
         if(name)t.title=name;
         t.status=doneSel?'done':'wait';
         if(ddTaskMastery!==null)t.mastery=ddTaskMastery;
+        // حالة المهمة الآن هي المرجع لهذا العنصر في ذلك اليوم، لا تأشيرٌ قديم
+        if(t.libParentId&&commitLogDB[ddIso]&&commitLogDB[ddIso].checks)delete commitLogDB[ddIso].checks[t.libParentId];
         recalcDayFromTasks(ddIso);
+        invalidateCommitDay(ddIso);
     }
     closeDayTaskEdit();renderDayDetail();refreshStatsViews();
 }
 function deleteDayTask(){
     const isToday=(ddIso===commitDayKey());
+    if(isToday){
+        const live=storedDailyTasks.find(x=>x.id===ddTaskId);
+        if(live&&live.isPrayerAnchor){showToast('لا يمكن حذف مهمة الصلاة');return;}
+    }
     showCustomConfirm('حذف هذه المهمة من هذا اليوم؟',()=>{
         if(isToday){
             storedDailyTasks=storedDailyTasks.filter(x=>x.id!==ddTaskId);
@@ -8798,6 +9880,7 @@ function deleteDayTask(){
             const r=ensureDayRecord(ddIso);
             r.tasks=(r.tasks||[]).filter(x=>x.id!==ddTaskId);
             recalcDayFromTasks(ddIso);
+            invalidateCommitDay(ddIso);
         }
         closeDayTaskEdit();renderDayDetail();refreshStatsViews();
     },{acceptLabel:'<i class="fa-solid fa-trash"></i> حذف',acceptColor:'var(--status-delay)'});
@@ -8812,6 +9895,7 @@ function addDayTask(){
     const id='hist-'+Date.now()+Math.floor(Math.random()*1000);
     r.tasks.push({id,title:'مهمة جديدة',category:'noCategory',status:'done',isCore:false,focusSeconds:0,mastery:null});
     recalcDayFromTasks(ddIso);
+    invalidateCommitDay(ddIso);
     renderDayDetail();
     openDayTaskEdit(id);
 }
@@ -8821,7 +9905,7 @@ function refreshStatsViews(){
 }
 
 function renderStatsDays(buckets){
-    const todayIso=isoDay();
+    const todayIso=commitDayKey();
     const wide=buckets.length>8;
     return `<div class="st-days" style="${wide?`min-width:${buckets.length*52}px;`:''}">${buckets.map(b=>{
         const has=bucketHasData(b);
@@ -8864,7 +9948,7 @@ function renderStatsChart(buckets){
     });
     const area=`${d} L ${pts[n-1].x} ${padT+innerH} L ${pts[0].x} ${padT+innerH} Z`;
     const every=n>20?Math.ceil(n/12):1;
-    const todayIso=isoDay();
+    const todayIso=commitDayKey();
     const isDaily=(statsRange!=='year');
     // تحت كل نقطة: اسم اليوم، ثم تاريخه، ثم علامة صح إن كان اليوم منجَزاً
     const labels=pts.map((p,i)=>{
@@ -8918,6 +10002,8 @@ function switchScreen(s){
         // فتح الأسبوع الحالي تلقائياً بدل الشهر
         switchHierarchicalViewContext(currentWeekKey);
     }
+    // ما صار «رئيسياً يومياً» من المكتبة يظهر في مهام اليوم فور العودة إليها
+    if(s==='tasks'||s==='stats')ensureDailyCoreTasks();
     if(s==='tasks'){renderDailyTasks();}
     if(s==='routine'){renderCurrentDaySlots();highlightCurrentDayInGrid();}
     if(s==='library'){renderLibrary();}
@@ -9152,9 +10238,22 @@ function saveGoalEdit(){
 // اليومية تنزل على كل يوم، والأسبوعية تتوزّع متباعدة لا متلاصقة
 // ================================================================
 const WEEK_ORDER=['fri','sat','sun','mon','tue','wed','thu'];
-function spreadDays(times,fromIndex){
-    // نوزّع n مرات على الأيام المتبقية بأكبر تباعد ممكن
-    const pool=WEEK_ORDER.slice(fromIndex||0);
+// أيام أسبوع تخطيطٍ بترتيبها الزمني الحقيقي، ومن اليوم فصاعداً إن كان الأسبوع الجاري.
+// (أسبوع 1 في شهر يبدأ بالخميس يبدأ بالخميس، لا بالجمعة)
+function remainingDayKeysOfWeek(weekKey){
+    const n=Math.min(4,Math.max(1,parseInt(String(weekKey).replace('w',''))||1));
+    const ref=todayDateObj;
+    const W=planWeekOf(new Date(ref.getFullYear(),ref.getMonth(),(n-1)*7+1,12));
+    const out=[];
+    for(let iso=W.startIso;iso<=W.endIso;iso=addDaysIso(iso,1)){
+        if(iso<logicalTodayIso)continue;
+        const dk=dayKeysMap[dateFromIso(iso).getDay()];
+        if(!out.includes(dk))out.push(dk);
+    }
+    return out;
+}
+function spreadDays(times,pool){
+    // نوزّع n مرات على الأيام المتاحة بأكبر تباعد ممكن
     if(times>=pool.length)return pool;
     const picks=[];
     for(let i=0;i<times;i++)picks.push(pool[Math.round(i*pool.length/times)]);
@@ -9210,11 +10309,11 @@ function distributeCoreTasks(){
 
     // الأيام التي مضت لا تُوزَّع عليها مهام جديدة
     // في الأسبوع الجاري نبدأ من اليوم؛ وفي أسبوع قادم من أوّله
-    const todayIdx=WEEK_ORDER.indexOf(currentActualDayKey);
     const weekNum=parseInt(String(activePlanWeekContext).replace('w',''))||1;
     const curNum=parseInt(String(currentWeekKey).replace('w',''))||1;
     if(weekNum<curNum){showToast('هذا أسبوع مضى — اختر الأسبوع الحالي أو ما بعده');return;}
-    const startIdx=(weekNum===curNum&&todayIdx>=0)?todayIdx:0;
+    const weekDays=remainingDayKeysOfWeek(activePlanWeekContext);
+    if(!weekDays.length){showToast('لم يبقَ من هذا الأسبوع أيام');return;}
 
     // كل وحدة محجوزة في أي أسبوع أو أي مهمة غير منجزة — يضمن أن الأسبوع
     // الجديد يكمل من حيث انتهى السابق بدل أن يعيد الحلقة الأولى
@@ -9229,18 +10328,23 @@ function distributeCoreTasks(){
     items.forEach(p=>{
         const f=findLibraryItem(p.id);if(!f)return;
         const it=f.item;
-        const r=p.recurrence||{type:'daily'};
+        const r=p.rec;   // إيقاع مُطبَّع: الحصّة بلا وحدات صارت عدد مرات أسبوعي
         const allUnits=allUnitsOf(it);
         const pending=pendingUnitsOf(it);
-
-        // العبادة البسيطة (أذكار/تسبيح) ليست وحدات: تُعامل كالتزام يومي
-        if(f.type==='worship'&&it.type==='simple'&&r.type==='quota'){
-            r.type='weekly';r.times=Math.min(7,r.perWeek||7);
-        }
         // ---------- (أ) عناصر بوحدات: حصّة أسبوعية تنزل في صندوق الأهداف ----------
         // لا نوزّعها على الأيام لأن إيقاعها غير منتظم — أنت تسحبها لليوم الذي يناسبك
         if(r.type==='quota'&&pending&&allUnits){
-            const quota=r.perWeek||3;
+            // في الأسبوع الجاري نوزّع الحصّة الفعلية (مع ما رُحّل من نقص) ناقصاً ما أُنجز وما في الصندوق
+            let quota=r.perWeek||3;
+            if(weekNum===curNum){
+                const req=currentWeekRequirement(p.id);
+                if(req){
+                    const inPool=hierarchicalGoalsDatabase.filter(g=>g.targetContext===activePlanWeekContext&&g.coreSourceId===p.id).length
+                        +storedDailyTasks.filter(t=>t.coreSourceId===p.id&&t.linkedUnitId&&t.status!=='done'&&t.targetWeek===activePlanWeekContext).length;
+                    quota=Math.max(0,req.required-req.got-inPool);
+                    if(!quota){skipped++;return;}
+                }
+            }
             for(let i=0;i<quota;i++){
                 const u=pending.find(x=>!reserved.has(x.id));
                 if(!u){exhausted.push(it.name);break;}
@@ -9264,30 +10368,17 @@ function distributeCoreTasks(){
         }
 
         // ---------- (ب) عناصر يومية/سلوكية: تنزل على الأيام وداخل فتراتها مباشرة ----------
-        const days=(r.type==='weekly')?spreadDays(r.times||3,startIdx):WEEK_ORDER.slice(startIdx);
-        const st=stationForCore(f.type,0,it);
+        const days=(r.type==='weekly')?spreadDays(r.times||3,weekDays):weekDays;
         days.forEach(dk=>{
             // الفحص مقيّد بالأسبوع المعروض، وإلا منع أسبوعٌ سابقٌ التوزيعَ على أسبوع جديد
             const already=storedDailyTasks.some(t=>
-                t.targetDay===dk&&t.targetWeek===activePlanWeekContext&&
-                t.coreSourceId===p.id&&t.status!=='done');
+                t.targetDay===dk&&(t.targetWeek===activePlanWeekContext||(!t.targetWeek&&dk===currentActualDayKey))&&
+                (t.coreSourceId===p.id||taskLibraryId(t)===p.id)&&t.status!=='parking');
             if(already){skipped++;return;}
-            const tid='task-core-'+p.id+'-'+dk+'-'+Date.now()+'-'+Math.floor(Math.random()*10000);
-            storedDailyTasks.push({
-                id:tid,
-                title:p.name,category:coreTaskCategoryFor(f.type),status:'wait',notes:'',
-                totalSecondsSpent:0,station:st,
-                targetWeek:activePlanWeekContext,targetDay:dk,
-                isCoreTask:true,coreSourceId:p.id,
-                linkedUnitId:null,unitKind:(f.type==='behavior')?'behavior':(f.type==='sports'?'sports':null),
-                progressCounted:false,expectedSeconds:0,simpleDone:true,
-                subjectColor:(it.color&&String(it.color).startsWith('#'))?it.color:null,
-                worshipId:f.type==='worship'?p.id:null,
-                sportId:f.type==='sports'?p.id:null,
-                behaviorId:f.type==='behavior'?p.id:null
-            });
+            const t=buildCoreDayTask(p,f,dk,activePlanWeekContext);
+            storedDailyTasks.push(t);
             // نضعها في فترتها فوراً: هذه إيقاعها ثابت ولا تحتاج توزيعاً يدوياً
-            assignTaskToPeriod(dk,st,tid);
+            assignTaskToPeriod(dk,t.station,t.id);
             toDays++;
         });
     });
@@ -9318,7 +10409,7 @@ function dayKeyOfDate(d){return WEEK_ORDER[(d.getDay()+2)%7];}   // الجمعة
 function plannedForDate(d){
     const iso=isoDay(d);
     const wk=weekKeyOfDate(d), dk=dayKeyOfDate(d);
-    const sameMonth=(d.getMonth()===new Date().getMonth()&&d.getFullYear()===new Date().getFullYear());
+    const sameMonth=(d.getMonth()===todayDateObj.getMonth()&&d.getFullYear()===todayDateObj.getFullYear());
     const out=[];
     if(sameMonth){
         storedDailyTasks.filter(t=>t.targetDay===dk&&t.targetWeek===wk&&t.status!=='parking')
@@ -9333,7 +10424,7 @@ function closePlanCalendar(){document.getElementById('plan-cal-modal').style.dis
 function stepPlanMonth(d){planCalMonthOffset+=d;renderPlanCalendar();}
 
 function renderPlanCalendar(){
-    const now=new Date();
+    const now=todayDateObj;
     const ref=new Date(now.getFullYear(),now.getMonth()+planCalMonthOffset,1);
     const y=ref.getFullYear(),mo=ref.getMonth();
     const days=new Date(y,mo+1,0).getDate();
@@ -9372,7 +10463,7 @@ function renderPlanCalendar(){
 // تفاصيل يوم في التقويم: ماضٍ = حصيلة، قادم = مخطّط + إضافة
 function openPlanDay(iso){
     const d=dateFromIso(iso);
-    const todayIso=isoDay(new Date());
+    const todayIso=logicalTodayIso;
     const past=daysBetween(iso,todayIso)>0;
     // التخطيط للأمام فقط: يوم مضى يُعرض للقراءة، وتصحيحه من صفحة الإنجاز
     if(past){openDayDetail(iso,false,true);return;}
@@ -9420,7 +10511,7 @@ function pickPlanDayCat(c,el){
 }
 // عند بداية كل يوم: التذكيرات المستحقّة تنزل مهامَّ فعلية
 function injectScheduledForToday(){
-    const iso=isoDay();
+    const iso=commitDayKey();
     let added=0;
     scheduledTasksDB.filter(x=>x.date===iso&&!x.injected).forEach(x=>{
         storedDailyTasks.push({
@@ -9622,7 +10713,7 @@ function openResetStats(){
     const days=Object.keys(historyDB).length;
     const hasCommit=commitmentDB&&commitmentDB.active;
     showCustomConfirm(
-        `سيُحذف سجلّ ${days} ${days===1?'يوم':'يوم'} من صفحة الإنجاز.<br>
+        `سيُحذف سجلّ ${days===1?'يوم واحد':(days===2?'يومين':`${days} ${daysWord(days)}`)} من صفحة الإنجاز.<br>
          <span style="font-size:11px;color:var(--ink-3);">
          مهامك ومكتبتك وروتينك لا تتأثّر — يُمسح سجلّ النِّسب والمنحنيات فقط،
          ${hasCommit?'ويُعاد احتساب تعهّدك من اليوم.':'ويبدأ العدّ من جديد اليوم.'}</span>`,
@@ -9634,8 +10725,10 @@ function openResetStats(){
                 localStorage.setItem('commitLogDB','{}');
                 if(commitmentDB&&commitmentDB.active){
                     commitmentDB.startDate=commitDayKey();
+                    commitmentDB.adjustments=[];commitmentDB.weeks={};
                     saveCommitment();
                 }
+                if(document.getElementById('commit-manage-modal').style.display==='flex')closeCommitManage();
                 recordTodayStats();                    // نعيد بناء لقطة اليوم من مهامه الحالية
                 if(typeof renderStats==='function')renderStats();
                 if(typeof renderCommitment==='function'&&statsTab==='commit')renderCommitment();
@@ -9678,12 +10771,14 @@ let _driveToken=null,_driveTokenExp=0,_tokenClient=null,_gisReady=false;
         else localStorage.removeItem('driveTok');
     }catch(e){}
 })();
+// حالة "تحتاج تسجيل دخول" أُلغيت: الإذن يتجدّد بصمت مرة في اليوم
+if('needsSignIn' in driveCfg){delete driveCfg.needsSignIn;saveDriveCfg();}
 function cacheDriveToken(tok,expSec){
     _driveToken=tok;_driveTokenExp=Date.now()+((expSec||3600)*1000);
-    // نحفظه ليبقى صالحاً عبر فتحات التطبيق داخل مدّته، فلا يتكرّر السؤال
+    // نحفظه ليبقى صالحاً عبر فتحات التطبيق داخل مدّته
     try{localStorage.setItem('driveTok',JSON.stringify({t:tok,e:_driveTokenExp}));}catch(e){}
-    driveCfg.needsSignIn=false;saveDriveCfg();
 }
+function driveTokenValid(){return !!_driveToken&&Date.now()<_driveTokenExp-60000;}
 function clearDriveToken(){
     _driveToken=null;_driveTokenExp=0;
     try{localStorage.removeItem('driveTok');}catch(e){}
@@ -9703,33 +10798,55 @@ function loadGIS(){
         document.head.appendChild(sc);
     });
 }
-// يطلب رمز وصول؛ silent=true لا يُظهر نافذة إن سبق الإذن
-function getDriveToken(silent){
-    return new Promise((resolve,reject)=>{
-        if(_driveToken&&Date.now()<_driveTokenExp-60000)return resolve(_driveToken);
-        if(!driveReady())return reject(new Error('no-client-id'));
-        // لا نفتح نافذة جوجل من تلقاء أنفسنا: الطلب الصامت ينتهي هنا
-        if(silent)return reject(new Error('needs-signin'));
-        loadGIS().then(()=>{
-            _tokenClient=google.accounts.oauth2.initTokenClient({
-                client_id:driveClientId(),
-                scope:DRIVE_SCOPE,
-                callback:resp=>{
-                    if(resp&&resp.access_token){
-                        cacheDriveToken(resp.access_token,resp.expires_in);
-                        resolve(_driveToken);
-                    }else reject(new Error('denied'));
-                },
-                error_callback:()=>reject(new Error('denied'))
-            });
-            // prompt فارغ = محاولة صامتة بلا نافذة اختيار حساب،
-            // وhint يوجّه جوجل للحساب نفسه إن عرفناه من مرة سابقة
-            // تسجيل دخول صريح بطلب المستخدم: نمرّر بريده ليُختار مباشرة
-            const req={};
-            if(driveCfg.email)req.hint=driveCfg.email;
-            _tokenClient.requestAccessToken(req);
-        }).catch(reject);
+// ----------------------------------------------------------------
+// رمز الوصول
+// تطبيق يعمل في المتصفح وحده لا يحصل من جوجل إلا على رمز صالح ساعة واحدة.
+// لذلك: تسجيل الدخول مرة واحدة يمنح الإذن، ثم يتجدّد الرمز بصمت
+// (prompt:'none' — بلا اختيار حساب ولا سؤال) مرة في اليوم مع أول لمسة.
+// قد تومض نافذة جوجل لحظة وتُغلق وحدها؛ هذا حدّ المتصفح لا التطبيق.
+// ----------------------------------------------------------------
+let _tokenWaiters=[];
+function settleTokenWaiters(err){
+    const ws=_tokenWaiters;_tokenWaiters=[];
+    ws.forEach(w=>err?w.reject(err):w.resolve(_driveToken));
+}
+// يُحمَّل عميل جوجل مسبقاً حتى يُطلب الرمز داخل لمسة المستخدم مباشرة (وإلا حُجبت النافذة)
+function prepareDriveTokenClient(){
+    if(_tokenClient)return Promise.resolve();
+    if(!driveReady())return Promise.reject(new Error('no-client-id'));
+    return loadGIS().then(()=>{
+        if(_tokenClient)return;
+        _tokenClient=google.accounts.oauth2.initTokenClient({
+            client_id:driveClientId(),
+            scope:DRIVE_SCOPE,
+            callback:resp=>{
+                if(resp&&resp.access_token){cacheDriveToken(resp.access_token,resp.expires_in);settleTokenWaiters(null);}
+                else settleTokenWaiters(new Error((resp&&resp.error)||'denied'));
+            },
+            error_callback:err=>settleTokenWaiters(new Error((err&&err.type)||'denied'))
+        });
     });
+}
+// prompt: '' أول مرة (اختيار الحساب والموافقة) — 'none' للتجديد الصامت
+function requestDriveToken(prompt){
+    return new Promise((resolve,reject)=>{
+        if(!_tokenClient)return reject(new Error('gis-not-ready'));
+        _tokenWaiters.push({resolve,reject});
+        const req={prompt:prompt};
+        if(driveCfg.email){req.login_hint=driveCfg.email;req.hint=driveCfg.email;}
+        try{_tokenClient.requestAccessToken(req);}
+        catch(e){settleTokenWaiters(e);}
+    });
+}
+// silent=true: لا نافذة أبداً — إمّا رمز صالح محفوظ أو رفض
+function getDriveToken(silent){
+    if(driveTokenValid())return Promise.resolve(_driveToken);
+    if(!driveReady())return Promise.reject(new Error('no-client-id'));
+    if(silent)return Promise.reject(new Error('needs-signin'));
+    // بطلب صريح من المستخدم (ارفع الآن / استعد): prompt '' لا يسأل إن كان الإذن ممنوحاً،
+    // ويعرض تسجيل الدخول فقط إن انتهت جلسة جوجل نفسها. محاولة واحدة لأن المتصفح
+    // يسمح بفتح نافذة واحدة لكل ضغطة.
+    return prepareDriveTokenClient().then(()=>requestDriveToken(''));
 }
 function driveFetch(url,opts){
     opts=opts||{};opts.headers=opts.headers||{};
@@ -9779,7 +10896,8 @@ function driveConnect(){
     if(!driveReady()){showToast('المزامنة غير مهيّأة في هذه النسخة');return;}
     if(!navigator.onLine){showToast('تحتاج اتصالاً بالإنترنت لتسجيل الدخول');return;}
     showToast('جارٍ فتح تسجيل الدخول...');
-    getDriveToken(false)
+    prepareDriveTokenClient()
+        .then(()=>requestDriveToken(''))
         .then(()=>rememberDriveAccount())
         .then(()=>{
             driveCfg.connected=true;driveCfg.declined=false;saveDriveCfg();
@@ -9811,7 +10929,9 @@ function driveDisconnect(){
 // عرض واحد عند أول تشغيل، ولا يتكرّر إن رفضه المستخدم
 function maybeOfferDriveOnFirstRun(){
     if(!driveReady()||driveCfg.connected||driveCfg.declined)return;
-    setTimeout(()=>{
+    setTimeout(function offer(){
+        // لا نقاطع نافذة مفتوحة (ولا نسرق نافذة التأكيد المشتركة): نعيد المحاولة بعد قليل
+        if(dayCloseWouldInterrupt()){setTimeout(offer,5000);return;}
         showCustomConfirm(
             'هل تريد حفظ بياناتك في حسابك على جوجل؟<br><span style="font-size:11px;color:var(--ink-3);">تُحفظ نسخة في درايفك تلقائياً، فلا تضيع مهامك وإنجازاتك إن مسحت المتصفح أو غيّرت جهازك. يمكنك تفعيلها لاحقاً من صفحة الروتين.</span>',
             ()=>driveConnect(),
@@ -9842,21 +10962,13 @@ function driveSyncNow(silent){
         })
         .catch(err=>{
             const m=String(err.message||'');
-            if(m==='needs-signin'||m==='expired'){
-                // انتهت صلاحية الإذن: ننتظر ضغطة المستخدم ولا نقاطعه بنافذة
-                driveCfg.needsSignIn=true;saveDriveCfg();updateDriveState();
-                if(silent&&!_signinToastShown){
-                    _signinToastShown=true;
-                    setTimeout(()=>showToast('المزامنة تحتاج تسجيل دخول — من صفحة الروتين'),2000);
-                }else if(!silent)showToast('سجّل الدخول لإكمال المزامنة');
-                return;
-            }
-            if(!silent){
-                if(m==='no-client-id')showToast('المزامنة غير مهيّأة في هذه النسخة');
-                else if(m==='denied')showToast('أُلغي تسجيل الدخول');
-                else if(m==='offline')showToast('تعذّر الاتصال بجوجل');
-                else showToast('تعذّرت المزامنة — حاول لاحقاً');
-            }
+            // الصامت لا يزعجك أبداً: النسخة اليومية القادمة تعيد المحاولة
+            if(silent)return;
+            if(m==='needs-signin'||m==='expired')showToast('تعذّر تجديد الإذن — حاول مرة أخرى');
+            else if(m==='no-client-id')showToast('المزامنة غير مهيّأة في هذه النسخة');
+            else if(m==='denied'||m==='access_denied')showToast('أُلغي تسجيل الدخول');
+            else if(m==='offline')showToast('تعذّر الاتصال بجوجل');
+            else showToast('تعذّرت المزامنة — حاول لاحقاً');
         });
 }
 function driveRestore(){
@@ -9887,36 +10999,85 @@ function driveRestore(){
         .catch(()=>showToast('تعذّر الجلب من درايف'));
 }
 // مزامنة صامتة مؤجّلة بعد أي تغيير، حتى لا نرفع مع كل ضغطة
-let _driveDebounce=null,_signinToastShown=false;
+let _driveDebounce=null;
 function scheduleDriveSync(){
     if(!driveCfg.auto||!driveReady()||!driveCfg.connected)return;
     driveCfg.lastLocalChange=new Date().toISOString();
     saveDriveCfg();
-    // لا جدوى من محاولة الرفع بلا رمز صالح: ننتظر تسجيل الدخول
-    if(!_driveToken||Date.now()>=_driveTokenExp-60000)return;
+    // بلا رمز صالح لا نحاول الآن: النسخة اليومية تتكفّل بها مع أول لمسة
+    if(!driveTokenValid())return;
     clearTimeout(_driveDebounce);
     _driveDebounce=setTimeout(()=>driveSyncNow(true),90000);
+}
+// ---- النسخة اليومية التلقائية ----
+// مرة في اليوم، مع أول لمسة في التطبيق: نجدّد الإذن بصمت ونرفع إن تغيّر شيء
+const DRIVE_DAILY_GAP_MS=20*3600*1000;
+let _dailyArmed=false;
+function driveDailyDue(){
+    if(!driveCfg.connected||!driveCfg.auto||!driveReady()||!navigator.onLine)return false;
+    const last=driveCfg.lastSync?new Date(driveCfg.lastSync).getTime():0;
+    const changed=!driveCfg.lastSync||(driveCfg.lastLocalChange&&new Date(driveCfg.lastLocalChange).getTime()>last);
+    return changed&&(Date.now()-last>=DRIVE_DAILY_GAP_MS);
+}
+function runDailyDriveBackup(){
+    if(!driveDailyDue())return;
+    const upload=()=>uploadToDrive().then(()=>{
+        driveCfg.lastSync=new Date().toISOString();driveCfg.lastFail=null;saveDriveCfg();updateDriveState();
+    });
+    const fail=()=>{driveCfg.lastFail=new Date().toISOString();saveDriveCfg();updateDriveState();};
+    if(driveTokenValid()){upload().catch(fail);return;}
+    if(!_tokenClient){fail();return;}           // عميل جوجل لم يُحمَّل (بلا إنترنت مثلاً)
+    requestDriveToken('none').then(upload).catch(fail);
+}
+function armDailyDriveBackup(){
+    if(_dailyArmed||!driveCfg.connected||!driveReady())return;
+    if(navigator.onLine)prepareDriveTokenClient().catch(()=>{});
+    _dailyArmed=true;
+    const onFirstTap=()=>{
+        document.removeEventListener('click',onFirstTap,true);
+        _dailyArmed=false;
+        runDailyDriveBackup();
+    };
+    // click لا pointerdown: المتصفح لا يسمح بفتح نافذة جوجل إلا من نقرة مكتملة
+    document.addEventListener('click',onFirstTap,true);
+}
+// يقلّل احتمال أن يمسح النظام بيانات التطبيق تلقائياً عند امتلاء الجهاز
+function requestPersistentStorage(){
+    try{
+        if(navigator.storage&&navigator.storage.persisted&&navigator.storage.persist){
+            navigator.storage.persisted().then(p=>{if(!p)navigator.storage.persist().catch(()=>{});}).catch(()=>{});
+        }
+    }catch(e){}
+}
+// "1 أكتوبر · 10:00 ص" بأرقام التطبيق نفسها
+function fmtStamp(isoStr){
+    const d=new Date(isoStr);if(isNaN(d.getTime()))return '';
+    return `${fmtDayMonth(isoDay(d))} · ${formatTime12(`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`)}`;
+}
+function driveSyncAgeText(){
+    if(!driveCfg.lastSync)return{text:'متصل',cls:'ok'};
+    const d=new Date(driveCfg.lastSync);
+    const days=daysBetween(isoDay(d),isoDay(new Date()));
+    const hm=formatTime12(`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`);
+    if(days<=0)return{text:`نسخة اليوم ${hm}`,cls:'ok'};
+    if(days===1)return{text:'نسخة أمس',cls:'ok'};
+    const ago=days===2?'قبل يومين':(days<=10?`قبل ${days} أيام`:`قبل ${days} يوماً`);
+    return{text:`آخر نسخة ${ago}`,cls:days>=3?'warn':'ok'};
 }
 function updateDriveState(){
     const el=document.getElementById('drive-state');
     if(el){
-        el.innerHTML=driveCfg.connected
-            ?(driveCfg.needsSignIn
-                ?'<span style="font-size:11px;color:var(--status-work);">تحتاج تسجيل دخول</span>'
-                :(driveCfg.lastSync
-                    ?`<span style="font-size:11px;color:var(--status-done);">محفوظة ${new Date(driveCfg.lastSync).toLocaleDateString('ar-EG')}</span>`
-                    :'<span style="font-size:11px;color:var(--status-done);">متصل</span>'))
-            :`<span style="font-size:11px;color:var(--ink-3);">${driveReady()?'غير متصل':'غير متاحة'}</span>`;
+        if(driveCfg.connected){
+            const a=driveSyncAgeText();
+            el.innerHTML=`<span style="font-size:11px;color:${a.cls==='warn'?'var(--status-work)':'var(--status-done)'};">${a.text}</span>`;
+        }else el.innerHTML=`<span style="font-size:11px;color:var(--ink-3);">${driveReady()?'غير متصل':'غير متاحة'}</span>`;
     }
     const cbtn=document.getElementById('drive-connect-btn');
     if(cbtn){
-        const needs=driveCfg.connected&&driveCfg.needsSignIn;
-        cbtn.innerHTML=needs
-            ? '<span>جدّد تسجيل الدخول لإكمال المزامنة</span><i class="fa-solid fa-rotate"></i>'
-            : (driveCfg.connected
-                ? '<span>إيقاف المزامنة</span><i class="fa-solid fa-link-slash"></i>'
-                : '<span>سجّل الدخول بحساب جوجل</span><i class="fa-brands fa-google"></i>');
-        cbtn.setAttribute('onclick',(driveCfg.connected&&!needs)?'driveDisconnect()':'driveConnect()');
+        cbtn.innerHTML=driveCfg.connected
+            ? '<span>إيقاف المزامنة</span><i class="fa-solid fa-link-slash"></i>'
+            : '<span>سجّل الدخول بحساب جوجل</span><i class="fa-brands fa-google"></i>';
+        cbtn.setAttribute('onclick',driveCfg.connected?'driveDisconnect()':'driveConnect()');
         cbtn.style.display=driveReady()?'flex':'none';
     }
     const actions=document.getElementById('drive-actions');
@@ -9925,9 +11086,10 @@ function updateDriveState(){
     if(unavail)unavail.style.display=driveReady()?'none':'block';
     const st=document.getElementById('drive-sync-status');
     if(st){
-        st.innerHTML=driveCfg.lastSync
-            ?`آخر رفع: <b>${new Date(driveCfg.lastSync).toLocaleString('ar-EG')}</b>`
-            :'لم تُرفع أي نسخة بعد.';
+        const acc=driveCfg.email?`<span dir="ltr">${driveCfg.email}</span><br>`:'';
+        st.innerHTML=driveCfg.connected
+            ? acc+(driveCfg.lastSync?`آخر رفع: <b>${fmtStamp(driveCfg.lastSync)}</b>`:'لم تُرفع أي نسخة بعد.')
+            : 'لم تسجّل الدخول بعد.';
     }
 }
 // شبكة أمان: تذكير أسبوعي بنسخة محلية حتى مع وجود درايف
@@ -10113,7 +11275,7 @@ function libUpdateSummaries(){
 
     const behCore=behaviorDatabase.filter(x=>x.isCore).length;
     set('lib-sum-behavior',behaviorDatabase.length?`${behaviorDatabase.length} سلوك · ${behCore} رئيسية`:'لا سلوكيات بعد');
-    const coreCount=getPledges().length;
+    const coreCount=sportsDatabase.filter(x=>x.isCore).length;
     set('lib-sum-sports',sportsDatabase.length?`${sportsDatabase.length} عنصر · ${coreCount} رئيسية`:'لا عناصر بعد');
 
     const wo=libCount(worshipDatabase,'pages',u=>(u.masteryPercent||0)>=100);
@@ -11134,11 +12296,23 @@ function setupLibReorderDrag(){
         }
         if(!dragEl)return;
         overEl=dragEl;overPos=null;
+        // تحديد الصف الهدف تحت نقطة — يُستدعى مع الحركة ومع كل خطوة تمرير تلقائي
+        const targetAt=(x,y)=>{
+            const el=document.elementFromPoint(x,y);
+            const row=el&&el.closest(dragKind==='parent'?'.lib-card':'.lib-unit-row');
+            if(!row||!siblings.includes(row))return;
+            clearIndicators();
+            const rect=row.getBoundingClientRect();
+            const before=(y-rect.top)<rect.height/2;
+            overEl=row;overPos=before?'before':'after';
+            row.classList.add(before?'reorder-drop-before':'reorder-drop-after');
+        };
         const activateDrag=()=>{
             if(dragActive)return;
             dragActive=true;
             handle.classList.add('dragging');
             dragEl.classList.add('reorder-dragging');
+            DragScroll.begin(dragEl,targetAt);
         };
         const onMove=me=>{
             const p=pointFromEvent(me);
@@ -11148,20 +12322,16 @@ function setupLibReorderDrag(){
                 else return;
             }
             me.preventDefault&&me.preventDefault();
-            const el=document.elementFromPoint(p.x,p.y);
-            const row=el&&el.closest(dragKind==='parent'?'.lib-card':'.lib-unit-row');
-            if(!row||!siblings.includes(row))return;
-            clearIndicators();
-            const rect=row.getBoundingClientRect();
-            const before=(p.y-rect.top)<rect.height/2;
-            overEl=row;overPos=before?'before':'after';
-            row.classList.add(before?'reorder-drop-before':'reorder-drop-after');
+            targetAt(p.x,p.y);
+            DragScroll.update(p.x,p.y);
         };
         const onEnd=()=>{
             document.removeEventListener('mousemove',onMove);
             document.removeEventListener('mouseup',onEnd);
             document.removeEventListener('touchmove',onMove);
             document.removeEventListener('touchend',onEnd);
+            document.removeEventListener('touchcancel',onEnd);
+            DragScroll.end();
             if(!dragActive){dragEl=null;dragKind=null;dragInfo=null;siblings=[];overEl=null;overPos=null;return;}
             endDrag();
         };
@@ -11169,6 +12339,7 @@ function setupLibReorderDrag(){
         document.addEventListener('mouseup',onEnd);
         document.addEventListener('touchmove',onMove,{passive:false});
         document.addEventListener('touchend',onEnd);
+        document.addEventListener('touchcancel',onEnd);
     };
     document.querySelectorAll('[data-reorder-parent],[data-reorder-unit]').forEach(handle=>{
         handle.addEventListener('mousedown',e=>startDrag(handle,e));
@@ -11735,8 +12906,8 @@ function toggleAppNotifications(){
 // الإقلاع
 // ================================================================
 (function init(){
-    checkDayTransition(); // انتقال اليوم التلقائي - أول شيء
-    injectDailyPrayerTasks();
+    checkDayTransition(); // إغلاق ما انقضى من أيام — أول شيء
+    startOfDayRoutines();
     selectDayGlobal(currentActualDayKey);
     renderDailyTasks();
     renderTodayDateLabel();
@@ -11744,15 +12915,17 @@ function toggleAppNotifications(){
     activePlanWeekContext=currentWeekKey; // فتح الأسبوع الحالي افتراضياً
     highlightCurrentDayInGrid();
     initDragAutoScroll();
-    injectScheduledForToday();
+    startDayWatcher();
     ensurePrayerLocation();
     updatePrayerSettingsState();
+    updateDoneFeedbackState();
     updateDriveState();
     checkBackupReminder();
-    // مزامنة صامتة عند الفتح إن كانت مفعّلة
-    if(driveCfg.connected&&driveCfg.auto&&navigator.onLine&&_driveToken)
+    // مزامنة صامتة عند الفتح إن بقي رمز صالح، وإلا فالنسخة اليومية مع أول لمسة
+    if(driveCfg.connected&&driveCfg.auto&&navigator.onLine&&driveTokenValid())
         setTimeout(()=>driveSyncNow(true),6000);
-    else if(driveCfg.connected&&!_driveToken){driveCfg.needsSignIn=true;saveDriveCfg();}
+    armDailyDriveBackup();
+    requestPersistentStorage();
     maybeOfferDriveOnFirstRun();
     document._weekTaskDeleteMode=null;
     refreshNotificationToggleUI();
