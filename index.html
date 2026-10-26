@@ -205,6 +205,39 @@
         .hero-next .hn-s.late { color: var(--status-work); }
         .hero-next i { color: var(--ink-3); font-size: 10px; flex-shrink: 0; }
         .hero-next:active { transform: scale(0.99); }
+        /* تذكير النسخ: هادئ، يظهر فقط حين تتأخّر النسخة، ويُطوى لليوم بضغطة */
+        .backup-nudge {
+            display: flex; align-items: center; gap: 9px;
+            margin: calc(-1 * var(--sp-5) + 10px) 0 var(--sp-5); padding: 8px 10px 8px 6px;
+            background: rgba(224,160,74,0.07); border: 1px solid rgba(224,160,74,0.22); border-radius: var(--r-md);
+            font-size: 11.5px; color: var(--ink-2);
+        }
+        .backup-nudge > i { color: var(--status-work); font-size: 12px; margin-right: 4px; }
+        .backup-nudge > span { flex: 1; min-width: 0; }
+        .backup-nudge .bn-act {
+            background: rgba(224,160,74,0.14); border: 1px solid rgba(224,160,74,0.3); color: var(--status-work);
+            border-radius: var(--r-pill); padding: 5px 11px; font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer; flex-shrink: 0;
+        }
+        .backup-nudge .bn-x { background: none; border: none; color: var(--ink-3); padding: 6px; font-size: 11px; cursor: pointer; flex-shrink: 0; }
+        /* مركز النسخ */
+        .bk-status { display: flex; flex-direction: column; gap: 1px; margin-bottom: 12px; border: 1px solid var(--line-1); border-radius: var(--r-sm); overflow: hidden; }
+        .bk-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface-2); font-size: 12px; color: var(--ink-2); }
+        .bk-row i { width: 16px; text-align: center; color: var(--ink-3); font-size: 12px; }
+        .bk-row span { flex: 1; }
+        .bk-row b { font-weight: 600; font-size: 11.5px; color: var(--status-done); font-variant-numeric: tabular-nums; }
+        .bk-row b.warn { color: var(--status-work); }
+        .bk-row b.muted { color: var(--ink-3); font-weight: 500; }
+        .act-btn small a { color: var(--accent-color); text-decoration: underline; cursor: pointer; }
+        .bk-snaps { display: none; flex-direction: column; gap: 5px; padding: 2px 0 4px; max-height: 240px; overflow-y: auto; }
+        .bk-snap {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: right;
+            background: transparent; border: 1px dashed var(--line-2, var(--line-1)); border-radius: var(--r-sm);
+            padding: 9px 12px; font-family: inherit; color: var(--ink-1); cursor: pointer;
+        }
+        .bk-snap span { display: flex; flex-direction: column; gap: 2px; }
+        .bk-snap b { font-size: 12px; font-weight: 600; }
+        .bk-snap small { font-size: 10px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+        .bk-snap i { color: var(--ink-3); font-size: 11px; }
         /* المحطات: الفارغة تُطوى سطراً واحداً، وما مضى وقته يخفت، والمتأخّر فيه شيء يُنبَّه إليه */
         .time-station-block.is-empty { padding: 10px var(--sp-3); }
         .time-station-block.is-empty .time-station-title { margin-bottom: 0; }
@@ -271,6 +304,23 @@
         .f-col-narrow { flex: 1; min-width: 0; }
         .f-inline { display: flex; align-items: center; gap: 8px; }
         .f-inline span { color: var(--ink-3); font-size: 11.5px; }
+        /* نافذة الإضافة: شرائح الأنواع بأيقونات في صفّ ينزلق أفقياً */
+        /* كل الأنواع ظاهرة معاً في شبكة من صفّين — لا شيء مخفيّ خلف تمرير */
+        .type-chips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 14px; }
+        .type-chip {
+            min-width: 0; cursor: pointer; white-space: nowrap;
+            display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 8px 8px;
+            background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-md);
+            color: var(--ink-2); font-family: inherit; font-size: 11px; font-weight: 500;
+            transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+        }
+        .type-chip i { font-size: 15px; color: var(--ink-3); transition: color 0.18s ease; }
+        .type-chip.selected { font-weight: 600; }
+        .type-chip.selected i { color: inherit; }
+        .type-chip:active { transform: scale(0.95); }
+        .modal-pick-area { margin-bottom: 14px; text-align: right; }
+        .pick-pool { display: flex; flex-wrap: wrap; gap: 2px; margin: 2px 0; }
+        .modal-scroll-list.is-plain { border: none; padding: 0; background: none; max-height: 240px; }
         /* نافذة تعديل المهمة الموحّدة */
         .et-cat { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; color: var(--ink-2); margin: -6px 0 14px; }
         .et-cat::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--c, var(--ink-3)); }
@@ -287,6 +337,24 @@
         .et-day b { font-size: 11.5px; font-weight: 600; }
         .et-day small { font-size: 9.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
         .et-day.selected small { color: inherit; opacity: 0.8; }
+        /* تقييم السلوك بنسبة */
+        .rate-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 4px 0 8px; }
+        .rate-opt {
+            display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 2px 8px; cursor: pointer;
+            background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm);
+            color: var(--ink-1); font-family: inherit; transition: background 0.15s ease, border-color 0.15s ease;
+        }
+        .rate-opt b { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+        .rate-opt small { font-size: 9.5px; color: var(--ink-3); }
+        .rate-opt:not(.is-fail) b { color: var(--status-done); }
+        .rate-opt.is-fail b { color: var(--status-work); }
+        .rate-opt:last-child b { color: var(--status-delay); }
+        .rate-opt.selected { background: var(--accent-tint); border-color: var(--accent-line); }
+        .rate-opt:active { transform: scale(0.96); }
+        .rate-hint { font-size: 10.5px; color: var(--ink-3); margin-bottom: 14px; }
+        .score-badge { font-size: 9.5px; font-weight: 600; padding: 1px 8px; border-radius: var(--r-pill); font-variant-numeric: tabular-nums; }
+        .score-badge.ok { color: var(--status-done); background: rgba(53,183,145,0.12); }
+        .score-badge.low { color: var(--status-work); background: rgba(224,160,74,0.12); }
         .ls-warn {
             align-items: center; gap: 8px; font-size: 11px; color: var(--status-work); line-height: 1.6;
             background: rgba(224,160,74,0.08); border: 1px solid rgba(224,160,74,0.25);
@@ -365,13 +433,13 @@
             border-radius: var(--r-xs); padding: 6px 2px;
         }
         .pc-wk b { display: block; color: var(--ink-2); font-size: 10.5px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+        .pc-wk.clickable { cursor: pointer; }
+        .pc-wk.is-cur { border-color: var(--accent-line); color: var(--accent-color); background: var(--accent-tint); }
+        .pc-wk.is-cur b { color: var(--accent-color); }
         .pc-cell { position: relative; font-size: 12px; }
-        /* يوم مضى: باهت ومشطوب، لا يُخطَّط له */
-        .pc-cell.is-past { opacity: 0.34; }
-        .pc-cell.is-past::before {
-            content: ''; position: absolute; left: 14%; right: 14%; top: 50%;
-            height: 1px; background: currentColor; opacity: 0.5;
-        }
+        /* يوم مضى: باهت بلا خطوط؛ ما فيه حصيلة يبقى مقروءاً بلونه */
+        .pc-cell.is-past { opacity: 0.3; }
+        .pc-cell.is-past.done, .pc-cell.is-past.broken { opacity: 0.72; }
         .pc-pct { position: absolute; bottom: 2px; left: 0; right: 0; font-size: 7.5px; opacity: 0.85; }
         .pc-dot {
             position: absolute; top: 2px; left: 2px; min-width: 13px; height: 13px; line-height: 13px;
@@ -392,7 +460,25 @@
         .pt-row:last-child { border-bottom: none; }
         .pt-name { color: var(--ink-2); width: 52px; }
         .pt-time { color: var(--ink-1); font-weight: 600; font-variant-numeric: tabular-nums; }
-        .pt-after { margin-right: auto; font-size: 10px; color: var(--ink-3); }
+        .pt-after { margin-right: auto; font-size: 10px; color: var(--ink-3); cursor: pointer; padding: 3px 8px; border-radius: var(--r-pill); border: 1px solid transparent; }
+        .pt-after:active { border-color: var(--line-2); }
+        .pt-after.custom { color: var(--status-work); }
+        .loc-card {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px;
+            background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm); padding: 10px 12px;
+        }
+        .loc-main { display: flex; align-items: center; gap: 10px; min-width: 0; text-align: right; }
+        .loc-main > i { color: var(--accent-color); font-size: 15px; }
+        .loc-main span { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+        .loc-main b { font-size: 13px; color: var(--ink-1); font-weight: 600; }
+        .loc-main small { font-size: 10px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+        .loc-btn {
+            flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-family: inherit;
+            font-size: 11px; font-weight: 600; color: var(--accent-color); background: var(--accent-tint);
+            border: 1px solid var(--accent-line); border-radius: var(--r-pill); padding: 7px 12px;
+        }
+        .tune-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+        .tune-cell { display: flex; flex-direction: column; gap: 5px; font-size: 10.5px; color: var(--ink-3); text-align: center; }
         .dd-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
         .dd-list { max-height: 44vh; overflow-y: auto; }
         .dd-row { display: flex; align-items: center; gap: 10px; padding: 10px 2px; border-bottom: 1px solid var(--line-1); }
@@ -403,6 +489,16 @@
             background: rgba(238,82,83,0.10); color: rgba(238,82,83,0.8); border: 1px solid rgba(238,82,83,0.25);
         }
         .dd-mark.on { background: rgba(53,183,145,0.14); color: var(--status-done); border-color: rgba(53,183,145,0.35); }
+        .dd-mark.plan { background: var(--surface-2); color: var(--ink-3); border-color: var(--line-1); }
+        .dd-commit-jump {
+            width: 100%; display: flex; align-items: center; gap: 7px; margin-bottom: 8px; padding: 8px 12px; cursor: pointer;
+            background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm);
+            font-family: inherit; font-size: 11.5px; color: var(--ink-2); text-align: right;
+        }
+        .dd-commit-jump i:first-child { color: var(--accent-color); font-size: 10px; }
+        .dd-commit-jump i:last-child { margin-right: auto; font-size: 9px; color: var(--ink-3); }
+        .dd-commit-jump.ok { color: var(--status-done); border-color: rgba(53,183,145,0.28); }
+        .dd-commit-jump.bad { color: rgba(238,120,120,0.95); border-color: rgba(238,82,83,0.24); }
         .dd-name { flex: 1; min-width: 0; font-size: 12.5px; color: var(--ink-1); text-align: right; line-height: 1.5; }
         .dd-cat { font-size: 10px; color: var(--ink-3); flex-shrink: 0; }
         /* بطاقات مهام اليوم داخل نافذة السجلّ */
@@ -914,6 +1010,54 @@
             background: rgba(238,82,83,0.08); color: rgba(238,82,83,0.8); border: 1px solid rgba(238,82,83,0.2);
         }
         .cm-tag.soft { background: var(--surface-2); color: var(--ink-3); border-color: var(--line-1); }
+        .cm-check.part { background: rgba(224,160,74,0.12); border-color: rgba(224,160,74,0.4); color: var(--status-work); }
+        /* أساسي/ثانوي: شارة تُبدَّل بضغطة */
+        .cm-imp {
+            flex-shrink: 0; font-family: inherit; font-size: 9.5px; font-weight: 600; cursor: pointer;
+            padding: 4px 10px; border-radius: var(--r-pill); border: 1px solid var(--line-1);
+        }
+        .cm-imp.essential { background: rgba(238,82,83,0.07); color: rgba(238,120,120,0.95); border-color: rgba(238,82,83,0.25); }
+        .cm-imp.secondary { background: var(--surface-2); color: var(--ink-3); }
+        /* نسبة اليوم مع علامة الحدّ */
+        .cm-day-score { padding: 4px 4px 12px; border-bottom: 1px solid var(--line-1); margin-bottom: 2px; }
+        .cm-ds-top { display: flex; align-items: baseline; gap: 8px; }
+        .cm-ds-top b { font-size: 20px; font-weight: 700; color: var(--ink-1); font-variant-numeric: tabular-nums; }
+        .cm-ds-lvl { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: var(--r-pill); }
+        .cm-ds-lvl.good { color: var(--status-done); background: rgba(53,183,145,0.10); }
+        .cm-ds-lvl.ok { color: var(--status-work); background: rgba(224,160,74,0.10); }
+        .cm-ds-lvl.bad { color: rgba(238,120,120,0.95); background: rgba(238,82,83,0.08); }
+        .cm-ds-th { margin-right: auto; font-size: 10px; color: var(--ink-3); }
+        .cm-day-score .cm-bar { position: relative; overflow: visible; }
+        .cm-day-score .cm-bar-fill { position: absolute; top: 0; right: 0; }
+        .cm-bar-th { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink-2); border-radius: 1px; opacity: 0.6; }
+        .cm-ds-note { font-size: 10.5px; color: var(--ink-3); margin-top: 8px; line-height: 1.6; }
+        .cm-day-score.is-done .cm-ds-note { color: var(--status-done); }
+        .cm-add-req {
+            width: 100%; margin-top: 8px; padding: 10px; border-radius: var(--r-sm); cursor: pointer;
+            background: transparent; border: 1px dashed var(--line-2, var(--line-1)); color: var(--ink-2);
+            font-family: inherit; font-size: 12px;
+        }
+        .cm-add-req i { font-size: 10px; color: var(--accent-color); margin-left: 4px; }
+        .cmm-reqs { display: flex; flex-direction: column; gap: 6px; }
+        .cmm-req { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--surface-2); border: 1px solid var(--line-1); border-radius: var(--r-sm); }
+        .cmm-req-name { flex: 1; min-width: 0; font-size: 12px; color: var(--ink-1); text-align: right; }
+        .cmm-imp { display: flex; background: var(--surface-1); border: 1px solid var(--line-1); border-radius: var(--r-pill); padding: 2px; flex-shrink: 0; }
+        .cmm-imp button { background: none; border: none; font-family: inherit; font-size: 10.5px; color: var(--ink-3); padding: 4px 10px; border-radius: var(--r-pill); cursor: pointer; }
+        .cmm-imp button.active { background: var(--accent-tint); color: var(--accent-color); font-weight: 600; }
+        /* نافذة إضافة التزام */
+        .ca-new { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+        .ca-new .cmm-btn { flex: 1; justify-content: center; min-width: 96px; }
+        .ca-group { font-size: 10.5px; color: var(--ink-3); font-weight: 600; margin: 14px 2px 6px; text-align: right; }
+        .ca-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line-1); border-radius: var(--r-sm); margin-bottom: 5px; background: var(--surface-2); }
+        .ca-row.is-core { border-color: var(--accent-line); }
+        .ca-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .ca-name { flex: 1; min-width: 0; font-size: 12px; color: var(--ink-1); text-align: right; display: flex; flex-direction: column; gap: 2px; }
+        .ca-name small { font-size: 9.5px; color: var(--ink-3); }
+        .ca-btn {
+            flex-shrink: 0; font-family: inherit; font-size: 10.5px; cursor: pointer; padding: 5px 10px; border-radius: var(--r-pill);
+            background: var(--accent-tint); color: var(--accent-color); border: 1px solid var(--accent-line);
+        }
+        .ca-btn.off { background: transparent; color: var(--ink-3); border-color: var(--line-1); }
 
         .cm-curve-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 0 var(--sp-2); margin-bottom: var(--sp-4); }
         .cm-curve-legend { display: flex; flex-direction: column; gap: 6px; font-size: 9.5px; color: var(--ink-3); margin-top: 6px; }
@@ -1473,6 +1617,12 @@
             white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
         }
         .station-time-label:hover { border-color: var(--line-3); color: var(--ink-1); }
+        button.station-time-label { font-family: inherit; }
+        .station-time-label:active { border-color: var(--accent-line); color: var(--accent-color); }
+        .tp-mode { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: var(--r-pill); white-space: nowrap; }
+        .tp-mode i { font-size: 9px; }
+        .tp-mode.auto { color: var(--status-done); background: rgba(53,183,145,0.10); border: 1px solid rgba(53,183,145,0.28); }
+        .tp-mode.custom { color: var(--status-work); background: rgba(224,160,74,0.10); border: 1px solid rgba(224,160,74,0.28); }
         /* المحطة الجارية الآن — إطار خفيف ووسم صغير */
         .time-station-block.is-now { border-color: rgba(76,184,212,0.28); background: rgba(76,184,212,0.035); }
         .now-badge {
@@ -1702,6 +1852,46 @@
         .lib-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: var(--sp-4); }
         .lib-head-title { font-size: 15px; font-weight: 600; color: var(--ink-1); }
         .lib-head-sum { font-size: 10.5px; color: var(--ink-3); margin-top: 3px; }
+        .lib-head-desc { font-size: 11px; color: var(--ink-2); margin-top: 6px; line-height: 1.6; }
+        /* أقسام المكتبة: شبكة ظاهرة كلها، لكل قسم أيقونته وعدده */
+        .lib-secs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: var(--sp-5); }
+        .lib-sec {
+            display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 4px 8px;
+            background: var(--surface-1); border: 1px solid var(--line-1); border-radius: var(--r-sm);
+            color: var(--ink-3); font-family: inherit; cursor: pointer; min-width: 0;
+        }
+        .lib-sec i { font-size: 14px; }
+        .lib-sec b { font-size: 11px; font-weight: 600; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .lib-sec small { font-size: 9.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; min-height: 12px; }
+        .lib-sec.active { background: var(--accent-tint); border-color: var(--accent-line); color: var(--accent-color); }
+        .lib-sec.active b { color: var(--accent-color); }
+        .lib-sec:active { transform: scale(0.97); }
+        .lib-add-btn {
+            display: flex; align-items: center; gap: 6px; flex-shrink: 0; cursor: pointer;
+            background: var(--accent-tint); border: 1px solid var(--accent-line); color: var(--accent-color);
+            border-radius: var(--r-pill); padding: 8px 14px; font-family: inherit; font-size: 12px; font-weight: 600;
+        }
+        .lib-add-btn i { font-size: 10px; }
+        .lib-help {
+            background: var(--surface-1); border: 1px solid var(--accent-line); border-radius: var(--r-md);
+            padding: 14px 16px 12px; margin-bottom: var(--sp-4); font-size: 11.5px; color: var(--ink-2); line-height: 1.8;
+        }
+        .lib-help .lh-title { font-size: 13px; font-weight: 600; color: var(--ink-1); margin-bottom: 4px; }
+        .lib-help .lh-title i { color: var(--accent-color); margin-left: 4px; }
+        .lib-help ol { margin: 0; padding-right: 18px; }
+        .lib-help b { color: var(--ink-1); }
+        .lib-help .lh-ok {
+            margin-top: 8px; background: none; border: 1px solid var(--line-1); border-radius: var(--r-pill);
+            color: var(--ink-2); font-family: inherit; font-size: 11.5px; padding: 6px 16px; cursor: pointer;
+        }
+        /* زر ⋯ ظاهر على كل بطاقة ووحدة: بديل واضح عن الضغط المطوّل */
+        .lib-more {
+            flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+            background: transparent; border: 1px solid transparent; color: var(--ink-3); font-size: 13px;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .lib-more:active { background: var(--surface-3); }
+        .lib-unit-actions .lib-more { width: 26px; height: 26px; font-size: 12px; }
         .lib-head .pl-add { margin-right: 0; width: 32px; height: 32px; font-size: 13px; }
 
         .lib-card {
@@ -1872,9 +2062,16 @@
             content: ''; position: absolute; top: 6px; left: 8px; width: 5px; height: 5px;
             border-radius: 50%; background: var(--status-done);
         }
-        .pw-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 2px var(--sp-1); }
+        .pw-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin: 0 2px var(--sp-1); }
         .pw-info { min-width: 0; text-align: right; }
-        .pw-title { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; color: var(--ink-1); }
+        .pw-title { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; color: var(--ink-1); white-space: nowrap; }
+        .pw-state { white-space: nowrap; }
+        /* الشاشة الضيّقة: العنوان سطر، والأزرار الثلاثة سطر كامل تحته */
+        @media (max-width: 440px) {
+            .pw-head .plan-head-acts { width: 100%; margin-right: 0; }
+            .pw-head .plan-btn { flex: 1; justify-content: center; }
+            .pw-head .plan-btn.add { flex: 1.3; }
+        }
         .pw-state {
             font-size: 10px; font-weight: 600; padding: 2px 9px; border-radius: var(--r-pill);
             border: 1px solid var(--line-1); color: var(--ink-3); background: var(--surface-2);
@@ -2179,7 +2376,7 @@
                     <button class="seg-opt active" data-core="0" onclick="pickLongpressCore(0)">عادية</button>
                     <button class="seg-opt" data-core="1" onclick="pickLongpressCore(1)">مهمة رئيسية</button>
                 </div>
-                <div class="rt-hint" style="padding:8px 2px 0;">المهمة الرئيسية تُحتسب في التعهّد: يوم تسقط فيه يضيف يوماً على مدتك.</div>
+                <div class="rt-hint" style="padding:8px 2px 0;">الرئيسية تدخل شروط التعهّد. تختار في صفحة التعهّد إن كانت أساسية (لا يكتمل اليوم بدونها) أو ثانوية (ترفع نسبة يومك).</div>
             </div>
 
             <div id="lib-longpress-rec-section" class="f-row" style="display:none;">
@@ -2355,6 +2552,11 @@
             <div class="act-title" id="goal-action-title">الهدف</div>
             <div class="act-sub" id="goal-action-sub"></div>
         </div>
+        <!-- توزيع بضغطة بدل السحب: أيام الأسبوع المتبقية -->
+        <div id="goal-day-pick" style="display:none;margin-bottom:12px;">
+            <label class="f-label" id="goal-day-label">ضعها في يوم</label>
+            <div class="et-days" id="goal-day-chips"></div>
+        </div>
         <div class="act-list">
             <button class="act-btn clickable" id="goal-open-btn" style="display:none;" onclick="openWeekTaskFromModal()">
                 <i class="fa-solid fa-play"></i><span>ابدأها الآن<small>مهمة اليوم — تفتح بنافذتها المعتادة</small></span>
@@ -2424,109 +2626,103 @@
 <!-- نافذة إضافة مهمة -->
 <div id="add-task-modal" class="custom-modal-overlay">
     <div class="custom-modal-content">
-        <h3 class="m-title"><i class="fa-solid fa-plus"></i> إضافة مهمة جديدة</h3>
+        <h3 class="m-title"><i class="fa-solid fa-plus"></i> <span id="add-task-heading">مهمة جديدة</span></h3>
         <button class="core-cta clickable" id="btn-distribute-core" style="display:none;" onclick="distributeCoreFromModal()">
             <span><span class="core-badge" style="margin:0 0 0 7px;">رئيسية</span> توزيع المهام الرئيسية على بقية الأسبوع</span>
             <i class="fa-solid fa-chevron-left"></i>
         </button>
-        <div class="f-row">
-            <label class="f-label">اسم المهمة</label>
-            <input type="text" id="input-modal-task-title" placeholder="اتركه فارغاً إذا اخترت من القائمة" style="width:100%;text-align:right;">
+        <!-- ١) النوع: كل نوع يفتح قائمته من المكتبة، و«عامة» لمهمة حرّة تكتب اسمها -->
+        <label class="f-label">النوع</label>
+        <div class="type-chips" id="modal-chips-group">
+            <button class="type-chip" data-cat="general" onclick="selectModalChip('general')"><i class="fa-solid fa-pen"></i><span>عامة</span></button>
+            <button class="type-chip" data-cat="study" onclick="selectModalChip('study')"><i class="fa-solid fa-graduation-cap"></i><span>دراسة</span></button>
+            <button class="type-chip" data-cat="book" onclick="selectModalChip('book')"><i class="fa-solid fa-book"></i><span>كتب</span></button>
+            <button class="type-chip" data-cat="god" onclick="selectModalChip('god')"><i class="fa-solid fa-mosque"></i><span>عبادات</span></button>
+            <button class="type-chip" data-cat="series" onclick="selectModalChip('series')"><i class="fa-solid fa-spa"></i><span>فقه النفس</span></button>
+            <button class="type-chip" data-cat="newseries" onclick="selectModalChip('newseries')"><i class="fa-solid fa-clapperboard"></i><span>سلاسل</span></button>
+            <button class="type-chip" data-cat="sport" onclick="selectModalChip('sport')"><i class="fa-solid fa-dumbbell"></i><span>رياضة</span></button>
+            <button class="type-chip" data-cat="behavior" onclick="selectModalChip('behavior')"><i class="fa-solid fa-compass"></i><span>سلوك</span></button>
+            <button class="type-chip" data-cat="break" onclick="selectModalChip('break')"><i class="fa-solid fa-mug-hot"></i><span>استراحة</span></button>
         </div>
-        <label class="f-label">التصنيف</label>
-
-        <div class="chips-container" id="modal-chips-group">
-            <div class="chip-choice selected" data-cat="study" onclick="selectModalChip('study')">دراسة</div>
-            <div class="chip-choice" data-cat="book" onclick="selectModalChip('book')">الكتب</div>
-            <div class="chip-choice" data-cat="series" onclick="selectModalChip('series')">فقه النفس</div>
-            <div class="chip-choice" data-cat="god" onclick="selectModalChip('god')">عبادات</div>
-            <div class="chip-choice" data-cat="newseries" onclick="selectModalChip('newseries')">السلاسل</div>
-            <div class="chip-choice" data-cat="sport" onclick="selectModalChip('sport')">الرياضة</div>
-            <div class="chip-choice" data-cat="behavior" onclick="selectModalChip('behavior')">السلوك</div>
-            <div class="chip-choice" data-cat="break" onclick="selectModalChip('break')">استراحة</div>
-        </div>
-        <div id="modal-subject-picker-area" style="margin-bottom:12px;text-align:right;display:block;">
-            <!-- حقل الوقت المتوقع اليدوي: يظهر فقط لتصنيف "استراحة" أو حالة "بدون تصنيف" (لا مصدر وقت من المكتبة بهاتين الحالتين) -->
-            <div id="modal-expected-time-field" class="f-row" style="display:none;">
-                <label class="f-label">الوقت المتوقع</label>
-                <div style="display:flex;gap:8px;align-items:center;">
-                    <input type="number" id="modal-task-hours" min="0" max="10" value="0" style="width:62px;text-align:center;">
-                    <span style="color:var(--ink-3);font-size:11.5px;">ساعة</span>
-                    <input type="number" id="modal-task-minutes" min="0" max="59" value="15" style="width:62px;text-align:center;">
-                    <span style="color:var(--ink-3);font-size:11.5px;">دقيقة</span>
-                </div>
-            </div>
-            <!-- قائمة المواد -->
+        <!-- ٢) الاختيار من المكتبة -->
+        <div id="modal-subject-picker-area" class="modal-pick-area">
             <div id="modal-subjects-panel">
-                <div id="modal-subjects-injection-pool" style="margin:5px 0;min-height:25px;"></div>
-                <!-- محاضرات المادة المختارة -->
+                <div id="modal-subjects-injection-pool" class="pick-pool"></div>
                 <div id="modal-lectures-panel" style="display:none;margin-top:8px;">
-                    <div class="f-label">اختر محاضرة:</div>
+                    <div class="f-label">اختر محاضرة</div>
                     <div id="modal-lectures-list" class="modal-scroll-list"></div>
                 </div>
             </div>
-            <!-- قائمة السلاسل (فقه النفس) -->
             <div id="modal-series-panel" style="display:none;">
-                <div id="modal-series-injection-pool" style="margin:5px 0;min-height:25px;"></div>
+                <div id="modal-series-injection-pool" class="pick-pool"></div>
                 <div id="modal-episodes-panel" style="display:none;margin-top:8px;">
-                    <div class="f-label">اختر حلقة:</div>
+                    <div class="f-label">اختر حلقة</div>
                     <div id="modal-episodes-list" class="modal-scroll-list"></div>
                 </div>
             </div>
-            <!-- قائمة الكتب -->
             <div id="modal-books-panel" style="display:none;">
-                <div id="modal-books-injection-pool" style="margin:5px 0;min-height:25px;"></div>
-                <!-- دروس/صفحات الكتاب المختار (حسب وضعه: دراسة/قراءة/حفظ) -->
+                <div id="modal-books-injection-pool" class="pick-pool"></div>
                 <div id="modal-lessons-panel" style="display:none;margin-top:8px;">
-                    <div id="modal-lessons-label" class="f-label">اختر درساً:</div>
+                    <div id="modal-lessons-label" class="f-label">اختر درساً</div>
                     <div id="modal-lessons-list" class="modal-scroll-list"></div>
                 </div>
             </div>
-            <!-- قائمة العبادات (كل العبادات المضافة: قراءة/حفظ/بسيطة) -->
             <div id="modal-worship-panel" style="display:none;">
-                <div id="modal-worship-injection-pool" style="margin:5px 0;min-height:25px;"></div>
+                <div id="modal-worship-injection-pool" class="pick-pool"></div>
                 <div id="modal-worship-pages-panel" style="display:none;margin-top:8px;">
-                    <div class="f-label" id="modal-worship-pages-label">اختر صفحة حفظ:</div>
+                    <div class="f-label" id="modal-worship-pages-label">اختر صفحة حفظ</div>
                     <div id="modal-worship-pages-list" class="modal-scroll-list"></div>
                 </div>
             </div>
-            <!-- لوحة "السلاسل" (تبويب المسلسلات/المحتوى الترفيهي الجديد) -->
             <div id="modal-sports-panel" style="display:none;">
-                <div class="f-label">اختر من الرياضة:</div>
-                <div id="modal-sports-list" class="modal-scroll-list"></div>
+                <div id="modal-sports-list" class="modal-scroll-list is-plain"></div>
             </div>
             <div id="modal-behavior-panel" style="display:none;">
-                <div class="f-label">اختر سلوكاً:</div>
-                <div id="modal-behavior-list" class="modal-scroll-list"></div>
+                <div id="modal-behavior-list" class="modal-scroll-list is-plain"></div>
             </div>
             <div id="modal-newseries-panel" style="display:none;">
-                <div id="modal-newseries-injection-pool" style="margin:5px 0;min-height:25px;"></div>
+                <div id="modal-newseries-injection-pool" class="pick-pool"></div>
                 <div id="modal-newseries-episodes-panel" style="display:none;margin-top:8px;">
-                    <div class="f-label">اختر حلقة:</div>
+                    <div class="f-label">اختر حلقة</div>
                     <div id="modal-newseries-episodes-list" class="modal-scroll-list"></div>
                 </div>
             </div>
         </div>
+        <!-- ٣) الاسم: يُملأ من اختيارك ويمكنك تعديله -->
         <div class="f-row">
-            <label class="f-label">المحطة الزمنية</label>
-            <div class="custom-select-wrap" style="margin-bottom:0;">
-                <div class="custom-select-trigger" id="csel-input-modal-station-trigger" onclick="openStationPickerModal()">
-                    <span id="csel-input-modal-station-label">فترة الصباح</span>
-                    <i class="fa-solid fa-chevron-down"></i>
-                </div>
-                <div class="custom-select-options" id="csel-input-modal-station-options" style="display:none;">
-                    <div class="custom-select-option" data-key="input-modal-station" data-value="fajr" onclick="pickCustomSelectOption('input-modal-station','fajr','بعد الفجر')">بعد الفجر</div>
-                    <div class="custom-select-option selected" data-key="input-modal-station" data-value="morning" onclick="pickCustomSelectOption('input-modal-station','morning','فترة الصباح')">فترة الصباح</div>
-                    <div class="custom-select-option" data-key="input-modal-station" data-value="dhuhr" onclick="pickCustomSelectOption('input-modal-station','dhuhr','بعد الظهر')">بعد الظهر</div>
-                    <div class="custom-select-option" data-key="input-modal-station" data-value="asr" onclick="pickCustomSelectOption('input-modal-station','asr','بعد العصر')">بعد العصر</div>
-                    <div class="custom-select-option" data-key="input-modal-station" data-value="maghrib" onclick="pickCustomSelectOption('input-modal-station','maghrib','بعد المغرب')">بعد المغرب</div>
-                    <div class="custom-select-option" data-key="input-modal-station" data-value="isha" onclick="pickCustomSelectOption('input-modal-station','isha','بعد العشاء')">بعد العشاء</div>
-                </div>
-                <input type="hidden" id="input-modal-station" value="morning">
+            <label class="f-label" id="modal-name-label">الاسم</label>
+            <input type="text" id="input-modal-task-title" placeholder="ماذا تريد أن تنجز؟" oninput="onModalNameInput()" style="width:100%;text-align:right;">
+        </div>
+        <div id="modal-expected-time-field" class="f-row" style="display:none;">
+            <label class="f-label">الوقت المتوقع</label>
+            <div class="quick-time-pills">
+                <div class="quick-time-pill clickable" onclick="setQuickTime('modal-task-hours','modal-task-minutes',15,this)">ربع ساعة</div>
+                <div class="quick-time-pill clickable" onclick="setQuickTime('modal-task-hours','modal-task-minutes',30,this)">نصف ساعة</div>
+                <div class="quick-time-pill clickable" onclick="setQuickTime('modal-task-hours','modal-task-minutes',60,this)">ساعة</div>
+                <div class="quick-time-pill clickable" onclick="setQuickTime('modal-task-hours','modal-task-minutes',90,this)">ساعة ونصف</div>
+            </div>
+            <div class="f-inline">
+                <input type="number" id="modal-task-hours" min="0" max="10" value="0" style="width:62px;text-align:center;">
+                <span>ساعة</span>
+                <input type="number" id="modal-task-minutes" min="0" max="59" value="15" style="width:62px;text-align:center;">
+                <span>دقيقة</span>
             </div>
         </div>
+        <!-- ٤) متى: اليوم والفترة بلمسة -->
+        <div class="f-row" id="modal-day-row">
+            <label class="f-label">اليوم</label>
+            <div class="et-days" id="modal-days"></div>
+        </div>
+        <div class="f-row" id="modal-station-row">
+            <label class="f-label">الفترة</label>
+            <div class="et-stations" id="modal-stations"></div>
+            <input type="hidden" id="input-modal-station" value="morning">
+        </div>
+        <div class="rt-hint" id="modal-goal-note" style="display:none;padding:10px 12px;background:var(--surface-2);border:1px solid var(--line-1);border-radius:var(--r-sm);margin-bottom:6px;">
+            <i class="fa-solid fa-bullseye" style="color:var(--accent-color);"></i> تُضاف إلى أهداف الأسبوع — تسحبها لاحقاً إلى يومها.
+        </div>
         <div style="display:flex;gap:9px;margin-top:4px;">
-            <button class="btn-prime clickable" style="flex:2;" onclick="submitAddNewTask()">حفظ وإدراج</button>
+            <button class="btn-prime clickable" style="flex:2;" id="add-task-submit" onclick="submitAddNewTask()">أضف</button>
             <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closeAddTaskModal()">إلغاء</button>
         </div>
     </div>
@@ -2551,7 +2747,10 @@
 <div id="station-time-picker-overlay" class="custom-modal-overlay" style="z-index:99998;">
     <div class="custom-modal-content">
         <h3 class="m-title"><i class="fa-solid fa-clock"></i> وقت الفترة</h3>
-        <p id="station-time-picker-label" style="font-size:12.5px;color:var(--ink-2);margin:-6px 0 12px;text-align:right;"></p>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-6px 0 12px;">
+            <p id="station-time-picker-label" style="font-size:12.5px;color:var(--ink-2);margin:0;text-align:right;"></p>
+            <span id="station-tp-mode"></span>
+        </div>
         <div id="station-tp-hint" class="rt-hint" style="padding:10px 12px;background:var(--surface-2);border:1px solid var(--line-1);border-radius:var(--r-sm);margin-bottom:14px;"></div>
         <div class="f-grid">
             <div class="f-col-wide"><label class="f-label">من</label>
@@ -2563,6 +2762,9 @@
                 <input type="hidden" id="station-tp-to">
             </div>
         </div>
+        <button class="act-btn clickable" id="station-tp-reset" style="display:none;margin-bottom:12px;" onclick="resetStationTime()">
+            <i class="fa-solid fa-wand-magic-sparkles"></i><span>إعادتها تلقائية<small>تتبع الأذان كل يوم</small></span>
+        </button>
         <div style="display:flex;gap:9px;">
             <button class="btn-prime clickable" style="flex:2;" onclick="saveStationTime()">حفظ</button>
             <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closeStationTimePicker()">إلغاء</button>
@@ -2839,6 +3041,7 @@
         </div>
     </div>
     <button class="hero-next clickable" id="hero-next" style="display:none;"></button>
+    <div class="backup-nudge" id="backup-nudge" style="display:none;"></div>
 
     <div class="section-title"><i class="fa-solid fa-list-check"></i> محطات اليوم <span class="sec-count" id="count-active">0</span></div>
     <div id="stations-tasks-wrapper-container"></div>
@@ -2898,7 +3101,7 @@
             </div>
             <div class="rt-line clickable" onclick="togglePrayerStat()">
                 <span class="rt-line-name"><i class="fa-solid fa-mosque" style="color:var(--cat-god);"></i> رصيد الصلوات</span>
-                <span class="rt-line-val">2.5 ساعة <i class="fa-solid fa-chevron-down" id="prayer-stat-chevron" style="font-size:9px;"></i></span>
+                <span class="rt-line-val"><span id="stat-day-prayers">2.5 ساعة</span> <i class="fa-solid fa-chevron-down" id="prayer-stat-chevron" style="font-size:9px;"></i></span>
             </div>
             <div id="prayer-stat-detail" style="display:none;">
                 <div class="rt-hint">نصف ساعة محجوزة عند كل أذان من الصلوات الخمس، تُخصم تلقائياً من الفراغ.</div>
@@ -2906,31 +3109,48 @@
         </div>
     </div>
 
-    <div class="section-title"><i class="fa-solid fa-gear"></i> الإعدادات والنسخ الاحتياطي</div>
+    <div class="section-title"><i class="fa-solid fa-gear"></i> الإعدادات</div>
     <div class="rt-card">
+        <button class="rt-line rt-line-btn clickable" onclick="openPrayerSettings()">
+            <span class="rt-line-name"><i class="fa-solid fa-mosque"></i> أوقات الصلاة والفترات</span>
+            <span class="rt-line-val"><span id="prayer-settings-state">—</span><i class="fa-solid fa-chevron-left"></i></span>
+        </button>
+        <button class="rt-line rt-line-btn clickable" onclick="openBackupCenter()">
+            <span class="rt-line-name"><i class="fa-solid fa-shield-halved"></i> النسخ الاحتياطي</span>
+            <span class="rt-line-val"><span id="drive-state">—</span><i class="fa-solid fa-chevron-left"></i></span>
+        </button>
         <button id="btn-toggle-notifications" class="rt-line rt-line-btn clickable" onclick="toggleAppNotifications()">
             <span class="rt-line-name"><i class="fa-solid fa-bell"></i> <span id="notif-toggle-label">الإشعارات موقوفة</span></span>
             <span class="rt-switch"></span>
-        </button>
-        <button class="rt-line rt-line-btn clickable" onclick="openDriveSettings()">
-            <span class="rt-line-name"><i class="fa-brands fa-google-drive"></i> الحفظ في جوجل درايف</span>
-            <span class="rt-line-val" id="drive-state">—</span>
         </button>
         <button class="rt-line rt-line-btn clickable" onclick="cycleDoneFeedback()">
             <span class="rt-line-name"><i class="fa-solid fa-bell-concierge"></i> تنبيه الإنجاز</span>
             <span class="rt-line-val" id="done-feedback-state">—</span>
         </button>
-        <button class="rt-line rt-line-btn clickable" onclick="openPrayerSettings()">
-            <span class="rt-line-name"><i class="fa-solid fa-mosque"></i> أوقات الصلاة</span>
-            <span class="rt-line-val" id="prayer-settings-state">—</span>
-        </button>
-        <div class="rt-line">
-            <span class="rt-line-name"><i class="fa-solid fa-database"></i> نسخة احتياطية</span>
-            <span style="display:flex;gap:10px;">
-                <button class="rt-icon-btn clickable" onclick="exportData()" title="تصدير"><i class="fa-solid fa-cloud-arrow-down"></i></button>
-                <button class="rt-icon-btn clickable" onclick="importData()" title="استيراد"><i class="fa-solid fa-cloud-arrow-up"></i></button>
-            </span>
+    </div>
+</div>
+
+<!-- مركز النسخ الاحتياطي: كل وسائل حفظ بياناتك واستعادتها في مكان واحد -->
+<div id="backup-modal" class="custom-modal-overlay">
+    <div class="custom-modal-content">
+        <h3 class="m-title"><i class="fa-solid fa-shield-halved"></i> النسخ الاحتياطي</h3>
+        <div class="bk-status" id="bk-status"></div>
+        <div class="act-list">
+            <button class="act-btn clickable" id="bk-drive-btn" onclick="backupDriveAction()">
+                <i class="fa-brands fa-google-drive"></i><span id="bk-drive-label">جوجل درايف</span>
+            </button>
+            <button class="act-btn clickable" onclick="exportData()">
+                <i class="fa-solid fa-file-arrow-down"></i><span>حفظ نسخة كملف<small>تحتفظ بها في ملفاتك أو ترسلها لنفسك</small></span>
+            </button>
+            <button class="act-btn clickable" onclick="openLocalSnapshots()">
+                <i class="fa-solid fa-clock-rotate-left"></i><span>نسخ تلقائية على الجهاز<small id="bk-snap-sub">لقطة كل يوم — للتراجع عن خطأ</small></span>
+            </button>
+            <div id="bk-snaps" class="bk-snaps" style="display:none;"></div>
+            <button class="act-btn clickable" onclick="importData()">
+                <i class="fa-solid fa-file-arrow-up"></i><span>استيراد من ملف<small>يحلّ محلّ بياناتك الحالية — تُحفظ لقطة قبلها</small></span>
+            </button>
         </div>
+        <button class="btn-prime btn-ghost clickable" style="margin-top:12px;" onclick="document.getElementById('backup-modal').style.display='none'">إغلاق</button>
     </div>
 </div>
 
@@ -2953,10 +3173,10 @@
             </div>
             <div class="plan-head-acts">
                 <button class="plan-btn dist clickable" id="pw-dist-btn" onclick="confirmDistributeCore()" aria-label="توزيع المهام الرئيسية" title="توزيع المهام الرئيسية على بقية الأسبوع">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i><span>وزّع</span>
                 </button>
                 <button class="plan-btn cal clickable" onclick="openPlanCalendar()" aria-label="التقويم">
-                    <i class="fa-solid fa-calendar-days"></i>
+                    <i class="fa-solid fa-calendar-days"></i><span>الشهر</span>
                 </button>
                 <button class="plan-btn add clickable" id="pw-add-btn" onclick="openAddGoalToWeekModal()">
                     <i class="fa-solid fa-plus"></i><span>هدف</span>
@@ -2978,14 +3198,24 @@
 
 <!-- ===== الصفحة الرابعة: بنك المواد والكتب ===== -->
 <div id="screen-library" class="app-screen">
-    <div class="mini-top-bar tabs-wrap" id="lib-tabs-bar">
-        <div id="lib-tab-subjects" class="mini-tab-btn active" onclick="switchLibTab('subjects')">المواد</div>
-        <div id="lib-tab-books" class="mini-tab-btn" onclick="switchLibTab('books')">الكتب</div>
-        <div id="lib-tab-series" class="mini-tab-btn" onclick="switchLibTab('series')">فقه النفس</div>
-        <div id="lib-tab-worship" class="mini-tab-btn" onclick="switchLibTab('worship')">العبادات</div>
-        <div id="lib-tab-newseries" class="mini-tab-btn" onclick="switchLibTab('newseries')">السلاسل</div>
-        <div id="lib-tab-sports" class="mini-tab-btn" onclick="switchLibTab('sports')">الرياضة</div>
-        <div id="lib-tab-behavior" class="mini-tab-btn" onclick="switchLibTab('behavior')">السلوك</div>
+    <!-- أقسام المكتبة: كلها ظاهرة معاً بأيقونة وعدد، فتعرف أين يذهب كل شيء -->
+    <div class="lib-help" id="lib-help" style="display:none;">
+        <div class="lh-title"><i class="fa-solid fa-circle-info"></i> كيف تعمل المكتبة؟</div>
+        <ol>
+            <li>المكتبة مخزن لكل ما تدرسه أو تتابعه: اختر القسم المناسب وأضف إليه.</li>
+            <li>اضغط <b>+ مهمة</b> بجانب أي محاضرة أو درس لتضعه في يومك، والتطبيق يتذكّر أين وصلت.</li>
+            <li>اجعل العنصر <b>رئيسياً</b> (من زر <i class="fa-solid fa-ellipsis"></i>) ليدخل في التزامك ويتوزّع على أسبوعك.</li>
+        </ol>
+        <button class="lh-ok clickable" onclick="dismissLibHelp()">فهمت</button>
+    </div>
+    <div class="lib-secs" id="lib-tabs-bar">
+        <button id="lib-tab-subjects" class="lib-sec active clickable" onclick="switchLibTab('subjects')"><i class="fa-solid fa-graduation-cap"></i><b>المواد</b><small id="lib-cnt-subjects"></small></button>
+        <button id="lib-tab-books" class="lib-sec clickable" onclick="switchLibTab('books')"><i class="fa-solid fa-book"></i><b>الكتب</b><small id="lib-cnt-books"></small></button>
+        <button id="lib-tab-series" class="lib-sec clickable" onclick="switchLibTab('series')"><i class="fa-solid fa-heart-pulse"></i><b>فقه النفس</b><small id="lib-cnt-series"></small></button>
+        <button id="lib-tab-newseries" class="lib-sec clickable" onclick="switchLibTab('newseries')"><i class="fa-solid fa-list-ol"></i><b>السلاسل</b><small id="lib-cnt-newseries"></small></button>
+        <button id="lib-tab-worship" class="lib-sec clickable" onclick="switchLibTab('worship')"><i class="fa-solid fa-book-quran"></i><b>العبادات</b><small id="lib-cnt-worship"></small></button>
+        <button id="lib-tab-sports" class="lib-sec clickable" onclick="switchLibTab('sports')"><i class="fa-solid fa-person-running"></i><b>الرياضة</b><small id="lib-cnt-sports"></small></button>
+        <button id="lib-tab-behavior" class="lib-sec clickable" onclick="switchLibTab('behavior')"><i class="fa-solid fa-seedling"></i><b>السلوك</b><small id="lib-cnt-behavior"></small></button>
     </div>
 
     <div id="lib-subjects-panel" class="lib-panel" style="">
@@ -2993,8 +3223,9 @@
             <div class="lib-head-txt">
                 <div class="lib-head-title">مواد الفصل الدراسي</div>
                 <div class="lib-head-sum" id="lib-sum-subjects">—</div>
+                <div class="lib-head-desc">مواد دراستك ومحاضراتها. أضف المادة، ثم محاضراتها داخلها.</div>
             </div>
-            <button class="pl-add clickable" onclick="openAddSubjectModal()" aria-label="إضافة"><i class="fa-solid fa-plus"></i></button>
+            <button class="lib-add-btn clickable" onclick="openAddSubjectModal()"><i class="fa-solid fa-plus"></i> مادة</button>
         </div>
         <div id="lib-subjects-list"></div>
     </div>
@@ -3004,8 +3235,9 @@
             <div class="lib-head-txt">
                 <div class="lib-head-title">الكتب والمتون</div>
                 <div class="lib-head-sum" id="lib-sum-books">—</div>
+                <div class="lib-head-desc">كتب تقرؤها بالصفحات، أو تحفظها، أو تدرسها درساً درساً.</div>
             </div>
-            <button class="pl-add clickable" onclick="openAddBookModal()" aria-label="إضافة"><i class="fa-solid fa-plus"></i></button>
+            <button class="lib-add-btn clickable" onclick="openAddBookModal()"><i class="fa-solid fa-plus"></i> كتاب</button>
         </div>
         <div id="lib-books-list"></div>
     </div>
@@ -3015,8 +3247,9 @@
             <div class="lib-head-txt">
                 <div class="lib-head-title">فقه النفس</div>
                 <div class="lib-head-sum" id="lib-sum-series">—</div>
+                <div class="lib-head-desc">سلاسل تزكية النفس وحلقاتها، تتابعها حلقة بعد حلقة.</div>
             </div>
-            <button class="pl-add clickable" onclick="openAddSeriesModal()" aria-label="إضافة"><i class="fa-solid fa-plus"></i></button>
+            <button class="lib-add-btn clickable" onclick="openAddSeriesModal()"><i class="fa-solid fa-plus"></i> سلسلة</button>
         </div>
         <div id="lib-series-list"></div>
     </div>
@@ -3026,8 +3259,9 @@
             <div class="lib-head-txt">
                 <div class="lib-head-title">القرآن والعبادات</div>
                 <div class="lib-head-sum" id="lib-sum-worship">—</div>
+                <div class="lib-head-desc">وِرد القرآن والأذكار والعبادات: حفظ أو قراءة أو استماع.</div>
             </div>
-            <button class="pl-add clickable" onclick="openAddWorshipModal()" aria-label="إضافة"><i class="fa-solid fa-plus"></i></button>
+            <button class="lib-add-btn clickable" onclick="openAddWorshipModal()"><i class="fa-solid fa-plus"></i> عبادة</button>
         </div>
         <div id="lib-worship-list"></div>
     </div>
@@ -3037,8 +3271,9 @@
             <div class="lib-head-txt">
                 <div class="lib-head-title">السلاسل</div>
                 <div class="lib-head-sum" id="lib-sum-newseries">—</div>
+                <div class="lib-head-desc">دورات وسلاسل أخرى تتابعها بالحلقات.</div>
             </div>
-            <button class="pl-add clickable" onclick="openAddNewSeriesModal()" aria-label="إضافة"><i class="fa-solid fa-plus"></i></button>
+            <button class="lib-add-btn clickable" onclick="openAddNewSeriesModal()"><i class="fa-solid fa-plus"></i> سلسلة</button>
         </div>
         <div id="lib-newseries-list"></div>
     </div>
@@ -3048,8 +3283,9 @@
             <div class="lib-head-txt">
                 <div class="lib-head-title">الرياضة والجسد</div>
                 <div class="lib-head-sum" id="lib-sum-sports">—</div>
+                <div class="lib-head-desc">تمارينك، أو وزن وسعرات تتابعها بالأرقام.</div>
             </div>
-            <button class="pl-add clickable" onclick="openAddSportModal()" aria-label="إضافة"><i class="fa-solid fa-plus"></i></button>
+            <button class="lib-add-btn clickable" onclick="openAddSportModal()"><i class="fa-solid fa-plus"></i> تمرين</button>
         </div>
         <div id="lib-sports-list"></div>
     </div>
@@ -3059,8 +3295,9 @@
             <div class="lib-head-txt">
                 <div class="lib-head-title">السلوك والعادات</div>
                 <div class="lib-head-sum" id="lib-sum-behavior">—</div>
+                <div class="lib-head-desc">عادة تبنيها أو شيء تتركه، وتقيّم نفسك فيه كل يوم بنسبة.</div>
             </div>
-            <button class="pl-add clickable" onclick="openAddBehaviorModal()" aria-label="إضافة"><i class="fa-solid fa-plus"></i></button>
+            <button class="lib-add-btn clickable" onclick="openAddBehaviorModal()"><i class="fa-solid fa-plus"></i> سلوك</button>
         </div>
         <div id="lib-behavior-list"></div>
     </div>
@@ -3529,7 +3766,7 @@
             <span><i class="cm-dot rest"></i> بلا مهام</span>
             <span><i class="cm-dot future"></i> قادم</span>
         </div>
-        <div class="rt-hint" style="text-align:center;">اضغط أي يوم قادم لتضيف فيه مهمة — ولو بعد شهرين.<br>الأيام المشطوبة مضت، وتصحيحها من صفحة الإنجاز.</div>
+        <div class="rt-hint" style="text-align:center;">اضغط أي يوم قادم لتضيف فيه مهمة — ولو بعد شهرين، أو اضغط أسبوعاً لتفتحه.<br>اليوم الماضي يُفتح لتراه، وتصحيحه من صفحة الإنجاز.</div>
         <button class="btn-prime btn-ghost clickable" onclick="closePlanCalendar()">إغلاق</button>
     </div>
 </div>
@@ -3540,20 +3777,10 @@
         <div class="lib-head-title" id="plan-day-title">اليوم</div>
         <div class="lib-head-sum" id="plan-day-sum" style="margin-bottom:14px;"></div>
         <div id="plan-day-rows" class="dd-list"></div>
-        <div style="border-top:1px solid var(--line-1);margin-top:14px;padding-top:14px;">
-            <label class="f-label">إضافة مهمة لهذا اليوم</label>
-            <input type="text" id="plan-day-input" placeholder="مثال: مراجعة عقد الإيجار" style="width:100%;text-align:right;">
-            <div class="chips-container" id="plan-day-cats" style="margin-top:10px;">
-                <div class="chip-choice selected" onclick="pickPlanDayCat('noCategory',this)">عام</div>
-                <div class="chip-choice" onclick="pickPlanDayCat('study',this)">دراسة</div>
-                <div class="chip-choice" onclick="pickPlanDayCat('god',this)">عبادات</div>
-                <div class="chip-choice" onclick="pickPlanDayCat('work',this)">عمل</div>
-                <div class="chip-choice" onclick="pickPlanDayCat('behavior',this)">سلوك</div>
-            </div>
-            <div style="display:flex;gap:9px;margin-top:6px;">
-                <button class="btn-prime clickable" style="flex:2;" onclick="addScheduledFromCalendar()">إضافة</button>
-                <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closePlanDay()">إغلاق</button>
-            </div>
+        <!-- الإضافة هنا هي نافذة الإضافة نفسها (كل الأنواع والمكتبة) مثبّتة على هذا التاريخ -->
+        <div style="display:flex;gap:9px;margin-top:16px;">
+            <button class="btn-prime clickable" style="flex:2;" onclick="addTaskFromPlanDay()"><i class="fa-solid fa-plus"></i> أضف مهمة لهذا اليوم</button>
+            <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closePlanDay()">إغلاق</button>
         </div>
     </div>
 </div>
@@ -3581,8 +3808,9 @@
                 <span>نسخة يومية تلقائية</span>
             </label>
             <div class="drive-note" style="margin-bottom:12px;">
-                تسجّل الدخول مرة واحدة فقط. بعدها تُرفع نسخة كل يوم تلقائياً مع أول لمسة لك في التطبيق،
-                وقد تومض نافذة جوجل لحظةً وتُغلق وحدها — هذا تجديد صامت للإذن، لا تحتاج فعل شيء.
+                تسجّل الدخول مرة واحدة. بعدها لا تظهر نافذة جوجل من تلقاء نفسها أبداً:
+                كل رفع تبدأه أنت بضغطة، وما تغيّره خلال الساعة التالية يُرفع وحده بصمت.
+                وحين تمضي أيام دون نسخة يذكّرك التطبيق بلطف في صفحة المهام.
             </div>
             <div style="display:flex;gap:9px;">
                 <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="driveSyncNow(false)"><i class="fa-solid fa-cloud-arrow-up"></i> ارفع الآن</button>
@@ -3616,7 +3844,8 @@
 <!-- إعدادات أوقات الصلاة -->
 <div id="prayer-settings-modal" class="custom-modal-overlay">
     <div class="custom-modal-content">
-        <h3 class="m-title"><i class="fa-solid fa-mosque"></i> أوقات الصلاة</h3>
+        <h3 class="m-title"><i class="fa-solid fa-mosque"></i> أوقات الصلاة والفترات</h3>
+        <div class="loc-card" id="prayer-loc-card"></div>
         <div id="prayer-times-preview" class="pt-preview"></div>
         <label class="f-label">طريقة الحساب</label>
         <div class="chips-container" id="prayer-method-chips"></div>
@@ -3631,14 +3860,14 @@
                 <input type="number" id="prayer-duration" min="5" max="120" step="5" oninput="renderPrayerPreview()" style="width:100%;text-align:center;">
             </div>
             <div class="f-col-narrow">
-                <label class="f-label">تعديل يدوي (± دقيقة)</label>
-                <input type="number" id="prayer-tuning" min="-30" max="30" style="width:100%;text-align:center;">
+                <label class="f-label">تعديل لكل الصلوات (± دقيقة)</label>
+                <input type="number" id="prayer-tuning" min="-30" max="30" oninput="renderPrayerPreview()" style="width:100%;text-align:center;">
             </div>
         </div>
-        <button class="core-cta clickable" style="background:var(--accent-tint);border-color:var(--accent-line);" onclick="requestPrayerLocation(false)">
-            <span>تحديث الموقع</span>
-            <i class="fa-solid fa-location-crosshairs" style="color:var(--accent-color);"></i>
-        </button>
+        <details class="f-fold">
+            <summary>تعديل دقيق لكل صلاة — لمطابقة أذان مسجدك</summary>
+            <div class="tune-grid" id="prayer-tune-grid"></div>
+        </details>
         <details class="f-fold">
             <summary>إدخال الإحداثيات يدوياً</summary>
             <div class="f-grid" style="margin:0;">
@@ -3646,6 +3875,9 @@
                 <div class="f-col-narrow"><label class="f-label">خط الطول</label><input type="number" id="prayer-lng" step="0.0001" oninput="renderPrayerPreview()" style="width:100%;text-align:center;"></div>
             </div>
         </details>
+        <button class="act-btn clickable" id="prayer-reset-periods" style="display:none;" onclick="resetAllStationTimes()">
+            <i class="fa-solid fa-wand-magic-sparkles"></i><span>إعادة كل الفترات تلقائية<small>تبدأ بعد الأذان وتنتهي بالأذان التالي</small></span>
+        </button>
         <div style="display:flex;gap:9px;margin-top:16px;">
             <button class="btn-prime clickable" style="flex:2;" onclick="savePrayerSettingsUI()">حفظ</button>
             <button class="btn-prime btn-ghost clickable" style="flex:1;" onclick="closePrayerSettings()">إغلاق</button>
@@ -3720,6 +3952,8 @@
         <div class="prayer-confirm-title" id="simple-task-title">المهمة</div>
         <div class="prayer-confirm-subtitle" id="simple-task-cat"></div>
         <div id="simple-task-streak"></div>
+        <div class="rate-row" id="simple-task-rate" style="display:none;"></div>
+        <div class="rate-hint" id="simple-task-rate-hint" style="display:none;"></div>
         <button class="prayer-btn-done clickable" id="simple-task-mark" onclick="toggleSimpleTaskDone()"></button>
         <div class="cw-row">
             <button class="cw-side clickable" onclick="editSimpleTask()"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
@@ -3977,6 +4211,17 @@
         <h3 class="m-title"><i class="fa-solid fa-sliders"></i> إدارة التعهّد</h3>
         <div class="cmm-summary" id="cmm-summary"></div>
 
+        <!-- كيف يُحكم على اليوم: أساسي/ثانوي لكل شرط + حدّ النجاح -->
+        <div class="cmm-section">
+            <div class="cmm-head">شروط اليوم</div>
+            <div class="cmm-hint"><b>الأساسي</b> لا يكتمل اليوم بدونه. <b>الثانوي</b> يرفع نسبة يومك ولا يكسره وحده. يسري من اليوم، والأيام الماضية تبقى بحكمها.</div>
+            <div id="cmm-reqs" class="cmm-reqs"></div>
+            <button class="cmm-btn clickable" style="width:100%;justify-content:center;margin-top:8px;" onclick="closeCommitManage();openCommitAddPicker()"><i class="fa-solid fa-plus"></i> أضف التزاماً من المكتبة</button>
+            <div class="cmm-head" style="margin-top:16px;">حدّ نجاح اليوم</div>
+            <div class="cmm-hint">أقلّ نسبة يُعدّ بها اليوم مكتملاً (مع تحقّق الأساسيات). وهو أيضاً حدّ نجاح تقييم السلوك.</div>
+            <div class="chips-container" id="cmm-threshold"></div>
+        </div>
+
         <div class="cmm-section">
             <div class="f-row">
                 <label class="f-label">ما الذي تستعدّ له؟</label>
@@ -4028,6 +4273,21 @@
         </div>
         <button class="cmm-new clickable" onclick="startNewCommitmentFromManage()"><i class="fa-solid fa-plus"></i> بدء تعهّد جديد</button>
         <button class="btn-prime btn-ghost clickable" style="margin-top:12px;" onclick="closeCommitManage()">إغلاق</button>
+    </div>
+</div>
+
+<!-- إضافة التزام: من المكتبة مباشرة دون البحث في تبويباتها -->
+<div id="commit-add-modal" class="custom-modal-overlay">
+    <div class="custom-modal-content">
+        <h3 class="m-title"><i class="fa-solid fa-route"></i> التزامات التعهّد</h3>
+        <div class="cmm-hint" style="margin-bottom:12px;">اختر من مكتبتك ما تلتزم به: <b>كل يوم</b> (شرط يومي) أو <b>أسبوعياً</b> (حصّة تُحاسَب بنهاية الأسبوع).</div>
+        <div class="ca-new">
+            <button class="cmm-btn clickable" onclick="closeCommitAddPicker();openAddBehaviorModal()"><i class="fa-solid fa-seedling"></i> سلوك جديد</button>
+            <button class="cmm-btn clickable" onclick="closeCommitAddPicker();openAddWorshipModal()"><i class="fa-solid fa-book-quran"></i> عبادة جديدة</button>
+            <button class="cmm-btn clickable" onclick="closeCommitAddPicker();openAddSportModal()"><i class="fa-solid fa-person-running"></i> تمرين جديد</button>
+        </div>
+        <div id="commit-add-list"></div>
+        <button class="btn-prime btn-ghost clickable" style="margin-top:12px;" onclick="closeCommitAddPicker()">تم</button>
     </div>
 </div>
 
@@ -4245,7 +4505,7 @@ function celebrateTaskDone(t,opts){
     pop.style.setProperty('--dp-on',lum>150?'#0b0b0f':'#ffffff');
     // موقعك من يومك بعد هذا الإنجاز
     const list=todaysTasks().filter(x=>x.status!=='parking');
-    const done=list.filter(x=>x.status==='done').length,total=list.length;
+    const done=list.filter(x=>taskStatusForDay(x,logicalTodayIso)==='done').length,total=list.length;
     const full=total>0&&done===total;
     const progress=total?(full?'اكتمل يومك كاملاً':`${done} من ${total} اليوم`):'';
     const name=String(opts.title||(t&&t.title)||'أُنجزت').trim();
@@ -4552,9 +4812,10 @@ function computePrayerTimes(date,lat,lng,methodKey,asrMadhab){
     out.maghrib = (hMaghrib!==null)?noon+hMaghrib:null;
     if(m.ishaMinutes!==undefined)out.isha=(out.maghrib!==null)?out.maghrib+m.ishaMinutes/60:null;
     else{const hIsha=_hourAngle(m.isha,lat,sp.decl);out.isha=(hIsha!==null)?noon+hIsha:null;}
-    // تعديل يدوي بالدقائق إن احتاج المستخدم مطابقة مسجده
+    // تعديل يدوي بالدقائق لمطابقة المسجد: عام لكل الصلوات، ودقيق لكل صلاة على حدة
     const tune=(prayerSettings.tuning||0)/60;
-    Object.keys(out).forEach(k=>{if(out[k]!==null)out[k]=_fixHour(out[k]+tune);});
+    const per=prayerSettings.tune||{};
+    Object.keys(out).forEach(k=>{if(out[k]!==null)out[k]=_fixHour(out[k]+tune+((k!=='sunrise'&&per[k])?per[k]/60:0));});
     return out;
 }
 function hoursToHHMM(h){
@@ -4603,14 +4864,22 @@ function requestPrayerLocation(silent){
         const lat=+pos.coords.latitude.toFixed(4), lng=+pos.coords.longitude.toFixed(4);
         const moved=(prayerSettings.lat===null)||
             (Math.abs(lat-prayerSettings.lat)>0.15||Math.abs(lng-prayerSettings.lng)>0.15);
-        if(moved){
+        // طلب صريح منك يأخذ الإحداثيات الدقيقة دائماً؛ الفحص الصامت اليومي لا يغيّرها إلا إن انتقلت فعلاً
+        if(moved||!silent){
             prayerSettings.lat=lat;prayerSettings.lng=lng;prayerSettings.enabled=true;
             savePrayerSettings();
             if(typeof renderDailyTasks==='function')renderDailyTasks();
-            if(!silent||prayerSettings.lastLocCheck)showToast('حُدِّث موقعك — أُعيد حساب أوقات الصلاة');
+            if(moved&&(!silent||prayerSettings.lastLocCheck))showToast('حُدِّث موقعك — أُعيد حساب أوقات الصلاة');
+            else if(!silent)showToast('موقعك محدَّث — الأوقات صحيحة');
         }
         prayerSettings.lastLocCheck=isoDay();
         savePrayerSettings();
+        const modal=document.getElementById('prayer-settings-modal');
+        if(modal&&modal.style.display==='flex'){
+            document.getElementById('prayer-lat').value=prayerSettings.lat;
+            document.getElementById('prayer-lng').value=prayerSettings.lng;
+            renderPrayerPreview();
+        }
     },err=>{
         if(!silent)showToast('تعذّر تحديد الموقع — يمكنك إدخال الإحداثيات يدوياً');
     },{enableHighAccuracy:false,timeout:12000,maximumAge:3600000});
@@ -4759,7 +5028,19 @@ function migrateTaskDates(){
 }
 
 let currentSelectedDay=currentActualDayKey;
-let studioActiveTaskIndex=null;
+// المهمة المفتوحة في الاستوديو تُتتبَّع بمعرّفها لا بموضعها في المصفوفة: الموضع يتغيّر إن
+// أُضيفت مهمة أو حُذفت أثناء الجلسة (بداية يوم جديد مثلاً)، فكان الوقت والملاحظات يُكتبان
+// على مهمة أخرى، وكان إغلاق الاستوديو يتعطّل إن حُذفت مهمته. studioActiveTaskIndex يُقرأ ويُكتب كما كان.
+let studioActiveTaskId=null;
+Object.defineProperty(window,'studioActiveTaskIndex',{
+    get(){
+        if(studioActiveTaskId===null)return null;
+        const i=storedDailyTasks.findIndex(t=>t.id===studioActiveTaskId);
+        return i<0?null:i;
+    },
+    set(v){studioActiveTaskId=(v===null||v===undefined||!storedDailyTasks[v])?null:storedDailyTasks[v].id;},
+    configurable:true
+});
 let selectedModalCategory='study';
 const chipColors={study:'var(--cat-study)',book:'var(--cat-book)',series:'var(--cat-series)',god:'var(--cat-god)',newseries:'var(--cat-newseries)',break:'var(--cat-break)',sport:'var(--cat-sport)',behavior:'var(--cat-break)'};
 let selectedModalSubjectId=null;
@@ -4781,7 +5062,7 @@ let actionGoalId=null;
 // متغير لحفظ اليوم المنفتح عليه نافذة الفترات
 let openPeriodsDay={};
 
-const categoryConfig={god:{name:"عبادات",color:"var(--cat-god)"},study:{name:"دراسة",color:"var(--cat-study)"},series:{name:"فقه النفس",color:"var(--cat-series)"},sport:{name:"الرياضة",color:"var(--cat-sport)"},work:{name:"العمل",color:"var(--cat-work)"},break:{name:"فراغ/راحة",color:"var(--cat-break)"},book:{name:"الكتب",color:"var(--cat-book)"},newseries:{name:"السلاسل",color:"var(--cat-newseries)"},behavior:{name:"السلوك",color:"var(--cat-break)"},noCategory:{name:"بدون تصنيف",color:"var(--neutral-gap)"}};
+const categoryConfig={god:{name:"عبادات",color:"var(--cat-god)"},study:{name:"دراسة",color:"var(--cat-study)"},series:{name:"فقه النفس",color:"var(--cat-series)"},sport:{name:"الرياضة",color:"var(--cat-sport)"},work:{name:"العمل",color:"var(--cat-work)"},break:{name:"فراغ/راحة",color:"var(--cat-break)"},book:{name:"الكتب",color:"var(--cat-book)"},newseries:{name:"السلاسل",color:"var(--cat-newseries)"},behavior:{name:"السلوك",color:"var(--cat-break)"},noCategory:{name:"عامة",color:"#8a8a99"}};
 
 // إشعار عابر: سطح داكن ونقطة بلون السياق بدل خلفية ساطعة تبهر في الإضاءة الخافتة
 function showToast(text,color){
@@ -4844,6 +5125,20 @@ function renderTimePickerUI(){
 function tpAdjustHour(delta){_tpHour+=delta;if(_tpHour>12)_tpHour=1;if(_tpHour<1)_tpHour=12;renderTimePickerUI();}
 function tpAdjustMinute(delta){_tpMinute+=delta;if(_tpMinute>=60)_tpMinute=0;if(_tpMinute<0)_tpMinute=55;renderTimePickerUI();}
 function tpSetAmPm(v){_tpAmPm=v;renderTimePickerUI();}
+// أسهم منتقي الوقت: ضغطة = خطوة، وإبقاء الإصبع = تكرار متسارع حتى تصل للوقت بسرعة
+(function bindTimePickerRepeat(){
+    document.querySelectorAll('#custom-time-picker-modal .tp-stepper-btn').forEach(btn=>{
+        const step=new Function(btn.getAttribute('onclick'));
+        btn.removeAttribute('onclick');
+        let hold=null,rep=null,n=0;
+        const stop=()=>{clearTimeout(hold);clearInterval(rep);hold=rep=null;};
+        btn.addEventListener('pointerdown',e=>{
+            e.preventDefault();step();n=0;
+            hold=setTimeout(()=>{rep=setInterval(()=>{step();n++;if(n===8){clearInterval(rep);rep=setInterval(step,45);}},110);},380);
+        });
+        ['pointerup','pointerleave','pointercancel'].forEach(ev=>btn.addEventListener(ev,stop));
+    });
+})();
 function openCustomTimePicker(targetId){
     _tpTarget=targetId;
     const cur=(document.getElementById(targetId).value)||'08:00';
@@ -4937,13 +5232,50 @@ function clampStationRange(sk,from,to){
     }
     return{from:floor,to:newTo,clamped:true,floor:floor};
 }
+// وقت الفترة الفعلي اليوم.
+// التعديل اليدوي يُحفظ إزاحةً عن حدّي الفترة التلقائيين (بعد الأذان بكذا، وقبل التالي بكذا)
+// لا ساعةً ثابتة — فيبقى صحيحاً مع تغيّر أوقات الصلاة عبر الفصول.
 function getStationEffectiveTimes(sk){
     const derived=derivedStationTimes();
     const auto=(derived&&derived[sk])?derived[sk]:null;
-    const manual=(stationTimesDB[sk]&&stationTimesDB[sk].from)?stationTimesDB[sk]:null;
+    const m=stationTimesDB[sk];
+    if(m&&m.mode==='offset'){
+        const base=auto||stationDefaultTimes[sk];
+        if(!base||!base.from)return{from:'',to:''};
+        return{from:_fromMin(_toMin(base.from)+(m.startOffset||0)),to:_fromMin(_toMin(base.to)-(m.endOffset||0))};
+    }
+    const manual=(m&&m.from)?m:null;
     if(!manual)return auto||stationDefaultTimes[sk]||{from:'',to:''};
     const r=clampStationRange(sk,manual.from,manual.to||(auto?auto.to:''));
     return{from:r.from,to:r.to};
+}
+function stationAutoTimes(sk){
+    const d=derivedStationTimes();
+    return (d&&d[sk])?d[sk]:(stationDefaultTimes[sk]||null);
+}
+// ترقية لمرة واحدة: أوقات محفوظة كساعات ثابتة (كثير منها قيم الصيف الافتراضية) تُفحص مقابل أذان اليوم:
+// القيمة الافتراضية القديمة أو البعيدة عن وقتها تعود تلقائية، والقريبة تتحوّل إزاحة تتبع الأذان
+const STATION_MAX_DELAY={fajr:90,morning:300,dhuhr:90,asr:90,maghrib:90,isha:120};
+function migrateStationTimes(){
+    // تعمل مع كل فتح (وبعد كل استيراد لنسخة قديمة): لا تمسّ إلا القيم الثابتة القديمة
+    const derived=derivedStationTimes();
+    if(!derived)return;                       // بلا أوقات صلاة لا مرجع نقيس عليه — نترك القديم كما هو
+    let reset=0,kept=0;
+    Object.keys(stationTimesDB).forEach(sk=>{
+        const m=stationTimesDB[sk];
+        if(!m||m.mode==='offset'||!m.from)return;
+        const auto=derived[sk];
+        if(!auto){delete stationTimesDB[sk];return;}
+        const def=stationDefaultTimes[sk];
+        const delay=_circDiff(auto.from,m.from);
+        if((def&&m.from===def.from)||delay>(STATION_MAX_DELAY[sk]||90)){delete stationTimesDB[sk];reset++;return;}
+        let endOffset=0;
+        if(m.to){const early=_circDiff(m.to,auto.to);if(early>0&&early<180)endOffset=early;}
+        stationTimesDB[sk]={mode:'offset',startOffset:delay,endOffset};kept++;
+    });
+    if(!reset&&!kept)return;
+    localStorage.setItem('stationTimesDB',JSON.stringify(stationTimesDB));
+    if(reset)setTimeout(()=>showToast(`صارت ${reset} ${reset===1?'فترة تتبع':'فترات تتبع'} أوقات الأذان تلقائياً`),3200);
 }
 // نصف ساعة محجوزة لكل صلاة من الصلوات الخمس، تبدأ من وقت أذانها (بداية فترتها الخاصة: فجر/ظهر/عصر/مغرب/عشاء)
 // "الضحى" ليست صلاة مفروضة فلا تُحسب هنا. هذا المجموع (5×نصف ساعة=2.5 ساعة) هو نفسه المحجوز أصلاً بإجمالي اليوم (calcPureFree)
@@ -5350,6 +5682,8 @@ function taskLibraryId(t){
 // صلاة الفجر تُؤدّى قبل حدّ اليوم بدقائق، فتُنسب لليوم الذي تبدأ به لا للذي ينتهي
 function taskStatusForDay(t,dayIso){
     if(t.isPrayerAnchor&&t.doneLog)return t.doneLog[dayIso]?'done':'wait';
+    // مهمة قُيّمت بنسبة دون حدّ النجاح: أُغلقت، لكنها لا تُحتسب إنجازاً
+    if(t.status==='done'&&t.score!=null&&t.score<passThreshold())return 'wait';
     return t.status==='done'?'done':'wait';
 }
 function recordTodayStats(dayIso){
@@ -5373,7 +5707,8 @@ function recordTodayStats(dayIso){
             prayer:t.isPrayerAnchor?(t.station||true):undefined,
             mastery:(t.masteryPercent!==undefined)?t.masteryPercent:null,
             isCore:taskIsCore(t),
-            focusSeconds:t.totalSecondsSpent||0
+            focusSeconds:t.totalSecondsSpent||0,
+            score:(t.score!=null)?t.score:undefined
         }));
         const core=rec.tasks.filter(t=>t.isCore);
         rec.coreTotal=core.length;
@@ -5780,6 +6115,8 @@ function rollToNewLogicalDay(){
     startOfDayRoutines();
     rerenderAfterDayChange();
     armDailyDriveBackup();
+    saveDailySnapshot();
+    renderBackupNudge();
 }
 function watchLogicalDay(){
     // إلى الأمام فقط: تعديل إعدادات الصلاة بعد الفجر قد يُرجع الحدّ، ولا نعيد فتح يوم أُغلق
@@ -5998,11 +6335,12 @@ function openEditTaskModal(taskId){
     }
     editTaskDraft={
         station:stationKeys.includes(t.station)?t.station:'dhuhr',
+        // المركونة في صندوق التراكم: اختيار يوم يُخرجها منه إليه
         date:(t.status==='parking')?null:(taskDateIso(t)||logicalTodayIso),
         autoTitle:isRead?readRangeTitle(t,t.fromPage||1,t.toPage||1):null
     };
-    // المنجزة والمركونة لا تُنقل بين الأيام من هنا
-    document.getElementById('edit-task-day-row').style.display=(t.status==='wait')?'block':'none';
+    document.getElementById('edit-task-day-row').style.display=(t.status!=='done')?'block':'none';
+    document.querySelector('#edit-task-day-row .f-label').innerText=(t.status==='parking')?'أعِدها إلى يوم':'اليوم';
     const es=t.expectedSeconds||0;
     document.getElementById('edit-task-hours').value=Math.floor(es/3600);
     document.getElementById('edit-task-minutes').value=Math.floor((es%3600)/60);
@@ -6027,7 +6365,9 @@ function saveEditTask(){
     // قراءة بالوقت: الوقت المتوقع هو مدة الجلسة نفسها
     if(t.readMode==='time'&&t.expectedSeconds>0)t.readMinutes=Math.max(1,Math.round(t.expectedSeconds/60));
     let movedTo=null;
-    if(t.status==='wait'&&editTaskDraft.date&&editTaskDraft.date!==taskDateIso(t)){
+    if(t.status==='parking'&&editTaskDraft.date){
+        t.status='wait';unbindTaskFromPeriods(t.id);setTaskDate(t,editTaskDraft.date);movedTo=editTaskDraft.date;
+    }else if(t.status==='wait'&&editTaskDraft.date&&editTaskDraft.date!==taskDateIso(t)){
         unbindTaskFromPeriods(t.id);setTaskDate(t,editTaskDraft.date);movedTo=editTaskDraft.date;
     }
     saveTasks();syncStationToTodayPeriod(t.id);closeEditTaskModal();
@@ -6056,9 +6396,29 @@ function openGoalActionModal(goalId){
     actionGoalId=goalId;
     const gc=categoryConfig[g.category]||categoryConfig['noCategory'];
     const vl=g.numericVolume>0?` · المتبقي ${g.numericVolume}`:'';
-    fillGoalActionSheet(g.text,`هدف ${planWeekLabel(g.targetContext)} · ${gc.name}${vl} — اسحبه إلى يوم لتوزيعه`,false);
+    fillGoalActionSheet(g.text,`هدف ${planWeekLabel(g.targetContext)} · ${gc.name}${vl}`,false,false,{week:g.targetContext,iso:null});
 }
-function fillGoalActionSheet(title,sub,canReturn,canOpen){
+// شريط أيام الأسبوع المتبقية داخل النافذة: ضغطة تضع الهدف (أو تنقل المهمة) في يومه
+function renderGoalDayPick(opt){
+    const box=document.getElementById('goal-day-pick');
+    const dates=opt?planWeekDates(opt.week).filter(d=>d>=logicalTodayIso):[];
+    if(!opt||!dates.length||(opt.iso&&!planWeekDates(opt.week).includes(opt.iso))){box.style.display='none';return;}
+    document.getElementById('goal-day-label').innerText=opt.iso?'انقلها إلى يوم آخر':'ضعها في يوم';
+    document.getElementById('goal-day-chips').innerHTML=dates.map(iso=>{
+        const d=dateFromIso(iso),i=daysBetween(logicalTodayIso,iso);
+        const name=i===0?'اليوم':(i===1?'غداً':ST_DAY_NAMES[d.getDay()]);
+        const cur=iso===opt.iso;
+        return `<button class="et-day${cur?' selected':''}" ${cur?'disabled':`onclick="pickGoalSheetDay('${iso}')"`}><b>${name}</b><small>${d.getDate()} ${ST_MONTHS[d.getMonth()].slice(0,3)}</small></button>`;
+    }).join('');
+    box.style.display='block';
+}
+function pickGoalSheetDay(iso){
+    const id=document._weekTaskDeleteMode||actionGoalId;if(!id)return;
+    closeGoalActionModal();
+    dropOnDay(id,iso);
+}
+function fillGoalActionSheet(title,sub,canReturn,canOpen,dayOpt){
+    renderGoalDayPick(dayOpt||null);
     document.getElementById('goal-action-title').innerText=title;
     document.getElementById('goal-action-sub').innerText=sub||'';
     document.getElementById('goal-edit-inp').value=title;
@@ -6582,7 +6942,7 @@ function selectSubjectForTask(id){
         </div>`;
     }).join('');
 }
-function backToSubjectsList(){selectedModalSubjectId=null;selectedModalUnitId=null;selectedModalParentId=null;document.getElementById('modal-lectures-panel').style.display='none';renderModalSubjectsPool();}
+function backToSubjectsList(){selectedModalSubjectId=null;selectedModalUnitId=null;selectedModalParentId=null;document.getElementById('modal-lectures-panel').style.display='none';renderModalSubjectsPool();refreshModalAutoTitle();}
 
 function renderModalSeriesPool(){const c=document.getElementById('modal-series-injection-pool');if(!c)return;if(!seriesDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا توجد سلاسل، أضفها من صفحة المكتبة.</div>';return;}c.innerHTML=seriesDatabase.map(s=>`<div class="subject-badge-card clickable" style="border-color:${s.color};" onclick="selectSeriesForTask('${s.id}')">${s.name}</div>`).join('');}
 function selectSeriesForTask(seriesId){
@@ -6601,7 +6961,7 @@ function selectSeriesForTask(seriesId){
         return`<div onclick="selectUnitForTask('${e.id}',this)" class="modal-pick-row"><span style="font-size:12px;">${s.unitType||'حلقة'} ${idx}: ${e.name}</span></div>`;
     }).join('');
 }
-function backToSeriesList(){selectedModalParentId=null;selectedModalUnitId=null;document.getElementById('modal-episodes-panel').style.display='none';renderModalSeriesPool();}
+function backToSeriesList(){selectedModalParentId=null;selectedModalUnitId=null;document.getElementById('modal-episodes-panel').style.display='none';renderModalSeriesPool();refreshModalAutoTitle();}
 
 function renderModalNewSeriesPool(){const c=document.getElementById('modal-newseries-injection-pool');if(!c)return;if(!newSeriesDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا توجد سلاسل، أضفها من صفحة المكتبة.</div>';return;}c.innerHTML=newSeriesDatabase.map(s=>`<div class="subject-badge-card clickable" style="border-color:${s.color};" onclick="selectNewSeriesForTask('${s.id}')">${s.name}</div>`).join('');}
 function selectNewSeriesForTask(seriesId){
@@ -6620,7 +6980,7 @@ function selectNewSeriesForTask(seriesId){
         return`<div onclick="selectUnitForTask('${e.id}',this)" class="modal-pick-row"><span style="font-size:12px;">${s.unitType||'حلقة'} ${idx}: ${e.name}</span></div>`;
     }).join('');
 }
-function backToNewSeriesList(){selectedModalParentId=null;selectedModalUnitId=null;document.getElementById('modal-newseries-episodes-panel').style.display='none';renderModalNewSeriesPool();}
+function backToNewSeriesList(){selectedModalParentId=null;selectedModalUnitId=null;document.getElementById('modal-newseries-episodes-panel').style.display='none';renderModalNewSeriesPool();refreshModalAutoTitle();}
 
 function renderModalBooksPool(){
     const c=document.getElementById('modal-books-injection-pool');if(!c)return;
@@ -6733,6 +7093,7 @@ function updatePendingReadTime(p,id){
     const st={mode:'time',minutes:m};
     if(p==='book')pendingBookReadRange=st;else pendingWorshipReadRange=st;
     selectedModalUnitId='reading-'+id; // قيمة رمزية لتفعيل زر الحفظ
+    refreshModalAutoTitle();
 }
 function updatePendingBookRange(bookId){
     const from=parseInt(document.getElementById('book-read-from').value)||1;
@@ -6741,8 +7102,9 @@ function updatePendingBookRange(bookId){
     const bm=parseInt(document.getElementById('book-read-minutes').value)||0;
     pendingBookReadRange={mode:'pages',from,to:Math.max(from,to),expectedSeconds:(bh*3600)+(bm*60)};
     selectedModalUnitId='reading-'+bookId; // قيمة رمزية لتفعيل زر الحفظ
+    refreshModalAutoTitle();
 }
-function backToBooksList(){selectedModalParentId=null;selectedModalUnitId=null;selectedModalUnitKind=null;pendingBookReadRange=null;document.getElementById('modal-lessons-panel').style.display='none';renderModalBooksPool();}
+function backToBooksList(){selectedModalParentId=null;selectedModalUnitId=null;selectedModalUnitKind=null;pendingBookReadRange=null;document.getElementById('modal-lessons-panel').style.display='none';renderModalBooksPool();refreshModalAutoTitle();}
 
 let pendingWorshipReadRange=null,pendingWorshipSimpleCount=null;
 
@@ -6792,13 +7154,14 @@ function selectWorshipForTask(worshipId){
     } else {
         selectedModalUnitKind='worship-simple';
         lp.style.display='block';
-        ll.innerHTML=`<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;">
-            <label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:6px;">العدد (اختياري${w.targetCount?', الهدف اليومي: '+w.targetCount:''}):</label>
-            <input type="number" id="worship-simple-count" placeholder="${w.targetCount||'اتركه فارغاً إن لم يلزم عدد'}" style="width:100%;padding:8px;background:var(--bg-color);color:#fff;border:1px solid var(--line-1);border-radius:6px;text-align:center;" oninput="pendingWorshipSimpleCount=this.value?parseInt(this.value):null;">
+        ll.innerHTML=`<div class="rp-box">
+            <label class="f-label">العدد (اختياري${w.targetCount?' — الهدف اليومي '+w.targetCount:''})</label>
+            <input type="number" id="worship-simple-count" value="${w.targetCount||''}" placeholder="بلا عدد" style="width:100%;text-align:center;" oninput="pendingWorshipSimpleCount=this.value?parseInt(this.value):null;refreshModalAutoTitle();">
         </div>`;
         pendingWorshipSimpleCount=w.targetCount||null;
         selectedModalUnitId='simple-'+w.id; // قيمة رمزية لتفعيل زر الحفظ
     }
+    refreshModalAutoTitle();
 }
 function updatePendingWorshipRange(worshipId){
     const from=parseInt(document.getElementById('worship-read-from').value)||1;
@@ -6807,8 +7170,9 @@ function updatePendingWorshipRange(worshipId){
     const wm=parseInt(document.getElementById('worship-read-minutes').value)||0;
     pendingWorshipReadRange={mode:'pages',from,to:Math.max(from,to),expectedSeconds:(wh*3600)+(wm*60)};
     selectedModalUnitId='reading-'+worshipId; // قيمة رمزية لتفعيل زر الحفظ
+    refreshModalAutoTitle();
 }
-function backToWorshipList(){selectedModalParentId=null;selectedModalUnitId=null;selectedModalUnitKind=null;pendingWorshipReadRange=null;pendingWorshipSimpleCount=null;document.getElementById('modal-worship-pages-panel').style.display='none';renderModalWorshipPool();}
+function backToWorshipList(){selectedModalParentId=null;selectedModalUnitId=null;selectedModalUnitKind=null;pendingWorshipReadRange=null;pendingWorshipSimpleCount=null;document.getElementById('modal-worship-pages-panel').style.display='none';renderModalWorshipPool();refreshModalAutoTitle();}
 
 // اختيار الوحدة النهائية (محاضرة/حلقة/درس/صفحة) - موحّد لكل الأنواع
 function selectUnitForTask(unitId,el){
@@ -6816,7 +7180,7 @@ function selectUnitForTask(unitId,el){
     const parentEl=el&&el.parentElement;
     if(parentEl)Array.from(parentEl.children).forEach(d=>d.classList.remove('selected'));
     if(el)el.classList.add('selected');
-    applyDefaultModalStation();
+    refreshModalAutoTitle();
 }
 // الفترة المقترحة: فترة التصنيف، وإن كانت مهمة اليوم وفات وقت تلك الفترة فالفترة الجارية
 function defaultStationFor(cat,iso){
@@ -6826,38 +7190,44 @@ function defaultStationFor(cat,iso){
     if(now&&stationKeys.indexOf(base)<stationKeys.indexOf(now))return now;
     return base;
 }
+// ---- متى؟ اليوم والفترة داخل النافذة نفسها ----
+let modalAddDraft={date:null,station:'morning',stationTouched:false};
+function renderModalWhenChips(){
+    const forGoal=!!(pendingWeekDayTarget&&pendingWeekDayTarget.day===null);
+    document.getElementById('modal-day-row').style.display=forGoal?'none':'block';
+    document.getElementById('modal-station-row').style.display=forGoal?'none':'block';
+    document.getElementById('modal-goal-note').style.display=forGoal?'block':'none';
+    if(forGoal)return;
+    document.getElementById('modal-days').innerHTML=dayChipsHtml(modalAddDraft.date,'pickModalDate');
+    document.getElementById('modal-stations').innerHTML=stationChipsHtml(modalAddDraft.station,'pickModalStation');
+    document.getElementById('input-modal-station').value=modalAddDraft.station;
+    const off=daysBetween(logicalTodayIso,modalAddDraft.date||logicalTodayIso);
+    document.getElementById('add-task-submit').innerHTML=`<i class="fa-solid fa-plus"></i> أضف ${off===0?'لليوم':(off===1?'للغد':'ليوم '+ST_DAY_NAMES[dateFromIso(modalAddDraft.date).getDay()])}`;
+}
+function pickModalDate(iso){
+    modalAddDraft.date=iso;
+    if(!modalAddDraft.stationTouched)modalAddDraft.station=defaultStationFor(selectedModalCategory,iso);
+    renderModalWhenChips();
+}
+function pickModalStation(sk){modalAddDraft.station=sk;modalAddDraft.stationTouched=true;renderModalWhenChips();}
 function applyDefaultModalStation(){
-    const iso=pendingWeekDayTarget&&pendingWeekDayTarget.day;
-    const sk=defaultStationFor(selectedModalCategory,iso||logicalTodayIso);
-    pickCustomSelectOption('input-modal-station',sk,stationLabelsArabic[sk]);
+    if(modalAddDraft.stationTouched)return;
+    modalAddDraft.station=defaultStationFor(selectedModalCategory,modalAddDraft.date||logicalTodayIso);
+    renderModalWhenChips();
 }
 
 function resetModalExpectedTimeField(){
     document.getElementById('modal-task-hours').value='0';
     document.getElementById('modal-task-minutes').value='15';
+    document.querySelectorAll('#modal-expected-time-field .quick-time-pill').forEach(p=>p.classList.remove('selected'));
 }
+const MODAL_PANELS=['modal-subjects-panel','modal-series-panel','modal-books-panel','modal-worship-panel','modal-newseries-panel',
+    'modal-lectures-panel','modal-episodes-panel','modal-lessons-panel','modal-worship-pages-panel','modal-newseries-episodes-panel',
+    'modal-sports-panel','modal-behavior-panel'];
 function selectModalChip(c){
-    const timeField=document.getElementById('modal-expected-time-field');
-    // خاصية إلغاء التحديد: الضغط على الشريحة المحددة حالياً يلغي التصنيف بالكامل
-    if(c===selectedModalCategory){
-        selectedModalCategory=null;selectedModalUnitId=null;selectedModalParentId=null;selectedModalUnitKind=null;
-        document.querySelectorAll('#modal-chips-group .chip-choice').forEach(x=>{
-            x.classList.remove('selected');
-            x.style.background='';x.style.color='';x.style.borderColor='';
-        });
-        const a=document.getElementById('modal-subject-picker-area');
-        a.style.display='block';
-        ['modal-subjects-panel','modal-series-panel','modal-books-panel','modal-worship-panel','modal-newseries-panel'].forEach(id=>document.getElementById(id).style.display='none');
-        document.getElementById('modal-lectures-panel').style.display='none';
-        document.getElementById('modal-episodes-panel').style.display='none';
-        document.getElementById('modal-lessons-panel').style.display='none';
-        document.getElementById('modal-worship-pages-panel').style.display='none';
-        document.getElementById('modal-newseries-episodes-panel').style.display='none';
-        timeField.style.display='block';resetModalExpectedTimeField();
-        return;
-    }
     selectedModalCategory=c;selectedModalUnitId=null;selectedModalParentId=null;selectedModalUnitKind=null;
-    document.querySelectorAll('#modal-chips-group .chip-choice').forEach(x=>{
+    pendingBookReadRange=null;pendingWorshipReadRange=null;pendingWorshipSimpleCount=null;
+    document.querySelectorAll('#modal-chips-group .type-chip').forEach(x=>{
         const isSel=x.getAttribute('data-cat')===c;
         x.classList.toggle('selected',isSel);
         const cc=chipColors[x.getAttribute('data-cat')]||'var(--accent-color)';
@@ -6865,47 +7235,38 @@ function selectModalChip(c){
         if(isSel){x.style.background=tintOf(cc,0.16);x.style.color=cc;x.style.borderColor=cc;}
         else{x.style.background='';x.style.color='';x.style.borderColor='';}
     });
-    const a=document.getElementById('modal-subject-picker-area');
-    a.style.display='block';
-    // إخفاء كل الألواح أولاً
-    ['modal-subjects-panel','modal-series-panel','modal-books-panel','modal-worship-panel','modal-newseries-panel'].forEach(id=>document.getElementById(id).style.display='none');
-    document.getElementById('modal-lectures-panel').style.display='none';
-    document.getElementById('modal-episodes-panel').style.display='none';
-    document.getElementById('modal-lessons-panel').style.display='none';
-    document.getElementById('modal-worship-pages-panel').style.display='none';
-    document.getElementById('modal-newseries-episodes-panel').style.display='none';
-    document.getElementById('modal-sports-panel').style.display='none';
-    document.getElementById('modal-behavior-panel').style.display='none';
+    MODAL_PANELS.forEach(id=>document.getElementById(id).style.display='none');
+    const timeField=document.getElementById('modal-expected-time-field');
     timeField.style.display='none';
-    applyDefaultModalStation();
+    const area=document.getElementById('modal-subject-picker-area');
+    area.style.display=(c==='general'||c==='break')?'none':'block';
     if(c==='study'){
         modalStudyTab='subjects';switchModalStudyTab('subjects');
     } else if(c==='book'){
-        document.getElementById('modal-books-panel').style.display='block';
-        renderModalBooksPool();
+        document.getElementById('modal-books-panel').style.display='block';renderModalBooksPool();
     } else if(c==='series'){
-        document.getElementById('modal-series-panel').style.display='block';
-        renderModalSeriesPool();
+        document.getElementById('modal-series-panel').style.display='block';renderModalSeriesPool();
     } else if(c==='god'){
-        document.getElementById('modal-worship-panel').style.display='block';
-        renderModalWorshipPool();
+        document.getElementById('modal-worship-panel').style.display='block';renderModalWorshipPool();
     } else if(c==='newseries'){
-        document.getElementById('modal-newseries-panel').style.display='block';
-        renderModalNewSeriesPool();
+        document.getElementById('modal-newseries-panel').style.display='block';renderModalNewSeriesPool();
     } else if(c==='sport'){
-        document.getElementById('modal-sports-panel').style.display='block';
-        renderModalSportsPool();
-        timeField.style.display='block';resetModalExpectedTimeField();
+        document.getElementById('modal-sports-panel').style.display='block';renderModalSportsPool();
     } else if(c==='behavior'){
-        document.getElementById('modal-behavior-panel').style.display='block';
-        renderModalBehaviorPool();
-    } else if(c==='break'){
-        timeField.style.display='block';resetModalExpectedTimeField();
+        document.getElementById('modal-behavior-panel').style.display='block';renderModalBehaviorPool();
     }
+    if(modalNeedsManualTime()){timeField.style.display='block';resetModalExpectedTimeField();}
+    // اسم المهمة: مطلوب للحرّة، ومقترح تلقائياً لما يُختار من المكتبة
+    const free=(c==='general'||c==='break');
+    document.getElementById('modal-name-label').innerText=free?'الاسم':'الاسم (يُملأ من اختيارك)';
+    document.getElementById('input-modal-task-title').placeholder=c==='break'?'استراحة، مشي، قيلولة…':(free?'ماذا تريد أن تنجز؟':'اختر من القائمة أعلاه أو اكتب اسماً');
+    modalNameTouched=false;
+    refreshModalAutoTitle();
+    applyDefaultModalStation();
 }
 function renderModalBehaviorPool(){
     const c=document.getElementById('modal-behavior-list');if(!c)return;
-    if(!behaviorDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا سلوكيات في المكتبة بعد.</div>';return;}
+    if(!behaviorDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا سلوكيات بعد — أضفها من المكتبة ← السلوك.</div>';return;}
     c.innerHTML=behaviorDatabase.map(x=>{
         const sel=(selectedModalParentId===x.id&&selectedModalUnitKind==='behavior')?' selected':'';
         return `<div class="modal-pick-row${sel}" onclick="pickModalBehavior('${x.id}')">
@@ -6918,15 +7279,13 @@ function renderModalBehaviorPool(){
 function pickModalBehavior(id){
     const x=behaviorDatabase.find(v=>v.id===id);if(!x)return;
     selectedModalParentId=id;selectedModalUnitId=null;selectedModalUnitKind='behavior';
-    const t=document.getElementById('input-modal-task-title');
-    if(!t.value.trim())t.value=x.name;
-    renderModalBehaviorPool();
+    renderModalBehaviorPool();refreshModalAutoTitle();
 }
 // عناصر الرياضة داخل نافذة إضافة المهمة
 function renderModalSportsPool(){
     const c=document.getElementById('modal-sports-list');if(!c)return;
     if(!sportsDatabase.length){
-        c.innerHTML='<div class="empty-zone-hint">لا عناصر في تبويب الرياضة بعد.</div>';return;
+        c.innerHTML='<div class="empty-zone-hint">لا عناصر بعد — أضفها من المكتبة ← الرياضة، أو اكتب اسم التمرين أدناه.</div>';return;
     }
     c.innerHTML=sportsDatabase.map(x=>{
         const kindLabel=x.kind==='do'?'تمارين':x.kind==='number'?'سعرات':'متابعة وزن';
@@ -6941,45 +7300,39 @@ function renderModalSportsPool(){
 function pickModalSport(id){
     const x=sportsDatabase.find(v=>v.id===id);if(!x)return;
     selectedModalParentId=id;selectedModalUnitId=null;selectedModalUnitKind='sports';
-    const t=document.getElementById('input-modal-task-title');
-    if(!t.value.trim())t.value=x.name;
-    renderModalSportsPool();
+    renderModalSportsPool();refreshModalAutoTitle();
 }
 let pendingWeekDayTarget=null; // {week,day} عند فتح النافذة من صفحة التخطيط
 // النافذة تفتح على آخر تصنيف استعملته — أغلب الإضافات المتتالية من نوع واحد
 function lastAddCategory(){
     let c=null;try{c=localStorage.getItem('lastAddCat');}catch(e){}
-    return (c&&document.querySelector(`#modal-chips-group .chip-choice[data-cat="${c}"]`))?c:'study';
+    if(c==='noCategory')c='general';
+    return (c&&document.querySelector(`#modal-chips-group .type-chip[data-cat="${c}"]`))?c:'general';
 }
-function openAddTaskModal(){
+// فتح موحّد: day = تاريخ (يوم محدّد) أو null (هدف لصندوق الأسبوع) أو undefined (اليوم)
+function openAddModalFor(target){
+    pendingWeekDayTarget=target||null;
+    const forGoal=!!(target&&target.day===null);
+    document.getElementById('add-task-heading').innerText=forGoal?`هدف جديد · ${planWeekLabel(target.week)}`:'مهمة جديدة';
     const cbtn=document.getElementById('btn-distribute-core');
-    if(cbtn)cbtn.style.display='none';
-    pendingWeekDayTarget=null;
-    document.getElementById('input-modal-task-title').value="";
+    if(cbtn)cbtn.style.display=(forGoal&&getCoreItems().length)?'flex':'none';
+    document.getElementById('input-modal-task-title').value='';
+    modalNameTouched=false;modalAutoTitle='';
+    modalAddDraft={date:(target&&target.day)||logicalTodayIso,station:'morning',stationTouched:false};
+    if(forGoal)document.getElementById('add-task-submit').innerHTML='<i class="fa-solid fa-plus"></i> أضف للأهداف';
     selectedModalSubjectId=null;selectedModalUnitId=null;selectedModalParentId=null;selectedModalUnitKind=null;modalStudyTab='subjects';
-    selectedModalCategory=null;selectModalChip(lastAddCategory());
+    selectedModalCategory=null;
+    selectModalChip(lastAddCategory());
+    renderModalWhenChips();
     document.getElementById('add-task-modal').style.display='flex';
+    const box=document.querySelector('#add-task-modal .custom-modal-content');if(box)box.scrollTop=0;
 }
+function openAddTaskModal(){openAddModalFor(null);}
 function closeAddTaskModal(){document.getElementById('add-task-modal').style.display='none';pendingWeekDayTarget=null;}
 // فتح نافذة إضافة مهمة مباشرة ليوم محدد ضمن أسبوع معيّن (من صفحة التخطيط)
-function openAddTaskToWeekDayModal(week,day){
-    pendingWeekDayTarget={week,day};
-    document.getElementById('input-modal-task-title').value="";
-    selectedModalSubjectId=null;selectedModalUnitId=null;selectedModalParentId=null;selectedModalUnitKind=null;modalStudyTab='subjects';
-    selectedModalCategory=null;selectModalChip(lastAddCategory());
-    document.getElementById('add-task-modal').style.display='flex';
-}
+function openAddTaskToWeekDayModal(week,day){openAddModalFor({week,day});}
 // فتح نافذة إضافة هدف لصندوق الأسبوع (بدون تخصيص يوم بعد) - زر + في أعلى صندوق أهداف الأسبوع
-function openAddGoalToWeekModal(){
-    pendingWeekDayTarget={week:activePlanWeekContext,day:null};
-    document.getElementById('input-modal-task-title').value="";
-    selectedModalSubjectId=null;selectedModalUnitId=null;selectedModalParentId=null;selectedModalUnitKind=null;modalStudyTab='subjects';
-    selectedModalCategory=null;selectModalChip(lastAddCategory());
-    // زر التوزيع يظهر في سياق التخطيط فقط، وفقط إن وُجدت مهام رئيسية
-    const btn=document.getElementById('btn-distribute-core');
-    if(btn)btn.style.display=getCoreItems().length?'flex':'none';
-    document.getElementById('add-task-modal').style.display='flex';
-}
+function openAddGoalToWeekModal(){openAddModalFor({week:activePlanWeekContext,day:null});}
 function distributeCoreFromModal(){
     closeAddTaskModal();
     confirmDistributeCore();
@@ -7008,188 +7361,192 @@ function openStationTimePicker(sk){
     document.getElementById('disp-station-tp-from').innerText=ex.from?formatTime12(ex.from):'--:--';
     document.getElementById('station-tp-to').value=ex.to||'';
     document.getElementById('disp-station-tp-to').innerText=ex.to?formatTime12(ex.to):'--:--';
-    // تنبيه بالحدّ الأدنى: لا تبدأ الفترة قبل انتهاء وقت الصلاة
-    const floor=earliestStationStart(sk);
+    // ما الحدّان التلقائيان اليوم؟ وهل الفترة معدّلة يدوياً؟
+    const auto=derivedStationTimes();
+    const au=auto&&auto[sk];
     const hint=document.getElementById('station-tp-hint');
-    const a=todayAdhanTimes();
+    const custom=!!stationTimesDB[sk];
     if(hint){
-        hint.innerHTML=floor
-            ? `أذان ${stationLabelsArabic[sk].replace('بعد ','')} الساعة <b>${formatTime12(a[sk])}</b> ·
-               بعده ${prayerSettings.prayerDuration||30} دقيقة للصلاة، فلا تبدأ الفترة قبل <b>${formatTime12(floor)}</b>.`
-            : 'فعّل أوقات الصلاة من صفحة الروتين ليُضبط الحدّ تلقائياً.';
+        hint.innerHTML=au
+            ? `تلقائياً اليوم: <b>${formatTime12(au.from)}</b> — <b>${formatTime12(au.to)}</b> (بعد الأذان بـ ${prayerSettings.prayerDuration||30} دقيقة حتى الأذان التالي).<br>
+               ما تعدّله يُحفظ نسبةً للأذان، فيتحرّك معه كل يوم.`
+            : 'فعّل أوقات الصلاة من صفحة الروتين لتتبع الفترات الأذان تلقائياً.';
     }
+    document.getElementById('station-tp-mode').innerHTML=custom
+        ?'<span class="tp-mode custom"><i class="fa-solid fa-sliders"></i> معدّلة يدوياً</span>'
+        :'<span class="tp-mode auto"><i class="fa-solid fa-wand-magic-sparkles"></i> تلقائية</span>';
+    document.getElementById('station-tp-reset').style.display=custom?'flex':'none';
     document.getElementById('station-time-picker-overlay').style.display='flex';
 }
 function closeStationTimePicker(){document.getElementById('station-time-picker-overlay').style.display='none';currentStationPickerKey=null;}
+function resetStationTime(){
+    const sk=currentStationPickerKey;if(!sk)return;
+    delete stationTimesDB[sk];
+    localStorage.setItem('stationTimesDB',JSON.stringify(stationTimesDB));
+    closeStationTimePicker();
+    showToast(`${stationLabelsArabic[sk]} تتبع الأذان تلقائياً`);
+    renderDailyTasks();
+}
 function saveStationTime(){
-    if(!currentStationPickerKey)return;
+    const sk=currentStationPickerKey;if(!sk)return;
     const rawFrom=document.getElementById('station-tp-from').value;
     const rawTo=document.getElementById('station-tp-to').value;
     if(!rawFrom||!rawTo){showToast('حدّد البداية والنهاية','var(--status-delay)');return;}
     if(rawFrom===rawTo){showToast('البداية والنهاية متطابقتان','var(--status-delay)');return;}
-    const r=clampStationRange(currentStationPickerKey,rawFrom,rawTo);
-    stationTimesDB[currentStationPickerKey]={from:r.from,to:r.to};
+    const r=clampStationRange(sk,rawFrom,rawTo);
+    const d=derivedStationTimes();
+    const au=d&&d[sk];
+    if(au){
+        // إزاحة عن الحدّين التلقائيين: لا تبدأ قبل انتهاء الصلاة ولا تتجاوز الأذان التالي
+        let startOffset=_circDiff(au.from,r.from);if(startOffset>720)startOffset=0;
+        let endOffset=_circDiff(r.to,au.to);if(endOffset>720)endOffset=0;
+        if(!startOffset&&!endOffset)delete stationTimesDB[sk];
+        else stationTimesDB[sk]={mode:'offset',startOffset,endOffset};
+    }else stationTimesDB[sk]={from:r.from,to:r.to};
     localStorage.setItem('stationTimesDB',JSON.stringify(stationTimesDB));
     closeStationTimePicker();
-    showToast(r.clamped?`ضُبطت الفترة على ${formatTime12(r.from)} — ${formatTime12(r.to)} · لا تبدأ قبل انتهاء الصلاة`:'تم تحديد الوقت');
+    const eff=getStationEffectiveTimes(sk);
+    showToast(`${stationLabelsArabic[sk]}: ${formatTime12(eff.from)} — ${formatTime12(eff.to)}`);
     renderDailyTasks();
 }
 function startStationLongPress(sk,e){e.preventDefault();stationLongPressTimer=setTimeout(()=>openStationTimePicker(sk),600);}
 function cancelStationLongPress(){clearTimeout(stationLongPressTimer);}
 
 // إضافة مهمة
-function submitAddNewTask(){
-    let title=document.getElementById('input-modal-task-title').value.trim();
-    const station=document.getElementById('input-modal-station').value;
-    let linkedUnitId=null,expectedSeconds=0,subjectColor=null,subjectId=null,unitKind=null,worshipId=null,bookId=null,fromPage=null,toPage=null,libParentId=selectedModalParentId||null;
-    let readMode=null,readMinutes=null;
-
-    if(selectedModalParentId&&selectedModalUnitKind){
-        if(selectedModalUnitKind==='behavior'){
-            const x=behaviorDatabase.find(v=>v.id===selectedModalParentId);
-            if(x){if(!title)title=x.name;unitKind='behavior';}
-        } else if(selectedModalUnitKind==='sports'){
-            const x=sportsDatabase.find(v=>v.id===selectedModalParentId);
-            if(x){
-                if(!title)title=x.name;
-                subjectColor=(x.color&&String(x.color).startsWith('#'))?x.color:null;
-                unitKind='sports';
-            }
-        } else if(selectedModalUnitKind==='subject'){
-            const s=subjectsDatabase.find(x=>x.id===selectedModalParentId);
-            const l=s&&s.lectures.find(x=>x.id===selectedModalUnitId);
+// ---- بناء المهمة من اختيارات النافذة (بلا أي حفظ) ----
+// مصدر واحد للاسم التلقائي والحقول: تقرؤه المعاينة أثناء الاختيار، والحفظ عند الضغط
+function buildModalTaskSpec(){
+    const sp={autoTitle:'',linkedUnitId:null,expectedSeconds:0,subjectColor:null,subjectId:null,unitKind:null,
+        worshipId:null,bookId:null,fromPage:null,toPage:null,libParentId:selectedModalParentId||null,
+        readMode:null,readMinutes:null,pageSrc:null,ready:false};
+    const k=selectedModalUnitKind,pid=selectedModalParentId,uid=selectedModalUnitId;
+    if(pid&&k){
+        if(k==='behavior'){
+            const x=behaviorDatabase.find(v=>v.id===pid);
+            if(x){sp.autoTitle=x.name;sp.unitKind='behavior';sp.ready=true;}
+        } else if(k==='sports'){
+            const x=sportsDatabase.find(v=>v.id===pid);
+            if(x){sp.autoTitle=x.name;sp.subjectColor=(x.color&&String(x.color).startsWith('#'))?x.color:null;sp.unitKind='sports';sp.ready=true;}
+        } else if(k==='subject'){
+            const s=subjectsDatabase.find(x=>x.id===pid);
+            const l=s&&s.lectures.find(x=>x.id===uid);
             if(s&&l){
-                const idx=s.lectures.indexOf(l);
-                if(!title)title=`${s.name} — محاضرة ${idx+1}: ${l.name}`;
-                linkedUnitId=l.id;expectedSeconds=l.expectedSeconds||0;subjectColor=s.color;subjectId=s.id;unitKind='subject';
+                sp.autoTitle=`${s.name} — محاضرة ${s.lectures.indexOf(l)+1}: ${l.name}`;
+                sp.linkedUnitId=l.id;sp.expectedSeconds=l.expectedSeconds||0;sp.subjectColor=s.color;sp.subjectId=s.id;sp.unitKind='subject';sp.ready=true;
             }
-        } else if(selectedModalUnitKind==='series'){
-            libParentId=selectedModalParentId;
-            const s=seriesDatabase.find(x=>x.id===selectedModalParentId);
-            const e=s&&s.episodes.find(x=>x.id===selectedModalUnitId);
+        } else if(k==='series'||k==='newseries'){
+            const db=(k==='series')?seriesDatabase:newSeriesDatabase;
+            const s=db.find(x=>x.id===pid);
+            const e=s&&s.episodes.find(x=>x.id===uid);
             if(s&&e){
-                const idx=s.episodes.indexOf(e);
-                if(!title)title=`${s.name} — ${s.unitType||'حلقة'} ${idx+1}: ${e.name}`;
-                linkedUnitId=e.id;subjectColor=s.color;unitKind='series';
+                sp.autoTitle=`${s.name} — ${s.unitType||'حلقة'} ${s.episodes.indexOf(e)+1}: ${e.name}`;
+                sp.linkedUnitId=e.id;sp.expectedSeconds=e.expectedSeconds||0;sp.subjectColor=s.color;sp.unitKind=k;sp.ready=true;
             }
-        } else if(selectedModalUnitKind==='newseries'){
-            const s=newSeriesDatabase.find(x=>x.id===selectedModalParentId);
-            const e=s&&s.episodes.find(x=>x.id===selectedModalUnitId);
-            if(s&&e){
-                const idx=s.episodes.indexOf(e);
-                if(!title)title=`${s.name} — ${s.unitType||'حلقة'} ${idx+1}: ${e.name}`;
-                linkedUnitId=e.id;subjectColor=s.color;unitKind='newseries';
-            }
-        } else if(selectedModalUnitKind==='book'){
-            const b=booksDatabase.find(x=>x.id===selectedModalParentId);
-            const l=b&&b.lessons.find(x=>x.id===selectedModalUnitId);
+        } else if(k==='book'){
+            const b=booksDatabase.find(x=>x.id===pid);
+            const l=b&&b.lessons.find(x=>x.id===uid);
             if(b&&l){
-                const idx=b.lessons.indexOf(l);
-                if(!title)title=`${b.name} — ${b.unitType||'درس'} ${idx+1}: ${l.name}`;
-                linkedUnitId=l.id;subjectColor=b.color;unitKind='book';
+                sp.autoTitle=`${b.name} — ${b.unitType||'درس'} ${b.lessons.indexOf(l)+1}: ${l.name}`;
+                sp.linkedUnitId=l.id;sp.expectedSeconds=l.expectedSeconds||0;sp.subjectColor=b.color;sp.unitKind='book';sp.ready=true;
             }
-        } else if(selectedModalUnitKind==='book-memorize'){
-            const b=booksDatabase.find(x=>x.id===selectedModalParentId);
-            const p=b&&b.pages&&b.pages.find(x=>x.id===selectedModalUnitId);
-            if(b&&p){
-                const idx=b.pages.indexOf(p);
-                if(!title)title=`${b.name} — حفظ صفحة ${idx+1}: ${p.name}`;
-                linkedUnitId=p.id;expectedSeconds=p.expectedSeconds||0;subjectColor=b.color;unitKind='book-memorize';
+        } else if(k==='book-memorize'||k==='worship-memorize'){
+            const src=(k==='book-memorize')?booksDatabase.find(x=>x.id===pid):worshipDatabase.find(x=>x.id===pid);
+            const p=src&&src.pages&&src.pages.find(x=>x.id===uid);
+            if(src&&p){
+                sp.autoTitle=`${src.name} — حفظ صفحة ${src.pages.indexOf(p)+1}: ${p.name}`;
+                sp.linkedUnitId=p.id;sp.expectedSeconds=p.expectedSeconds||0;sp.subjectColor=src.color;sp.unitKind=k;sp.ready=true;
             }
-        } else if(selectedModalUnitKind==='book-reading'){
-            const b=booksDatabase.find(x=>x.id===selectedModalParentId);
-            if(b&&pendingBookReadRange&&pendingBookReadRange.mode==='time'){
-                const m=pendingBookReadRange.minutes;
-                if(!title)title=`${b.name} — قراءة ${m} دقيقة`;
-                subjectColor=b.color;unitKind='book-read';bookId=b.id;
-                readMode='time';readMinutes=m;expectedSeconds=m*60;
-            } else if(b&&pendingBookReadRange){
-                if(!title)title=`${b.name} — قراءة من صفحة ${pendingBookReadRange.from} إلى ${pendingBookReadRange.to}`;
-                subjectColor=b.color;unitKind='book-read';bookId=b.id;
-                fromPage=pendingBookReadRange.from;toPage=pendingBookReadRange.to;
-                expectedSeconds=pendingBookReadRange.expectedSeconds||0;
-                // تحديث فوري لآخر صفحة أُسندت (لضمان استمرارية الاقتراح الافتراضي عند إضافة مهام قراءة متتالية قبل إنجازها)
-                b.lastAssignedToPage=toPage;saveBooks();
+        } else if(k==='book-reading'||k==='worship-reading'){
+            const isBook=(k==='book-reading');
+            const src=isBook?booksDatabase.find(x=>x.id===pid):worshipDatabase.find(x=>x.id===pid);
+            const rng=isBook?pendingBookReadRange:pendingWorshipReadRange;
+            if(src&&rng){
+                sp.subjectColor=src.color;sp.unitKind=isBook?'book-read':'worship-read';
+                if(isBook)sp.bookId=src.id;else sp.worshipId=src.id;
+                if(rng.mode==='time'){
+                    sp.autoTitle=`${src.name} — قراءة ${rng.minutes} دقيقة`;
+                    sp.readMode='time';sp.readMinutes=rng.minutes;sp.expectedSeconds=rng.minutes*60;
+                }else{
+                    sp.autoTitle=`${src.name} — قراءة من صفحة ${rng.from} إلى ${rng.to}`;
+                    sp.fromPage=rng.from;sp.toPage=rng.to;sp.expectedSeconds=rng.expectedSeconds||0;
+                    sp.pageSrc={src,to:rng.to,isBook};
+                }
+                sp.ready=true;
             }
-        } else if(selectedModalUnitKind==='worship-memorize'){
-            const w=worshipDatabase.find(x=>x.id===selectedModalParentId);
-            const p=w&&w.pages&&w.pages.find(x=>x.id===selectedModalUnitId);
-            if(w&&p){
-                const idx=w.pages.indexOf(p);
-                if(!title)title=`${w.name} — حفظ صفحة ${idx+1}: ${p.name}`;
-                linkedUnitId=p.id;expectedSeconds=p.expectedSeconds||0;subjectColor=w.color;unitKind='worship-memorize';
-            }
-        } else if(selectedModalUnitKind==='worship-reading'){
-            const w=worshipDatabase.find(x=>x.id===selectedModalParentId);
-            if(w&&pendingWorshipReadRange&&pendingWorshipReadRange.mode==='time'){
-                const m=pendingWorshipReadRange.minutes;
-                if(!title)title=`${w.name} — قراءة ${m} دقيقة`;
-                subjectColor=w.color;unitKind='worship-read';worshipId=w.id;
-                readMode='time';readMinutes=m;expectedSeconds=m*60;
-            } else if(w&&pendingWorshipReadRange){
-                if(!title)title=`${w.name} — قراءة من صفحة ${pendingWorshipReadRange.from} إلى ${pendingWorshipReadRange.to}`;
-                subjectColor=w.color;unitKind='worship-read';worshipId=w.id;
-                fromPage=pendingWorshipReadRange.from;toPage=pendingWorshipReadRange.to;
-                expectedSeconds=pendingWorshipReadRange.expectedSeconds||0;
-                // تحديث فوري لآخر صفحة أُسندت (لضمان استمرارية الاقتراح الافتراضي عند إضافة مهام قراءة متتالية قبل إنجازها)
-                w.lastAssignedToPage=toPage;saveWorship();
-            }
-        } else if(selectedModalUnitKind==='worship-simple'){
-            const w=worshipDatabase.find(x=>x.id===selectedModalParentId);
+        } else if(k==='worship-simple'){
+            const w=worshipDatabase.find(x=>x.id===pid);
             if(w){
-                if(!title)title=pendingWorshipSimpleCount?`${w.name} (${pendingWorshipSimpleCount})`:w.name;
-                subjectColor=w.color;unitKind='worship-simple';worshipId=w.id;expectedSeconds=w.expectedSeconds||0;
+                sp.autoTitle=pendingWorshipSimpleCount?`${w.name} (${pendingWorshipSimpleCount})`:w.name;
+                sp.subjectColor=w.color;sp.unitKind='worship-simple';sp.worshipId=w.id;sp.expectedSeconds=w.expectedSeconds||0;sp.ready=true;
             }
         }
     }
-    // استراحة / بدون تصنيف: لا مصدر وقت مسبق من المكتبة — يُؤخذ الوقت المتوقع من الحقل اليدوي
-    if(selectedModalCategory==='break'||selectedModalCategory===null){
+    // ما لا مصدر وقت له في المكتبة يأخذ وقته من الحقل اليدوي
+    if(modalNeedsManualTime()){
         const h=parseInt(document.getElementById('modal-task-hours').value)||0;
         const m=parseInt(document.getElementById('modal-task-minutes').value)||0;
-        expectedSeconds=(h*3600)+(m*60);
+        sp.expectedSeconds=(h*3600)+(m*60);
     }
-    if(!title){showToast("الرجاء كتابة اسم المهمة أو اختيار عنصر");return;}
+    return sp;
+}
+function modalNeedsManualTime(){
+    return selectedModalCategory===null||['general','break','sport'].includes(selectedModalCategory);
+}
+// الاسم يتبع اختيارك تلقائياً ما لم تكتب اسماً بيدك
+let modalAutoTitle='',modalNameTouched=false;
+function refreshModalAutoTitle(){
+    const inp=document.getElementById('input-modal-task-title');if(!inp)return;
+    const sp=buildModalTaskSpec();
+    if(!modalNameTouched||!inp.value.trim()){inp.value=sp.autoTitle||'';modalNameTouched=false;}
+    modalAutoTitle=sp.autoTitle||'';
+}
+function onModalNameInput(){
+    const inp=document.getElementById('input-modal-task-title');
+    modalNameTouched=!!inp.value.trim()&&inp.value!==modalAutoTitle;
+}
+function submitAddNewTask(){
+    const sp=buildModalTaskSpec();
+    const title=document.getElementById('input-modal-task-title').value.trim()||sp.autoTitle;
+    const libraryType=['study','book','series','god','newseries','behavior'].includes(selectedModalCategory);
+    if(libraryType&&!sp.ready&&!document.getElementById('input-modal-task-title').value.trim()){
+        showToast('اختر عنصراً من القائمة، أو اكتب اسماً لمهمة حرّة');return;
+    }
+    if(!title){showToast('اكتب اسم المهمة');document.getElementById('input-modal-task-title').focus();return;}
     try{if(selectedModalCategory)localStorage.setItem('lastAddCat',selectedModalCategory);}catch(e){}
+    const category=(selectedModalCategory==='general'||!selectedModalCategory)?'noCategory':selectedModalCategory;
+    // تحديث آخر صفحة أُسندت، حتى يقترح التالي ما بعدها عند إضافات متتالية قبل الإنجاز
+    const markPages=()=>{if(sp.pageSrc){sp.pageSrc.src.lastAssignedToPage=sp.pageSrc.to;sp.pageSrc.isBook?saveBooks():saveWorship();}};
+    const fields={subjectId:sp.subjectId,subjectColor:sp.subjectColor,libParentId:sp.libParentId,linkedUnitId:sp.linkedUnitId,
+        unitKind:sp.unitKind,worshipId:sp.worshipId,bookId:sp.bookId,fromPage:sp.fromPage,toPage:sp.toPage,
+        expectedSeconds:sp.expectedSeconds,readMode:sp.readMode,readMinutes:sp.readMinutes};
+    const resetPending=()=>{pendingWorshipReadRange=null;pendingWorshipSimpleCount=null;pendingBookReadRange=null;};
 
-    // حالة خاصة: إضافة هدف لصندوق الأسبوع (بدون تخصيص يوم بعد) - يُحفظ كهدف وليس كمهمة يومية
+    // هدف لصندوق الأسبوع (بلا يوم بعد): يُحفظ هدفاً لا مهمة يومية
     if(pendingWeekDayTarget&&pendingWeekDayTarget.day===null){
-        hierarchicalGoalsDatabase.push({
-            id:'weekgoal-'+Date.now(),text:title,
-            category:selectedModalCategory,targetContext:pendingWeekDayTarget.week,
-            subjectId,subjectColor,libParentId,linkedUnitId,unitKind,worshipId,bookId,fromPage,toPage,expectedSeconds,
-            readMode,readMinutes,
+        hierarchicalGoalsDatabase.push(Object.assign({
+            id:'weekgoal-'+Date.now(),text:title,category,targetContext:pendingWeekDayTarget.week,
             numericVolume:0,originalVolume:0,isCompleted:false
-        });
-        saveGoals();closeAddTaskModal();
-        pendingWorshipReadRange=null;pendingWorshipSimpleCount=null;pendingBookReadRange=null;pendingWeekDayTarget=null;
-        showToast("تمت إضافة الهدف للأسبوع","var(--cat-study)");
+        },fields));
+        markPages();saveGoals();closeAddTaskModal();resetPending();pendingWeekDayTarget=null;
+        showToast("أُضيف لأهداف الأسبوع — اسحبه إلى يومه حين تقرّر","var(--cat-study)");
         renderHierarchicalTopDownSystem();
         return;
     }
 
-    const newTask={
-        id:'task-'+Date.now(),title,
-        category:selectedModalCategory,status:'wait',notes:'',
-        totalSecondsSpent:0,station,
-        parentGoalId:null,
-        targetWeek:pendingWeekDayTarget?pendingWeekDayTarget.week:null,
-        targetDay:pendingWeekDayTarget?pendingWeekDayTarget.day:null,
-        subjectId,subjectColor,
-        linkedUnitId,progressCounted:false,expectedSeconds,
-        unitKind,worshipId,bookId,libParentId,fromPage,toPage,
-        readMode,readMinutes,
-        stationTimeFixed:null
-    };
-    setTaskDate(newTask,(pendingWeekDayTarget&&pendingWeekDayTarget.day)||logicalTodayIso);
+    const date=modalAddDraft.date||logicalTodayIso;
+    const newTask=Object.assign({
+        id:'task-'+Date.now(),title,category,status:'wait',notes:'',
+        totalSecondsSpent:0,station:modalAddDraft.station,parentGoalId:null,
+        progressCounted:false,stationTimeFixed:null
+    },fields);
+    setTaskDate(newTask,date);
     storedDailyTasks.push(newTask);
-    saveTasks();syncStationToTodayPeriod(newTask.id);closeAddTaskModal();
-    pendingWorshipReadRange=null;pendingWorshipSimpleCount=null;pendingBookReadRange=null;
-    showToast("تم إدراج المهمة","var(--cat-study)");
-    if(pendingWeekDayTarget){
-        pendingWeekDayTarget=null;renderHierarchicalTopDownSystem();
-    } else {
-        renderDailyTasks();
-    }
+    markPages();
+    const fromPlan=!!pendingWeekDayTarget;
+    saveTasks();syncStationToTodayPeriod(newTask.id);closeAddTaskModal();resetPending();pendingWeekDayTarget=null;
+    showToast(date===logicalTodayIso?`أُضيفت لليوم · ${STATION_SHORT[newTask.station]||''}`:`أُضيفت إلى ${planDayLabel(date)}`,"var(--cat-study)");
+    renderDailyTasks();
+    if(fromPlan||document.getElementById('screen-plan').classList.contains('active-screen'))renderHierarchicalTopDownSystem();
 }
 
 // ================================================================
@@ -8076,28 +8433,83 @@ function openSimpleTaskConfirm(taskId){
     document.getElementById('simple-task-icon').style.color=col;
     const title=document.getElementById('simple-task-title');
     title.innerText=t.title;title.style.color=col;
-    document.getElementById('simple-task-cat').innerText=
-        isAbstain?'هل التزمت اليوم؟':(f&&f.type==='sports'?'هل أدّيت تمرين اليوم؟':'هل أنجزتها اليوم؟');
+    const isBehavior=!!(f&&f.type==='behavior')||t.unitKind==='behavior'||t.category==='behavior';
+    document.getElementById('simple-task-cat').innerText=isBehavior
+        ?(done&&t.score!=null?`قيّمت التزامك اليوم بـ ${Math.round(t.score*100)}٪ — غيّره إن شئت`:'كيف كان التزامك اليوم؟')
+        :(f&&f.type==='sports'?'هل أدّيت تمرين اليوم؟':'هل أنجزتها اليوم؟');
+    // السلوك يُقيَّم بنسبة: ما دون حدّ النجاح لا يُحتسب التزاماً
+    const rate=document.getElementById('simple-task-rate');
+    if(isBehavior){
+        const pass=passThreshold();
+        const cur=(done&&t.score==null)?1:(t.score!=null?t.score:null);
+        // الوصف يتبع حدّ النجاح الحالي: 60٪ «مقبول» عند حدّ 60، و«دون الحدّ» عند حدّ 70
+        rate.innerHTML=SCORE_LEVELS.map(l=>`<button class="rate-opt${cur!==null&&Math.abs(cur-l.v)<0.001?' selected':''}${l.v<pass?' is-fail':''}" onclick="rateSimpleTask(${l.v})">
+            <b>${Math.round(l.v*100)}٪</b><small>${l.v===0?'لم ألتزم':scoreLevelLabel(l.v)}</small></button>`).join('');
+        rate.style.display='grid';
+        document.getElementById('simple-task-rate-hint').innerText=`حدّ النجاح ${Math.round(pass*100)}٪ — ما دونه لا يُحتسب التزاماً`;
+        document.getElementById('simple-task-rate-hint').style.display='block';
+    }else{
+        rate.style.display='none';
+        document.getElementById('simple-task-rate-hint').style.display='none';
+    }
     const mark=document.getElementById('simple-task-mark');
+    mark.style.display=(isBehavior&&!done)?'none':'';
     mark.innerHTML=done
         ? '<i class="fa-solid fa-rotate-left"></i> إرجاعها غير منجزة'
-        : (isAbstain?'<i class="fa-solid fa-check"></i> نعم، التزمت':'<i class="fa-solid fa-check"></i> تم الإنجاز');
+        : '<i class="fa-solid fa-check"></i> تم الإنجاز';
     mark.style.background=done?'var(--surface-3)':col;
     mark.style.color=done?'var(--ink-2)':'#0d1512';
     document.getElementById('simple-task-streak').innerHTML=renderSimpleStreak(t);
     document.getElementById('simple-task-modal').style.display='flex';
+}
+// درجات التقييم الجزئي (للسلوك): النسبة تُحفظ مع المهمة ومع سجلّ التعهّد لليوم
+const SCORE_LEVELS=[
+    {v:1,label:'ممتاز'},{v:0.85,label:'جيد جداً'},{v:0.7,label:'جيد'},{v:0.6,label:'مقبول'},{v:0.5,label:'دون الحدّ'},{v:0,label:'لم ألتزم'}
+];
+function passThreshold(){
+    const v=commitmentDB&&parseFloat(commitmentDB.passThreshold);
+    return (v>0&&v<=1)?v:0.6;
+}
+// المستويات نفسها لتقييم السلوك ولنسبة اليوم: ممتاز 100، جيد جداً 85+، جيد 70+، مقبول حتى الحدّ، وما دونه دون الحدّ
+function scoreLevelLabel(s){
+    const th=passThreshold();
+    if(s>=1)return 'ممتاز';
+    if(s>=0.85&&s>=th)return 'جيد جداً';
+    if(s>=0.7&&s>=th)return 'جيد';
+    if(s>=th)return 'مقبول';
+    return s>0?'دون الحدّ':'لم يُنجز';
+}
+function rateSimpleTask(score){
+    const t=storedDailyTasks.find(x=>x.id===simpleTaskId);if(!t)return;
+    const undo=snapshotForUndo(t);
+    t.score=score;t.status='done';adoptToToday(t);
+    const pass=score>=passThreshold();
+    const srcId=t.coreSourceId||t.behaviorId||t.sportId||taskLibraryId(t);
+    if(srcId){
+        const e=commitEntry(commitDayKey());
+        e.checks[srcId]=pass;
+        e.scores=e.scores||{};e.scores[srcId]=score;
+        saveCommitLog();
+    }
+    saveTasks();closeSimpleTaskConfirm();renderDailyTasks();
+    if(pass){
+        const streak=srcId?behaviorStreakFromLog(srcId):0;
+        celebrateTaskDone(t,{undo,tag:[`${Math.round(score*100)}٪ ${scoreLevelLabel(score)}`,streak>1?`${streak} ${streak<=10?'أيام متتالية':'يوماً متتالياً'}`:''].filter(Boolean).join(' · ')});
+    }else showToast(`سُجّل ${Math.round(score*100)}٪ — دون حدّ النجاح، غداً أفضل بإذن الله`,'var(--status-work)');
 }
 function closeSimpleTaskConfirm(){document.getElementById('simple-task-modal').style.display='none';simpleTaskId=null;}
 function toggleSimpleTaskDone(){
     const t=storedDailyTasks.find(x=>x.id===simpleTaskId);if(!t)return;
     const done=t.status==='done';
     t.status=done?'wait':'done';
+    delete t.score;
     if(!done)adoptToToday(t);
     // نكتب في سجلّ الالتزام ليظهر في شريط الأيام وفي المكتبة
     const srcId=t.coreSourceId||t.behaviorId||t.sportId;
     if(srcId){
         const e=commitEntry(commitDayKey());
         e.checks[srcId]=!done;
+        if(e.scores)delete e.scores[srcId];
         saveCommitLog();
     }
     saveTasks();closeSimpleTaskConfirm();renderDailyTasks();
@@ -8552,14 +8964,14 @@ function renderDailyTasks(){
         stHtml+=`<div class="time-station-block ${cls}" data-station="${sk}">
             <div class="time-station-title">
                 <span class="station-name">${stationLabelsArabic[sk]}${nowBadge}${lateBadge}${past?'':freeBadge}</span>
-                <span class="station-time-label" ontouchstart="startStationLongPress('${sk}',event)" ontouchend="cancelStationLongPress()" onmousedown="startStationLongPress('${sk}',event)" onmouseup="cancelStationLongPress()" onmouseleave="cancelStationLongPress()"><i class="fa-solid fa-clock" style="font-size:9px;"></i> ${tl}</span>
+                <button class="station-time-label" onclick="openStationTimePicker('${sk}')" aria-label="تعديل وقت الفترة"><i class="fa-solid fa-${stationTimesDB[sk]?'sliders':'clock'}" style="font-size:9px;"></i> ${tl}</button>
             </div>
             <div class="station-tasks-drop-zone" id="zone-station-${sk}" style="min-height:40px;" data-station="${sk}"></div>
         </div>`;
     });
     wrapper.innerHTML=stHtml;
 
-    let doneHtml='',parkHtml='',normalTotal=0,doneCount=0,parkCount=0;
+    let doneHtml='',parkHtml='',normalTotal=0,doneCount=0,parkCount=0,achieved=0;
 
     todayList.forEach(task=>{
         const cat=categoryConfig[task.category]||categoryConfig['noCategory'];
@@ -8571,7 +8983,9 @@ function renderDailyTasks(){
         const doneCard=`<div class="task-card is-done${task.isPrayerAnchor?' is-prayer':''} clickable" draggable="true" id="task-dom-done-${task.id}" style="--task-accent:${sc};cursor:grab;" onclick="openDoneTaskActions('${task.id}',event)">
             <div class="task-info">
                 <div class="task-title">${task.title}${pex}</div>
-                ${task.totalSecondsSpent>0?`<div class="task-meta-preview"><span class="task-meta-num">${Math.floor(task.totalSecondsSpent/60)} د تركيز</span></div>`:''}
+                ${(task.totalSecondsSpent>0||task.score!=null)?`<div class="task-meta-preview">
+                    ${task.score!=null?`<span class="score-badge ${task.score>=passThreshold()?'ok':'low'}">${Math.round(task.score*100)}٪ ${scoreLevelLabel(task.score)}</span>`:''}
+                    ${task.totalSecondsSpent>0?`<span class="task-meta-num">${Math.floor(task.totalSecondsSpent/60)} د تركيز</span>`:''}</div>`:''}
             </div>
             <i class="fa-solid fa-check task-chevron" style="color:var(--status-done);"></i>
         </div>`;
@@ -8604,6 +9018,7 @@ function renderDailyTasks(){
                     <div class="task-title"><span>${task.title}</span>${core?'<span class="core-badge">رئيسية</span>':''}</div>
                     <div class="task-meta-preview">
                         <span class="task-tag">${cat.name}</span>
+                        ${(task.status==='parking'&&taskDateIso(task))?`<span class="task-meta-sep"></span><span>من ${ST_DAY_NAMES[dateFromIso(taskDateIso(task)).getDay()]} ${dateFromIso(taskDateIso(task)).getDate()}</span>`:''}
                         ${spentBadge}
                         ${masteryBadge}
                     </div>
@@ -8612,7 +9027,7 @@ function renderDailyTasks(){
             </div>`;
         }
 
-        if(task.status==='done'){doneHtml+=doneCard;doneCount++;normalTotal++;}
+        if(task.status==='done'){doneHtml+=doneCard;doneCount++;normalTotal++;if(taskStatusForDay(task,logicalTodayIso)==='done')achieved++;}
         else if(task.status==='parking'){parkHtml+=activeCard;parkCount++;}
         else{const z=document.getElementById(`zone-station-${task.station}`);if(z){z.innerHTML+=activeCard;normalTotal++;}}
     });
@@ -8642,7 +9057,8 @@ function renderDailyTasks(){
 
     setupDragAndDropEngines();
 
-    const pct=normalTotal>0?Math.round((doneCount/normalTotal)*100):0;
+    // ما قُيّم دون حدّ النجاح أُغلق، لكنه لا يرفع نسبة اليوم
+    const pct=normalTotal>0?Math.round((achieved/normalTotal)*100):0;
     const ring=document.getElementById('progress-bar-fill-id');
     if(ring)ring.style.setProperty('--p',pct);
     document.getElementById('progress-percent-text').innerText=pct+"%";
@@ -8719,9 +9135,12 @@ function renderHeroCommit(){
     const el=document.getElementById('hero-commit');if(!el)return;
     const st=(typeof commitmentStats==='function')?commitmentStats():null;
     if(!st){el.style.display='none';return;}
-    const ok=dayVerdict(st.today)==='done';
+    const lv=liveDayVerdict(st.today),ok=lv.v==='done';
+    const hasReqs=lv.items.length>0;
     el.classList.toggle('is-done',ok);
-    el.innerHTML=`<i class="fa-solid fa-${ok?'circle-check':'route'}"></i> اليوم ${st.dayNumber} من ${st.totalDays}`;
+    el.innerHTML=`<i class="fa-solid fa-${ok?'circle-check':'route'}"></i> اليوم ${st.dayNumber} من ${st.totalDays}${hasReqs?` · ${Math.round(lv.pct*100)}%`:''}`;
+    el.onclick=()=>{switchScreen('stats');switchStatsTab('commit');};
+    el.style.cursor='pointer';
     el.style.display='inline-flex';
 }
 
@@ -9086,9 +9505,11 @@ function selectDayGlobal(d){currentSelectedDay=d;document.querySelectorAll('.day
 function addMinutesToTime(t,m){let[h,mm]=t.split(':').map(Number);h=h||0;mm=(mm||0)+m;h+=Math.floor(mm/60);mm=mm%60;h=h%24;return`${String(h).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;}
 function calcHDiff(f,t){const s=new Date("2000/01/01 "+f);let e=new Date("2000/01/01 "+t);if(e<=s)e.setDate(e.getDate()+1);return parseFloat(((e-s)/3600000).toFixed(2));}
 // الفراغ الصافي ليوم بعينه: قالب الروتين الأسبوعي لاسم اليوم، ومهام ذلك التاريخ تحديداً
+// ساعات الصلوات الخمس المحجوزة يومياً: مدّة الصلاة × ٥ (كانت 2.5 ثابتة مهما غيّرت المدّة)
+function prayerReservedHours(){return 5*(prayerSettings.prayerDuration||30)/60;}
 function calcPureFree(dk,iso){
     iso=iso||upcomingIsoFor(dk);
-    let occ=2.5;
+    let occ=prayerReservedHours();
     (fixedSleepDatabase[dk]||[]).forEach(p=>{if(p.from&&p.to)occ+=calcHDiff(p.from,p.to);});
     (routineDatabase[dk]||[]).forEach(s=>{if(!s.isSuspended)occ+=s.hours;});
     let tasksSeconds=0;
@@ -9183,7 +9604,7 @@ function deleteSlot(i){routineDatabase[currentSelectedDay].splice(i,1);localStor
 
 function renderCurrentDaySlots(){
     const c=document.getElementById('current-day-slots-list');if(!c)return;
-    const slots=routineDatabase[currentSelectedDay]||[];let html='',tu=0,ts=0,tocc=2.5;
+    const slots=routineDatabase[currentSelectedDay]||[];let html='',tu=0,ts=0,tocc=prayerReservedHours();
     const sleepList=(fixedSleepDatabase[currentSelectedDay]||[]).filter(p=>p&&p.from&&p.to);
     sleepList.forEach(p=>{if(p.isSuspended)return;const h=calcHDiff(p.from,p.to);ts+=h;tocc+=h;});
     // نعرض فترات النوم ضمن قائمة الروتين نفسها فتظهر الصورة كاملة.
@@ -9228,6 +9649,10 @@ function renderCurrentDaySlots(){
     const fr=Math.max(0,24-tocc);
     document.getElementById('stat-day-uni').innerText=tu.toFixed(1)+" ساعة";
     document.getElementById('stat-day-sleep').innerText=ts.toFixed(1)+" ساعة";
+    const pr=document.getElementById('stat-day-prayers');
+    if(pr)pr.innerText=prayerReservedHours().toFixed(1).replace(/\.0$/,'')+" ساعة";
+    const prd=document.querySelector('#prayer-stat-detail .rt-hint');
+    if(prd)prd.innerText=`${prayerSettings.prayerDuration||30} دقيقة محجوزة بعد كل أذان من الصلوات الخمس، تُخصم تلقائياً من الفراغ — تغيّرها من «أوقات الصلاة».`;
     let dayTasksSeconds=0;
     const selIso=upcomingIsoFor(currentSelectedDay);
     storedDailyTasks.forEach(t=>{
@@ -9379,7 +9804,7 @@ function lastSportValue(id){
 function renderLibSports(){
     const c=document.getElementById('lib-sports-list');if(!c)return;
     if(!sportsDatabase.length){
-        c.innerHTML=`<div class="empty-zone-hint">لا عناصر بعد. اضغط (+) لإضافة تمارين أو سعرات أو متابعة وزن.</div>`;return;
+        c.innerHTML=`<div class="empty-zone-hint">لا عناصر بعد. اضغط زر الإضافة أعلاه لإضافة تمارين أو سعرات أو متابعة وزن.</div>`;return;
     }
     c.innerHTML=sportsDatabase.map(x=>{
         const kindLabel=x.kind==='do'?'تمارين':x.kind==='number'?'سعرات':'متابعة وزن';
@@ -9485,7 +9910,7 @@ function behaviorStreak(id){return behaviorStreakFromLog(id);}
 function renderLibBehavior(){
     const c=document.getElementById('lib-behavior-list');if(!c)return;
     if(!behaviorDatabase.length){
-        c.innerHTML=`<div class="empty-zone-hint">لا سلوكيات بعد. اضغط (+) لإضافة ما تريد تركه أو تثبيته.</div>`;return;
+        c.innerHTML=`<div class="empty-zone-hint">لا سلوكيات بعد. اضغط زر الإضافة أعلاه لإضافة ما تريد تركه أو تثبيته.</div>`;return;
     }
     c.innerHTML=behaviorDatabase.map(x=>{
         const kindLabel=x.kind==='abstain'?'امتناع':'بناء عادة';
@@ -9708,13 +10133,63 @@ function dailyRequirements(){
         reqs.unshift({id:PRAYERS_REQ_ID,name:'الصلوات الخمس',kind:'prayers'});
     return reqs;
 }
+// ---- أساسية وثانوية، ونسبة اليوم ----
+// الأساسية شرطٌ بذاتها: إن سقطت سقط اليوم. الثانوية تُحسب في نسبة اليوم فقط.
+// كل شرط له درجة من 0 إلى 1: الصلوات بعددها، والسلوك المقيَّم بنسبته، والباقي تمّ أو لم يتمّ.
+// يكتمل اليوم إذا تحقّقت الأساسيات كلها وبلغت نسبته حدّ النجاح (60% افتراضياً).
+// بلا ثانويات يبقى الحكم كما كان تماماً: كل الشروط مطلوبة.
+const REQ_WEIGHT={essential:2,secondary:1};
+function reqImportance(id){
+    const m=commitmentDB&&commitmentDB.reqImportance;
+    return (m&&m[id]==='secondary')?'secondary':'essential';
+}
+function setReqImportance(id,imp){
+    if(!commitmentDB)return;
+    commitmentDB.reqImportance=commitmentDB.reqImportance||{};
+    if(imp==='secondary')commitmentDB.reqImportance[id]='secondary';
+    else delete commitmentDB.reqImportance[id];
+    saveCommitment();
+}
+function toggleReqImportance(id){
+    const next=reqImportance(id)==='essential'?'secondary':'essential';
+    setReqImportance(id,next);
+    renderCommitment();renderHeroCommit();
+    showToast(next==='essential'?'صار أساسياً: لا يكتمل اليوم بدونه':'صار ثانوياً: يرفع نسبة يومك ولا يكسره وحده');
+}
+function reqScoreOn(req,iso,idx){
+    const e=commitLogDB[iso];
+    const sc=e&&e.scores&&e.scores[req.id];
+    if(typeof sc==='number')return Math.max(0,Math.min(1,sc));
+    const ex=explicitCheck(iso,req.id);
+    if(ex!==undefined)return ex?1:0;
+    if(req.kind==='prayers')return Math.min(idx.prayers,5)/5;
+    return (idx.units[req.id]||0)>0?1:0;
+}
+// المستوى بالكلمات: يُعرض بجانب كل نسبة
+function dayLevelOf(pct){
+    const th=passThreshold();
+    return{label:pct>0?scoreLevelLabel(pct):'لم يبدأ',cls:pct>=Math.max(0.7,th)?'good':(pct>=th?'ok':'bad')};
+}
 function liveDayVerdict(iso){
     const idx=dayIndex(iso);
-    const items=dailyRequirements().map(r=>({
-        id:r.id,name:r.name,ok:requirementMetOn(r,iso,idx),
-        detail:(r.kind==='prayers')?`${Math.min(idx.prayers,5)} من 5`:undefined
-    }));
-    return{v:items.every(x=>x.ok)?'done':'broken',items};
+    let sw=0,ss=0;
+    const items=dailyRequirements().map(r=>{
+        const score=reqScoreOn(r,iso,idx),imp=reqImportance(r.id);
+        const ok=requirementMetOn(r,iso,idx);
+        sw+=REQ_WEIGHT[imp];ss+=REQ_WEIGHT[imp]*score;
+        return{id:r.id,name:r.name,ok,score,imp,
+            detail:(r.kind==='prayers')?`${Math.min(idx.prayers,5)} من 5`:undefined};
+    });
+    const pct=sw?ss/sw:1;
+    const essentialOk=items.every(x=>x.imp!=='essential'||x.ok);
+    return{v:(essentialOk&&pct>=passThreshold()-1e-9)?'done':'broken',items,pct};
+}
+// نسبة يوم محسوم: الأحكام القديمة بلا نسبة تُقرأ من شروطها
+function verdictPct(d){
+    if(!d)return null;
+    if(typeof d.pct==='number')return d.pct;
+    const it=d.items||[];
+    return it.length?it.filter(x=>x.ok).length/it.length:1;
 }
 // حكم يوم مضى: يُحسب مرة عند انقضائه ثم يُحفظ
 function frozenDayVerdict(iso){
@@ -9724,7 +10199,7 @@ function frozenDayVerdict(iso){
     const stale=e.verdict&&e.verdict.cid&&cid&&e.verdict.cid!==cid;
     if(!e.verdict||!e.verdict.v||stale){
         const lv=liveDayVerdict(iso);
-        e.verdict={v:lv.v,items:lv.items,at:Date.now(),cid:cid||null};
+        e.verdict={v:lv.v,items:lv.items,pct:lv.pct,at:Date.now(),cid:cid||null};
         queueCommitLogSave();
     }
     return e.verdict;
@@ -9740,7 +10215,7 @@ function dayVerdict(iso){
 }
 function dayVerdictDetail(iso){
     if(!inCommitment(iso))return null;
-    if(iso===commitDayKey()){const lv=liveDayVerdict(iso);return{v:lv.v==='done'?'done':'pending',items:lv.items};}
+    if(iso===commitDayKey()){const lv=liveDayVerdict(iso);return{v:lv.v==='done'?'done':'pending',items:lv.items,pct:lv.pct};}
     return frozenDayVerdict(iso);
 }
 // تصحيح يوم مضى يُسقط حكمه المحفوظ وأحكام أسابيعه، فتُعاد بالمعطيات الجديدة
@@ -10038,6 +10513,82 @@ function renderCommitManage(){
         </button>`;
     }).join('');
     document.getElementById('cmm-prayers-toggle').classList.toggle('is-on',commitmentDB.includePrayers!==false);
+    // شروط اليوم: مفتاح أساسي/ثانوي لكل شرط
+    const reqs=dailyRequirements();
+    document.getElementById('cmm-reqs').innerHTML=reqs.length?reqs.map(r=>{
+        const imp=reqImportance(r.id);
+        return `<div class="cmm-req">
+            <span class="cmm-req-name">${r.name}</span>
+            <div class="cmm-imp">
+                <button class="${imp==='essential'?'active':''} clickable" onclick="setReqImportance('${r.id}','essential');renderCommitManage();renderCommitment();renderHeroCommit();">أساسي</button>
+                <button class="${imp==='secondary'?'active':''} clickable" onclick="setReqImportance('${r.id}','secondary');renderCommitManage();renderCommitment();renderHeroCommit();">ثانوي</button>
+            </div>
+        </div>`;
+    }).join(''):'<div class="cmm-hint">لا شروط يومية بعد.</div>';
+    const th=passThreshold();
+    document.getElementById('cmm-threshold').innerHTML=[0.5,0.6,0.7,0.8].map(v=>
+        `<div class="chip-choice${Math.abs(v-th)<0.001?' selected':''}" onclick="setPassThreshold(${v})">${Math.round(v*100)}%</div>`).join('');
+}
+// ---- إضافة التزامات من صفحة التعهّد ----
+const CA_SECTIONS={subject:'المواد',book:'الكتب',series:'فقه النفس',newseries:'السلاسل',worship:'العبادات',sports:'الرياضة',behavior:'السلوك'};
+function caRecLabel(p){
+    if(p.rec.type==='daily')return 'كل يوم';
+    if(p.rec.type==='quota')return `${p.rec.perWeek} ${QUOTA_WORD[p.source]||'وحدة'} أسبوعياً`;
+    return `${p.rec.times} مرات أسبوعياً`;
+}
+function openCommitAddPicker(){renderCommitAddPicker();document.getElementById('commit-add-modal').style.display='flex';}
+function closeCommitAddPicker(){document.getElementById('commit-add-modal').style.display='none';}
+function renderCommitAddPicker(){
+    const core=getCoreItems();
+    let html='';
+    if(core.length){
+        html+=`<div class="ca-group">في تعهّدك الآن</div>`+core.map(p=>`<div class="ca-row is-core">
+            <span class="ca-dot" style="background:${p.color};"></span>
+            <span class="ca-name">${p.name}<small>${CA_SECTIONS[p.source]||''} · ${caRecLabel(p)}${p.rec.type==='daily'?' · '+(reqImportance(p.id)==='essential'?'أساسي':'ثانوي'):''}</small></span>
+            <button class="ca-btn off clickable" onclick="commitRemoveItem('${p.id}')">إزالة</button>
+        </div>`).join('');
+    }
+    CORE_SOURCES.forEach(src=>{
+        const items=(src.db()||[]).filter(x=>!x.isCore);
+        if(!items.length)return;
+        html+=`<div class="ca-group">${CA_SECTIONS[src.type]}</div>`+items.map(x=>`<div class="ca-row">
+            <span class="ca-dot" style="background:${x.color||src.color};"></span>
+            <span class="ca-name">${x.name}</span>
+            <button class="ca-btn clickable" onclick="commitAddItem('${x.id}','daily')">كل يوم</button>
+            <button class="ca-btn clickable" onclick="commitAddItem('${x.id}','weekly')">أسبوعياً</button>
+        </div>`).join('');
+    });
+    document.getElementById('commit-add-list').innerHTML=html||'<div class="st-empty">مكتبتك فارغة — أضف عنصراً جديداً من الأزرار أعلاه.</div>';
+}
+function commitAddItem(id,mode){
+    const f=findLibraryItem(id);if(!f)return;
+    const it=f.item;
+    it.isCore=true;
+    if(mode==='daily')it.recurrence={type:'daily'};
+    else{
+        // ما له وحدات (محاضرات، حلقات، صفحات) حصّة وحدات؛ وما سواه عدد مرات
+        const units=!!allUnitsOf(it)&&!(f.type==='worship'&&it.type==='simple');
+        it.recurrence=units?{type:'quota',perWeek:3}:{type:'weekly',times:3};
+    }
+    saveLibraryType(f.type);
+    ensureDailyCoreTasks();renderDailyTasks();
+    renderCommitAddPicker();renderCommitment();renderHeroCommit();
+    if(document.getElementById('screen-library').classList.contains('active-screen'))renderLibrary();
+    showToast(mode==='daily'?`«${it.name}» شرط يومي الآن`:`«${it.name}» حصّة أسبوعية (3) — غيّرها من المكتبة ⋯`);
+}
+function commitRemoveItem(id){
+    const f=findLibraryItem(id);if(!f)return;
+    showCustomConfirm(`إزالة «${f.item.name}» من التعهّد؟<br><span style="font-size:11px;color:var(--ink-3);">يبقى في المكتبة، والأيام الماضية تبقى بحكمها.</span>`,()=>{
+        f.item.isCore=false;saveLibraryType(f.type);
+        renderCommitAddPicker();renderCommitment();renderHeroCommit();
+        showToast('أُزيل من التعهّد');
+    },{acceptLabel:'<i class="fa-solid fa-minus"></i> أزِل',acceptColor:'var(--status-delay)'});
+}
+function setPassThreshold(v){
+    if(!commitmentDB)return;
+    commitmentDB.passThreshold=v;saveCommitment();
+    renderCommitManage();renderCommitment();renderHeroCommit();
+    showToast(`حدّ النجاح ${Math.round(v*100)}% — من اليوم فصاعداً`);
 }
 function saveCommitBasics(){
     const reward=document.getElementById('cmm-reward').value.trim();
@@ -10171,6 +10722,7 @@ function openCommitRequirement(id){
     if(p&&(p.kind==='number'||p.kind==='track')){openCommitValue(id);return;}
     const e=commitEntry(commitDayKey());
     e.checks[id]=!e.checks[id];
+    if(e.scores)delete e.scores[id];
     saveCommitLog();renderCommitment();
 }
 
@@ -10203,8 +10755,15 @@ function renderCommitment(){
     const live=liveDayVerdict(iso);
     const doneN=live.items.filter(x=>x.ok).length,totalN=live.items.length;
     const verdict=dayVerdict(iso);
-    const verdictText=st.completed?'اكتمل التعهّد':(verdict==='done'?'يوم مكتمل':(totalN?`${doneN} من ${totalN}`:'لا شروط يومية'));
+    const pctN=Math.round(live.pct*100),lvl=dayLevelOf(live.pct);
+    const verdictText=st.completed?'اكتمل التعهّد':(verdict==='done'?`${pctN}% · ${lvl.label}`:(totalN?`${pctN}%`:'لا شروط يومية'));
     const verdictCls=(st.completed||verdict==='done')?'good':'soft';
+    // سطر يشرح ما ينقص اليوم بالضبط
+    const missEss=live.items.filter(x=>x.imp==='essential'&&!x.ok);
+    const thN=Math.round(passThreshold()*100);
+    const dayNote=!totalN?'':(verdict==='done'?`اكتمل يومك — ${lvl.label}`
+        :(missEss.length?(missEss.length<=2?`يلزم ${missEss.length===1?'الأساسي':'الأساسيان'}: ${missEss.map(x=>x.name).join('، ')}`:`بقي ${missEss.length} شروط أساسية`)+(pctN<thN?` · ونسبة ${thN}%`:'')
+        :`يلزم بلوغ ${thN}% — أنت عند ${pctN}%`));
 
     // شروط اليوم: كل الالتزامات اليومية، موضوعةً في المهام أو لا
     const core=getCoreItems();
@@ -10212,6 +10771,9 @@ function renderCommitment(){
         const p=core.find(c=>c.id===x.id);
         let sub=x.ok?'مُنجز':'لم يُنجز بعد';
         if(x.detail)sub=x.detail;
+        // تقييم جزئي (سلوك): النسبة ومستواها
+        const sc=commitLogDB[iso]&&commitLogDB[iso].scores&&commitLogDB[iso].scores[x.id];
+        if(typeof sc==='number')sub=`${Math.round(sc*100)}% · ${scoreLevelLabel(sc)}`;
         // ما له رقم (وزن، سعرات، ساعات هاتف) يعرض قيمته المسجّلة
         const v=p?(commitLogDB[iso]&&commitLogDB[iso].values||{})[p.id]:undefined;
         if(v!==undefined&&v!==''){
@@ -10219,10 +10781,11 @@ function renderCommitment(){
             const unit=(m&&m.unit)||(p.kind==='track'?'كغ':'');
             sub=`${v} ${unit}`.trim()+(p.kind==='track'?'':(x.ok?' · ضمن الهدف':' · خارج الهدف'));
         }
+        const partial=!x.ok&&x.score>0;
         return `<div class="cm-row clickable" onclick="openCommitRequirement('${x.id}')">
-            <span class="cm-check ${x.ok?'on':''}"><i class="fa-solid fa-${x.id===PRAYERS_REQ_ID?'mosque':'check'}"></i></span>
+            <span class="cm-check ${x.ok?'on':(partial?'part':'')}"><i class="fa-solid fa-${x.id===PRAYERS_REQ_ID?'mosque':'check'}"></i></span>
             <div class="cm-row-body"><div class="cm-row-name">${x.name}</div><div class="cm-row-sub">${sub}</div></div>
-            ${x.ok?'':'<span class="cm-tag">مطلوب</span>'}
+            <button class="cm-imp ${x.imp} clickable" onclick="event.stopPropagation();toggleReqImportance('${x.id}')" title="اضغط للتبديل">${x.imp==='essential'?'أساسي':'ثانوي'}</button>
         </div>`;
     }).join('');
 
@@ -10273,7 +10836,13 @@ function renderCommitment(){
 
     <div class="section-title"><i class="fa-solid fa-bolt"></i> شروط اليوم <span class="sec-count">${doneN}/${totalN}</span></div>
     <div class="st-card">
-        ${rows||'<div class="st-empty">لا التزامات يومية.<br>علّم من المكتبة ما تريده «رئيسية — كل يوم».</div>'}
+        ${totalN?`<div class="cm-day-score ${verdict==='done'?'is-done':''}">
+            <div class="cm-ds-top"><b>${pctN}%</b><span class="cm-ds-lvl ${lvl.cls}">${lvl.label}</span><span class="cm-ds-th">الحدّ ${thN}%</span></div>
+            <div class="cm-bar thin"><div class="cm-bar-fill" style="width:${pctN}%;"></div><i class="cm-bar-th" style="right:${thN}%;"></i></div>
+            <div class="cm-ds-note">${dayNote}</div>
+        </div>`:''}
+        ${rows||'<div class="st-empty">لا التزامات يومية بعد.</div>'}
+        <button class="cm-add-req clickable" onclick="openCommitAddPicker()"><i class="fa-solid fa-plus"></i> أضف التزاماً</button>
     </div>
 
     ${wItems.length?`<div class="section-title"><i class="fa-solid fa-calendar-week"></i> حصص الأسبوع <span class="sec-count">${daysLeftText(cur.daysLeft)}</span></div>
@@ -10337,9 +10906,7 @@ function renderCoreProgress(st){
 
 // نسبة شروط اليوم المتحققة (لمنحنى التعهّد)
 function dayRequirementRate(iso){
-    const d=dayVerdictDetail(iso);
-    if(!d||!d.items||!d.items.length)return d?1:null;
-    return d.items.filter(x=>x.ok).length/d.items.length;
+    return verdictPct(dayVerdictDetail(iso));
 }
 
 // منحنى التعهّد: نسبة إنجاز الرئيسيات يوماً بيوم.
@@ -10574,7 +11141,9 @@ function renderStats(){
     }));
     const rate=total?Math.round((done/total)*100):0;
     document.getElementById('st-rate').innerText=rate+'%';
-    document.getElementById('st-total-focus').innerText=(focus/3600).toFixed(1);
+    // أقل من ساعة بالدقائق، وما فوقها بالساعات والدقائق: "45 د"، "3 س 20 د"
+    const fm=Math.round(focus/60);
+    document.getElementById('st-total-focus').innerText=fm<60?`${fm} د`:`${Math.floor(fm/60)} س${fm%60?` ${fm%60} د`:''}`;
     document.getElementById('st-total-done').innerText=done;
     document.getElementById('st-success-days').innerText=successDays;
     document.getElementById('st-streak').innerText=longestStreak(buckets);
@@ -10812,7 +11381,15 @@ function renderDayDetail(){
     const listHtml=rows||'<div class="st-empty">لا مهام في هذا اليوم.<br>اضغط «تعديل» لتسجيله.</div>';
     const commitHtml=renderDayCommitBlock(iso,isToday);
     const fromCommit=(statsTab==='commit')&&document.getElementById('screen-stats').classList.contains('active-screen');
-    document.getElementById('day-detail-rows').innerHTML=fromCommit?(commitHtml+listHtml):(listHtml+commitHtml);
+    // من غير صفحة التعهّد: سطر مختصر بالحكم في الأعلى يأخذك لشروطه أسفل القائمة
+    let jump='';
+    const cd=commitHtml&&!fromCommit?dayVerdictDetail(iso):null;
+    if(cd&&cd.items&&cd.items.length){
+        const ok=cd.v==='done';
+        jump=`<button class="dd-commit-jump ${ok?'ok':(cd.v==='pending'?'':'bad')} clickable" onclick="document.querySelector('#day-detail-rows .dd-commit').scrollIntoView({behavior:'smooth',block:'start'})">
+            <i class="fa-solid fa-route"></i> التعهّد: ${Math.round((verdictPct(cd)||0)*100)}% · ${ok?'مكتمل':(cd.v==='pending'?'جارٍ':'لم يكتمل')} <i class="fa-solid fa-chevron-down"></i></button>`;
+    }
+    document.getElementById('day-detail-rows').innerHTML=fromCommit?(commitHtml+listHtml):(jump+listHtml+commitHtml);
     const note=document.getElementById('day-detail-note');
     if(note)note.innerText=ddReadOnly?'يوم مضى — لتصحيحه افتحه من صفحة الإنجاز'
                                      :(ddEdit?'اضغط أي مهمة لتعديلها':'');
@@ -10823,12 +11400,16 @@ function renderDayCommitBlock(iso,isToday){
     const d=dayVerdictDetail(iso);
     if(!d)return '';
     const editable=ddEdit&&!isToday&&!ddReadOnly;
-    const rows=(d.items||[]).map(x=>`<div class="dd-req${editable?' editable clickable':''}"${editable?` onclick="ddToggleRequirement('${x.id}')"`:''}>
+    const rows=(d.items||[]).map(x=>{
+        // النسبة الجزئية تظهر بجانب الشرط (صلوات 4 من 5، سلوك 75%)
+        const part=(!x.detail&&typeof x.score==='number'&&x.score>0&&x.score<1)?`${Math.round(x.score*100)}%`:'';
+        return `<div class="dd-req${editable?' editable clickable':''}"${editable?` onclick="ddToggleRequirement('${x.id}')"`:''}>
             <span class="dd-mark ${x.ok?'on':''}"><i class="fa-solid fa-${x.ok?'check':'xmark'}"></i></span>
-            <span class="dd-req-name">${x.name}</span>${x.detail?`<span class="dd-req-sub">${x.detail}</span>`:''}
-        </div>`).join('');
+            <span class="dd-req-name">${x.name}${x.imp==='secondary'?' <small style="color:var(--ink-3);">· ثانوي</small>':''}</span>${(x.detail||part)?`<span class="dd-req-sub">${x.detail||part}</span>`:''}
+        </div>`;}).join('');
     const wk=Object.values((commitmentDB&&commitmentDB.weeks)||{}).find(w=>w&&w.endIso===iso&&w.penalty>0);
-    const vText=d.v==='done'?'يوم مكتمل':(d.v==='pending'?'جارٍ':'يوم مكسور');
+    const pc=Math.round((verdictPct(d)||0)*100);
+    const vText=(d.items&&d.items.length?`${pc}% · `:'')+(d.v==='done'?'مكتمل':(d.v==='pending'?'جارٍ':'لم يكتمل'));
     const vCls=d.v==='done'?'good':(d.v==='pending'?'soft':'bad');
     return `<div class="dd-commit">
         <div class="dd-commit-head">
@@ -10846,6 +11427,7 @@ function ddToggleRequirement(id){
     const cur=(d.items||[]).find(x=>x.id===id);
     const e=commitEntry(ddIso);
     e.checks[id]=!(cur&&cur.ok);
+    if(e.scores)delete e.scores[id];   // التصحيح اليدوي حكمٌ كامل لا نسبة
     saveCommitLog();
     invalidateCommitDay(ddIso);
     renderDayDetail();refreshStatsViews();
@@ -11302,12 +11884,12 @@ function renderWeekView(wk){
                 ${planDateBadge(d,isToday)}
                 <div class="db-info">
                     <div class="day-bucket-name">${ST_DAY_NAMES[d.getDay()]}${isToday?'<span class="now-badge">اليوم</span>':''}</div>
-                    <div class="db-sub">${sub} · ${calcPureFree(dk,iso).toFixed(1)} س حرة</div>
+                    <div class="db-sub">${sub} · ${fmtFreeHours(calcPureFree(dk,iso))}</div>
                 </div>
                 <button class="pl-add clickable" onclick="event.stopPropagation();openAddTaskToWeekDayModal('${wk}','${iso}')" aria-label="إضافة مهمة لهذا اليوم"><i class="fa-solid fa-plus"></i></button>
             </div>
             ${open?buildDayPeriodsView(iso):`<div class="db-tasks">${pills}<div class="db-drop-hint"><i class="fa-solid fa-arrow-down-long"></i> ${list.length?'أفلت هنا':'اسحب هدفاً إلى هنا'}</div></div>`}
-            ${(list.length||open)?`<button class="day-periods-toggle-btn" onclick="toggleDayPeriods('${iso}')"><i class="fa-solid fa-${open?'chevron-up':'clock-rotate-left'}"></i> ${open?'إخفاء الفترات':'توزيع على الفترات'}</button>`:''}
+            ${(list.length||open)?`<button class="day-periods-toggle-btn" onclick="toggleDayPeriods('${iso}')"><i class="fa-solid fa-${open?'chevron-up':'layer-group'}"></i> ${open?'عرض مختصر':'عرض حسب الفترات'}</button>`:''}
         </div>`;
     }).join('');
     document.getElementById('pw-days-count').innerText=upcoming?`${upcoming} ${upcoming===dates.length?'':'متبقية'}`.trim():'مضى';
@@ -11321,6 +11903,11 @@ function renderWeekView(wk){
     setupWeekViewDnD();
 }
 
+// "14 س حرّة" / "2.5 س حرّة": أقرب نصف ساعة، بلا "14.0"
+function fmtFreeHours(h){
+    const r=Math.round(Math.max(0,h)*2)/2;
+    return r?`${r} س حرّة`:'لا وقت حرّاً';
+}
 // فتح/إغلاق الفترات لليوم
 function toggleDayPeriods(iso){
     openPeriodsDay[iso]=!openPeriodsDay[iso];
@@ -11337,7 +11924,8 @@ function openWeekTaskActionModal(taskId){
     fillGoalActionSheet(t.title.replace(/🎯\s*/,''),
         `${iso?planDayLabel(iso):''}${t.station?' · '+(stationLabelsArabic[t.station]||''):''}${t.status==='done'?' · منجزة':''}`,
         t.status!=='done',
-        iso===logicalTodayIso&&t.status==='wait');
+        iso===logicalTodayIso&&t.status==='wait',
+        (t.status!=='done'&&!t.isPrayerAnchor&&!isDailyCoreTask(t)&&iso)?{week:activePlanWeekContext,iso}:null);
 }
 
 // نافذة سياق إجراءات أسبوع (تعديل/حذف المهمة)
@@ -11586,9 +12174,12 @@ function renderPlanCalendar(){
     }
     document.getElementById('plan-cal-grid').innerHTML=pad+cells;
     // شريط الأسابيع: يبيّن أي مدى تواريخ يقابل كل تبويب أسبوع
+    // في الشهر الحالي: ضغطة على الأسبوع تفتحه في صفحة التخطيط
+    const cur=planCalMonthOffset===0,curW=cur?weekKeyOfDate(todayDateObj):'';
     document.getElementById('plan-cal-weeks').innerHTML=[1,2,3,4].map(w=>{
         const a=(w-1)*7+1, b=(w===4)?days:w*7;
-        return `<span class="pc-wk">الأسبوع ${w}<b>${a}–${b}</b></span>`;
+        const go=cur?` clickable" onclick="closePlanCalendar();switchHierarchicalViewContext('w${w}')`:'';
+        return `<span class="pc-wk${curW==='w'+w?' is-cur':''}${go}">الأسبوع ${w}<b>${a}–${b}</b></span>`;
     }).join('');
 }
 
@@ -11604,42 +12195,31 @@ function openPlanDay(iso){
         `${ST_DAY_NAMES[d.getDay()]} ${d.getDate()} ${ST_MONTHS[d.getMonth()]}`;
     const list=plannedForDate(d);
     document.getElementById('plan-day-sum').innerText=list.length?`${list.length} مهمة مخطّطة`:'لا مهام مخطّطة بعد';
+    // صفّ المهمة يفتح إجراءاتها (تعديل، نقل، حذف) كما في صفحة التخطيط
     document.getElementById('plan-day-rows').innerHTML=list.length?list.map(x=>{
         const cat=categoryConfig[x.category]||categoryConfig['noCategory'];
-        return `<div class="dd-row">
-            <span class="dd-mark ${x.done?'on':''}"><i class="fa-solid fa-${x.done?'check':'clock'}"></i></span>
+        const open=x.src==='task'?` clickable" onclick="closePlanDay();closePlanCalendar();openWeekTaskActionModal('${x.id}')`:'';
+        return `<div class="dd-row${open}">
+            <span class="dd-mark ${x.done?'on':'plan'}"><i class="fa-solid fa-${x.done?'check':'clock'}"></i></span>
             <span class="dd-name">${x.title}</span>
             <span class="dd-cat" style="color:${cat.color};">${cat.name}</span>
             ${x.src==='sched'?`<button class="pc-del clickable" onclick="deleteScheduled('${x.id}')"><i class="fa-solid fa-xmark"></i></button>`:''}
         </div>`;
-    }).join(''):'<div class="st-empty">اكتب مهمة أدناه لتُضاف إلى هذا اليوم.</div>';
-    document.getElementById('plan-day-input').value='';
+    }).join(''):'<div class="st-empty">لا شيء بعد في هذا اليوم.</div>';
     document.getElementById('plan-day-modal').style.display='flex';
 }
 let planDayIso=null;
 function closePlanDay(){document.getElementById('plan-day-modal').style.display='none';planDayIso=null;}
-function addScheduledFromCalendar(){
-    const title=document.getElementById('plan-day-input').value.trim();
-    if(!title){showToast('اكتب اسم المهمة');return;}
-    if(!planDayIso)return;
-    scheduledTasksDB.push({
-        id:'sch-'+Date.now()+Math.floor(Math.random()*1000),
-        date:planDayIso,title:title,category:selectedPlanDayCat||'noCategory'
-    });
-    saveScheduled();
-    injectScheduledForToday();
-    openPlanDay(planDayIso);renderPlanCalendar();
-    showToast('أُضيفت — ستظهر في يومها تلقائياً');
+// مهمة كاملة بتاريخها (ولو بعد شهرين): المهام مربوطة بالتاريخ، فتظهر في يومها حين يأتي
+function addTaskFromPlanDay(){
+    const iso=planDayIso;if(!iso)return;
+    closePlanDay();closePlanCalendar();
+    openAddModalFor({week:planWeekOf(dateFromIso(iso)).key,day:iso});
 }
+// التذكيرات القديمة (اسم فقط) تبقى تُعرض وتُحذف وتنزل في يومها
 function deleteScheduled(id){
     scheduledTasksDB=scheduledTasksDB.filter(x=>x.id!==id);
     saveScheduled();openPlanDay(planDayIso);renderPlanCalendar();
-}
-let selectedPlanDayCat='noCategory';
-function pickPlanDayCat(c,el){
-    selectedPlanDayCat=c;
-    document.querySelectorAll('#plan-day-cats .chip-choice').forEach(x=>x.classList.remove('selected'));
-    el.classList.add('selected');
 }
 // عند بداية كل يوم: التذكيرات المستحقّة تنزل مهامَّ فعلية
 function injectScheduledForToday(){
@@ -11795,6 +12375,50 @@ function saveDriveSettings(){
 
 // ---------------- واجهة إعدادات أوقات الصلاة ----------------
 const PRAYER_LABELS={fajr:'الفجر',sunrise:'الشروق',dhuhr:'الظهر',asr:'العصر',maghrib:'المغرب',isha:'العشاء'};
+// مدن مرجعية للتحقّق من الموقع بلا إنترنت: نعرض أقربها حتى ترى أن الإحداثيات صحيحة
+const REF_CITIES=[
+    ['ربيعة',36.80,42.10],['الموصل',36.34,43.13],['دهوك',36.87,42.99],['زاخو',37.14,42.68],['تلعفر',36.37,42.45],['سنجار',36.32,41.87],
+    ['أربيل',36.19,44.01],['السليمانية',35.56,45.43],['كركوك',35.47,44.39],['بغداد',33.31,44.37],['البصرة',30.51,47.81],['النجف',32.03,44.35],
+    ['القامشلي',37.05,41.22],['الحسكة',36.50,40.75],['دير الزور',35.33,40.14],['الرقة',35.95,39.01],['حلب',36.20,37.13],['حمص',34.73,36.72],
+    ['دمشق',33.51,36.29],['اللاذقية',35.52,35.79],['درعا',32.62,36.10],['عمّان',31.95,35.93],['إربد',32.55,35.85],['القدس',31.77,35.21],
+    ['غزة',31.50,34.47],['بيروت',33.89,35.50],['طرابلس (لبنان)',34.44,35.83],['غازي عنتاب',37.07,37.38],['أورفا',37.16,38.79],['ماردين',37.31,40.74],
+    ['ديار بكر',37.91,40.24],['إسطنبول',41.01,28.98],['أنقرة',39.93,32.86],['الرياض',24.71,46.68],['مكة',21.42,39.83],['المدينة',24.47,39.61],
+    ['جدة',21.49,39.19],['الدمام',26.43,50.10],['الكويت',29.38,47.99],['الدوحة',25.29,51.53],['المنامة',26.23,50.59],['دبي',25.20,55.27],
+    ['أبوظبي',24.45,54.38],['مسقط',23.59,58.41],['صنعاء',15.37,44.19],['القاهرة',30.04,31.24],['الإسكندرية',31.20,29.92],['الخرطوم',15.50,32.56],
+    ['طرابلس (ليبيا)',32.89,13.19],['تونس',36.81,10.18],['الجزائر',36.75,3.06],['الدار البيضاء',33.57,-7.59],['طهران',35.69,51.39],['برلين',52.52,13.40],
+    ['لندن',51.51,-0.13],['باريس',48.86,2.35],['أمستردام',52.37,4.90],['ستوكهولم',59.33,18.07]
+];
+function _haversineKm(a1,o1,a2,o2){
+    const R=6371,dA=_rad(a2-a1),dO=_rad(o2-o1);
+    const h=Math.sin(dA/2)**2+Math.cos(_rad(a1))*Math.cos(_rad(a2))*Math.sin(dO/2)**2;
+    return 2*R*Math.asin(Math.sqrt(h));
+}
+function nearestRefCity(lat,lng){
+    let best=null;
+    REF_CITIES.forEach(([n,a,o])=>{const d=_haversineKm(lat,lng,a,o);if(!best||d<best.d)best={n,d};});
+    return best;
+}
+function renderPrayerLocCard(lat,lng){
+    const box=document.getElementById('prayer-loc-card');if(!box)return;
+    if(lat===null||lat===undefined||isNaN(lat)||lng===null||lng===undefined||isNaN(lng)){
+        box.innerHTML=`<div class="loc-main"><i class="fa-solid fa-location-dot"></i><span>لم يُحدَّد موقعك بعد</span></div>
+            <button class="loc-btn clickable" onclick="locatePrayerNow()"><i class="fa-solid fa-location-crosshairs"></i> حدّد موقعي</button>`;
+        return;
+    }
+    const c=nearestRefCity(lat,lng);
+    const tz=-new Date().getTimezoneOffset()/60;
+    const place=c?(c.d<25?`قرب ${c.n}`:(c.d<150?`${Math.round(c.d)} كم من ${c.n}`:'')):'';
+    const checked=prayerSettings.lastLocCheck?`تحقّق ${prayerSettings.lastLocCheck===isoDay()?'اليوم':fmtDayMonth(prayerSettings.lastLocCheck)}`:'';
+    box.innerHTML=`<div class="loc-main"><i class="fa-solid fa-location-dot"></i>
+            <span><b>${place||'موقعك'}</b><small>${lat.toFixed(3)}°، ${lng.toFixed(3)}° · توقيت ${tz>=0?'+':''}${tz}${checked?' · '+checked:''}</small></span></div>
+        <button class="loc-btn clickable" onclick="locatePrayerNow()"><i class="fa-solid fa-location-crosshairs"></i> تحديث</button>`;
+}
+function locatePrayerNow(){
+    showToast('جارٍ تحديد موقعك…');
+    prayerSettings.lastLocCheck=null;   // نجبر التحديث حتى لو لم يتغيّر الموقع كثيراً
+    requestPrayerLocation(false);
+}
+const PRAYER_TUNE_KEYS=['fajr','dhuhr','asr','maghrib','isha'];
 function openPrayerSettings(){
     document.getElementById('prayer-method-chips').innerHTML=Object.keys(PRAYER_METHODS).map(k=>
         `<div class="chip-choice${prayerSettings.method===k?' selected':''}" onclick="pickPrayerMethod('${k}')">${PRAYER_METHODS[k].name}</div>`).join('');
@@ -11803,6 +12427,11 @@ function openPrayerSettings(){
     document.getElementById('prayer-tuning').value=prayerSettings.tuning||0;
     document.getElementById('prayer-lat').value=(prayerSettings.lat!==null&&prayerSettings.lat!==undefined)?prayerSettings.lat:'';
     document.getElementById('prayer-lng').value=(prayerSettings.lng!==null&&prayerSettings.lng!==undefined)?prayerSettings.lng:'';
+    const per=prayerSettings.tune||{};
+    document.getElementById('prayer-tune-grid').innerHTML=PRAYER_TUNE_KEYS.map(k=>`<label class="tune-cell">
+        <span>${PRAYER_LABELS[k]}</span>
+        <input type="number" id="prayer-tune-${k}" min="-30" max="30" value="${per[k]||0}" oninput="renderPrayerPreview()" style="width:100%;text-align:center;">
+    </label>`).join('');
     renderPrayerPreview();
     document.getElementById('prayer-settings-modal').style.display='flex';
 }
@@ -11819,33 +12448,58 @@ function pickAsrMadhab(m,quiet){
     if(btns.length>1){btns[0].classList.toggle('active',m==='standard');btns[1].classList.toggle('active',m==='hanafi');}
     if(!quiet)renderPrayerPreview();
 }
+// المعاينة تُحسب بالقيم المكتوبة الآن (قبل الحفظ)، والفترة المعروضة هي فترتك الفعلية
+function readPrayerDraft(){
+    const lat=parseFloat(document.getElementById('prayer-lat').value),lng=parseFloat(document.getElementById('prayer-lng').value);
+    const tune={};PRAYER_TUNE_KEYS.forEach(k=>{const el=document.getElementById('prayer-tune-'+k);tune[k]=el?Math.max(-30,Math.min(30,parseInt(el.value)||0)):0;});
+    return{
+        lat:isNaN(lat)?prayerSettings.lat:lat,lng:isNaN(lng)?prayerSettings.lng:lng,
+        duration:Math.max(5,Math.min(120,parseInt(document.getElementById('prayer-duration').value)||30)),
+        tuning:Math.max(-30,Math.min(30,parseInt(document.getElementById('prayer-tuning').value)||0)),tune
+    };
+}
 function renderPrayerPreview(){
     const box=document.getElementById('prayer-times-preview');if(!box)return;
-    const lat=parseFloat(document.getElementById('prayer-lat').value),
-          lng=parseFloat(document.getElementById('prayer-lng').value);
-    const useLat=isNaN(lat)?prayerSettings.lat:lat, useLng=isNaN(lng)?prayerSettings.lng:lng;
-    if(useLat===null||useLat===undefined||useLng===null||useLng===undefined){
-        box.innerHTML='<div class="st-empty">لم يُحدَّد موقعك بعد.<br>اضغط «تحديث الموقع» أو أدخل الإحداثيات.</div>';
+    const dr=readPrayerDraft();
+    renderPrayerLocCard(dr.lat,dr.lng);
+    if(dr.lat===null||dr.lat===undefined||dr.lng===null||dr.lng===undefined){
+        box.innerHTML='<div class="st-empty">حدّد موقعك لتُحسب الأوقات.</div>';
+        document.getElementById('prayer-reset-periods').style.display='none';
         return;
     }
-    const dur=parseInt(document.getElementById('prayer-duration').value)||30;
-    const t=computePrayerTimes(new Date(),useLat,useLng,prayerSettings.method,prayerSettings.asrMadhab);
-    box.innerHTML=['fajr','sunrise','dhuhr','asr','maghrib','isha'].map(k=>{
-        const hh=hoursToHHMM(t[k]);
-        if(!hh)return '';
-        const after=(k!=='sunrise')?`<span class="pt-after">الفترة ${formatTime12(hoursToHHMM(t[k]+dur/60))}</span>`:'';
-        return `<div class="pt-row"><span class="pt-name">${PRAYER_LABELS[k]}</span><span class="pt-time">${formatTime12(hh)}</span>${after}</div>`;
+    // نحسب بإعدادات المسودّة مؤقتاً ثم نعيد المحفوظة كما هي
+    const saved={tuning:prayerSettings.tuning,tune:prayerSettings.tune,prayerDuration:prayerSettings.prayerDuration,lat:prayerSettings.lat,lng:prayerSettings.lng,enabled:prayerSettings.enabled};
+    Object.assign(prayerSettings,{tuning:dr.tuning,tune:dr.tune,prayerDuration:dr.duration,lat:dr.lat,lng:dr.lng,enabled:true});
+    const t=computePrayerTimes(new Date(),dr.lat,dr.lng,prayerSettings.method,prayerSettings.asrMadhab);
+    const periodOf={fajr:'fajr',sunrise:'morning',dhuhr:'dhuhr',asr:'asr',maghrib:'maghrib',isha:'isha'};
+    const rows=['fajr','sunrise','dhuhr','asr','maghrib','isha'].map(k=>{
+        const hh=hoursToHHMM(t[k]);if(!hh)return '';
+        const sk=periodOf[k],eff=getStationEffectiveTimes(sk),custom=!!stationTimesDB[sk];
+        return `<div class="pt-row"><span class="pt-name">${PRAYER_LABELS[k]}</span><span class="pt-time">${formatTime12(hh)}</span>
+            <span class="pt-after${custom?' custom':''}" onclick="closePrayerSettings();openStationTimePicker('${sk}')">${stationLabelsArabic[sk]} ${formatTime12(eff.from)}${custom?' · معدّلة':''}</span></div>`;
     }).join('');
+    Object.assign(prayerSettings,saved);
+    box.innerHTML=rows;
+    document.getElementById('prayer-reset-periods').style.display=Object.keys(stationTimesDB).length?'flex':'none';
+}
+function resetAllStationTimes(){
+    const n=Object.keys(stationTimesDB).length;
+    showCustomConfirm(`إعادة ${n} ${n===1?'فترة معدّلة':'فترات معدّلة'} لتتبع الأذان تلقائياً؟`,()=>{
+        stationTimesDB={};
+        localStorage.setItem('stationTimesDB','{}');
+        renderPrayerPreview();renderDailyTasks();
+        showToast('كل الفترات تتبع الأذان الآن');
+    },{acceptLabel:'<i class="fa-solid fa-wand-magic-sparkles"></i> أعِدها',acceptColor:'var(--accent-color)'});
 }
 function savePrayerSettingsUI(){
-    const lat=parseFloat(document.getElementById('prayer-lat').value),
-          lng=parseFloat(document.getElementById('prayer-lng').value);
-    if(!isNaN(lat)&&!isNaN(lng)){prayerSettings.lat=lat;prayerSettings.lng=lng;}
-    prayerSettings.prayerDuration=Math.max(5,Math.min(120,parseInt(document.getElementById('prayer-duration').value)||30));
-    prayerSettings.tuning=Math.max(-30,Math.min(30,parseInt(document.getElementById('prayer-tuning').value)||0));
+    const dr=readPrayerDraft();
+    if(dr.lat!==null&&dr.lat!==undefined&&dr.lng!==null&&dr.lng!==undefined){prayerSettings.lat=dr.lat;prayerSettings.lng=dr.lng;}
+    prayerSettings.prayerDuration=dr.duration;
+    prayerSettings.tuning=dr.tuning;
+    prayerSettings.tune=dr.tune;
     prayerSettings.enabled=(prayerSettings.lat!==null&&prayerSettings.lat!==undefined);
     savePrayerSettings();closePrayerSettings();renderDailyTasks();updatePrayerSettingsState();
-    showToast(prayerSettings.enabled?'حُفظت أوقات الصلاة':'أدخل الموقع أولاً');
+    showToast(prayerSettings.enabled?'حُفظت أوقات الصلاة':'حدّد الموقع أولاً');
 }
 function updatePrayerSettingsState(){
     const el=document.getElementById('prayer-settings-state');if(!el)return;
@@ -11945,10 +12599,9 @@ function loadGIS(){
 }
 // ----------------------------------------------------------------
 // رمز الوصول
-// تطبيق يعمل في المتصفح وحده لا يحصل من جوجل إلا على رمز صالح ساعة واحدة.
-// لذلك: تسجيل الدخول مرة واحدة يمنح الإذن، ثم يتجدّد الرمز بصمت
-// (prompt:'none' — بلا اختيار حساب ولا سؤال) مرة في اليوم مع أول لمسة.
-// قد تومض نافذة جوجل لحظة وتُغلق وحدها؛ هذا حدّ المتصفح لا التطبيق.
+// تطبيق يعمل في المتصفح وحده لا يحصل من جوجل إلا على رمز صالح ساعة واحدة،
+// ولا يستطيع تجديده دون نافذة. لذلك لا نفتح أي نافذة من تلقاء أنفسنا:
+// خلال الساعة بعد آخر رفع بدأته نرفع بصمت، وبعدها يذكّرك شريط لطيف حين تتأخّر النسخة.
 // ----------------------------------------------------------------
 let _tokenWaiters=[];
 function settleTokenWaiters(err){
@@ -12087,9 +12740,15 @@ function maybeOfferDriveOnFirstRun(){
 }
 
 // ---- عمليات الواجهة ----
+let _driveSyncing=null;   // رفع جارٍ: لا نبدأ ثانياً فوقه
 function driveSyncNow(silent){
     if(!driveReady()){if(!silent)showToast('المزامنة غير مهيّأة في هذه النسخة');return Promise.resolve();}
     if(!navigator.onLine){if(!silent)showToast('لا اتصال بالإنترنت');return Promise.resolve();}
+    if(_driveSyncing)return _driveSyncing;
+    _driveSyncing=_driveSyncRun(silent).finally(()=>{_driveSyncing=null;});
+    return _driveSyncing;
+}
+function _driveSyncRun(silent){
     // الرفع الصامت لا يجري إلا إن تغيّر شيء فعلاً، وبفاصل عشر دقائق على الأقل
     if(silent){
         const changed=driveCfg.lastLocalChange&&(!driveCfg.lastSync||
@@ -12102,7 +12761,7 @@ function driveSyncNow(silent){
         .then(()=>uploadToDrive())
         .then(()=>{
             driveCfg.lastSync=new Date().toISOString();saveDriveCfg();
-            updateDriveState();
+            updateDriveState();renderBackupNudge();
             if(!silent)showToast('حُفظت نسختك في درايف');
         })
         .catch(err=>{
@@ -12157,34 +12816,22 @@ function scheduleDriveSync(){
 // ---- النسخة اليومية التلقائية ----
 // مرة في اليوم، مع أول لمسة في التطبيق: نجدّد الإذن بصمت ونرفع إن تغيّر شيء
 const DRIVE_DAILY_GAP_MS=20*3600*1000;
-let _dailyArmed=false;
 function driveDailyDue(){
     if(!driveCfg.connected||!driveCfg.auto||!driveReady()||!navigator.onLine)return false;
     const last=driveCfg.lastSync?new Date(driveCfg.lastSync).getTime():0;
     const changed=!driveCfg.lastSync||(driveCfg.lastLocalChange&&new Date(driveCfg.lastLocalChange).getTime()>last);
     return changed&&(Date.now()-last>=DRIVE_DAILY_GAP_MS);
 }
+// لا نطلب إذناً جديداً من تلقاء أنفسنا: كان ذلك يفتح نافذة اختيار الحساب كل يوم.
+// نرفع بصمت فقط إن بقي رمز صالح من آخر رفع بدأته أنت، وإلا يتكفّل التذكير اللطيف بالباقي.
 function runDailyDriveBackup(){
-    if(!driveDailyDue())return;
-    const upload=()=>uploadToDrive().then(()=>{
-        driveCfg.lastSync=new Date().toISOString();driveCfg.lastFail=null;saveDriveCfg();updateDriveState();
-    });
-    const fail=()=>{driveCfg.lastFail=new Date().toISOString();saveDriveCfg();updateDriveState();};
-    if(driveTokenValid()){upload().catch(fail);return;}
-    if(!_tokenClient){fail();return;}           // عميل جوجل لم يُحمَّل (بلا إنترنت مثلاً)
-    requestDriveToken('none').then(upload).catch(fail);
+    if(driveDailyDue()&&driveTokenValid())driveSyncNow(true);
 }
 function armDailyDriveBackup(){
-    if(_dailyArmed||!driveCfg.connected||!driveReady())return;
+    if(!driveCfg.connected||!driveReady())return;
+    // نحمّل عميل جوجل مسبقاً ليفتح "ارفع الآن" نافذته فوراً داخل ضغطتك
     if(navigator.onLine)prepareDriveTokenClient().catch(()=>{});
-    _dailyArmed=true;
-    const onFirstTap=()=>{
-        document.removeEventListener('click',onFirstTap,true);
-        _dailyArmed=false;
-        runDailyDriveBackup();
-    };
-    // click لا pointerdown: المتصفح لا يسمح بفتح نافذة جوجل إلا من نقرة مكتملة
-    document.addEventListener('click',onFirstTap,true);
+    runDailyDriveBackup();
 }
 // يقلّل احتمال أن يمسح النظام بيانات التطبيق تلقائياً عند امتلاء الجهاز
 function requestPersistentStorage(){
@@ -12194,6 +12841,124 @@ function requestPersistentStorage(){
         }
     }catch(e){}
 }
+// ================================================================
+// نسخ تلقائية على الجهاز: لقطة كاملة كل يوم في IndexedDB (آخر عشر)
+// لا تحمي من ضياع الجهاز — لذلك درايف والملف — لكنها تُرجعك عن خطأ
+// (حذف بالغلط، استيراد خاطئ) بضغطة، بلا إنترنت ولا إذن.
+// ================================================================
+const SNAP_DB='montheoma-snaps',SNAP_KEEP=10;
+function snapDb(){
+    return new Promise((res,rej)=>{
+        if(!window.indexedDB)return rej(new Error('no-idb'));
+        const r=indexedDB.open(SNAP_DB,1);
+        r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('snaps'))r.result.createObjectStore('snaps',{keyPath:'id'});};
+        r.onsuccess=()=>res(r.result);
+        r.onerror=()=>rej(r.error);
+    });
+}
+function saveSnapshot(kind){
+    const day=commitDayKey();
+    const id=kind==='daily'?day:`${day}-${kind}-${Date.now()}`;
+    return snapDb().then(db=>new Promise(res=>{
+        const tx=db.transaction('snaps','readwrite'),st=tx.objectStore('snaps');
+        st.put({id,day,kind,at:new Date().toISOString(),payload:buildBackupPayload()});
+        const all=st.getAll();
+        all.onsuccess=()=>{
+            const items=(all.result||[]).sort((a,b)=>b.at.localeCompare(a.at));
+            items.slice(SNAP_KEEP).forEach(x=>st.delete(x.id));
+        };
+        tx.oncomplete=()=>res(true);tx.onerror=()=>res(false);
+    })).catch(()=>false);
+}
+// مرة في اليوم المنطقي: حالة يومك عند بدايته
+function saveDailySnapshot(){
+    const day=commitDayKey();
+    let last=null;try{last=localStorage.getItem('lastSnapDay');}catch(e){}
+    if(last===day)return;
+    saveSnapshot('daily').then(ok=>{if(ok)try{localStorage.setItem('lastSnapDay',day);}catch(e){}});
+}
+function listSnapshots(){
+    return snapDb().then(db=>new Promise(res=>{
+        const r=db.transaction('snaps').objectStore('snaps').getAll();
+        r.onsuccess=()=>res((r.result||[]).sort((a,b)=>b.at.localeCompare(a.at)));
+        r.onerror=()=>res([]);
+    })).catch(()=>[]);
+}
+function openLocalSnapshots(){
+    const box=document.getElementById('bk-snaps');
+    if(box.style.display==='flex'){box.style.display='none';return;}
+    box.style.display='flex';box.innerHTML='<div class="st-empty">…</div>';
+    listSnapshots().then(list=>{
+        if(!list.length){box.innerHTML='<div class="st-empty">لا لقطات بعد — تُحفظ أول لقطة مع بداية يومك القادم.</div>';return;}
+        box.innerHTML=list.map(s=>{
+            const p=s.payload||{};
+            const n=(p.storedDailyTasks||[]).length;
+            const label=s.kind==='daily'?`بداية يوم ${fmtDayMonth(s.day)}`:(s.kind==='pre-import'?'قبل استيراد':'قبل استعادة');
+            return `<button class="bk-snap clickable" onclick="restoreSnapshot('${s.id}')">
+                <span><b>${label}</b><small>${fmtStamp(s.at)} · ${n} مهمة</small></span><i class="fa-solid fa-rotate-left"></i></button>`;
+        }).join('');
+    });
+}
+function restoreSnapshot(id){
+    listSnapshots().then(list=>{
+        const s=list.find(x=>x.id===id);if(!s)return;
+        showCustomConfirm(`استعادة لقطة ${fmtStamp(s.at)}؟<br><span style="font-size:11px;color:var(--ink-3);">تحلّ محلّ بياناتك الحالية. تُحفظ لقطة من حالتك الآن قبلها، فتستطيع الرجوع.</span>`,()=>{
+            saveSnapshot('pre-restore').then(()=>{
+                try{applyBackupPayload(s.payload);showToast('استُعيدت اللقطة — جارٍ إعادة التحميل');setTimeout(()=>location.reload(),900);}
+                catch(e){showToast('تعذّرت الاستعادة');}
+            });
+        },{acceptLabel:'<i class="fa-solid fa-rotate-left"></i> استعد',acceptColor:'var(--status-work)'});
+    });
+}
+// ---- مركز النسخ ----
+function backupAgeDays(iso){return iso?Math.floor((Date.now()-new Date(iso).getTime())/86400000):null;}
+function openBackupCenter(){
+    const file=localStorage.getItem('lastManualBackup');
+    const fd=backupAgeDays(file);
+    const rows=[];
+    rows.push(`<div class="bk-row"><i class="fa-brands fa-google-drive"></i><span>درايف</span><b class="${driveCfg.connected?'':'muted'}">${driveCfg.connected?driveSyncAgeText().text:'غير متصل'}</b></div>`);
+    rows.push(`<div class="bk-row"><i class="fa-solid fa-file-lines"></i><span>آخر ملف محفوظ</span><b class="${fd===null||fd>=7?'warn':''}">${fd===null?'لم تحفظ ملفاً بعد':(fd===0?'اليوم':(fd===1?'أمس':`قبل ${fd} ${daysWord(fd)}`))}</b></div>`);
+    document.getElementById('bk-status').innerHTML=rows.join('');
+    document.getElementById('bk-drive-label').innerHTML=driveCfg.connected
+        ?`ارفع الآن إلى درايف<small>${driveCfg.email?`<span dir="ltr">${driveCfg.email}</span> · `:''}<a onclick="event.stopPropagation();openDriveSettings()">الإعدادات</a></small>`
+        :(driveReady()?'اربط حساب جوجل درايف<small>نسخة في حسابك تنجو إن ضاع الجهاز</small>':'جوجل درايف<small>غير مهيّأ في هذه النسخة</small>');
+    listSnapshots().then(l=>{
+        const sub=document.getElementById('bk-snap-sub');
+        if(sub)sub.innerText=l.length?`${l.length===1?'لقطة واحدة':l.length+' لقطات'} · آخرها ${fmtStamp(l[0].at)}`:'لقطة كل يوم — للتراجع عن خطأ';
+    });
+    document.getElementById('bk-snaps').style.display='none';
+    document.getElementById('backup-modal').style.display='flex';
+}
+function backupDriveAction(){
+    if(!driveCfg.connected){openDriveSettings();return;}
+    driveSyncNow(false).then(()=>{if(document.getElementById('backup-modal').style.display==='flex')openBackupCenter();renderBackupNudge();});
+}
+// ---- تذكير لطيف بدل النوافذ المفاجئة: يظهر في صفحة المهام حين تتأخّر النسخة ----
+function backupNudgeState(){
+    let snooze=null;try{snooze=localStorage.getItem('bkNudgeSnooze');}catch(e){}
+    if(snooze===commitDayKey())return null;
+    if(driveCfg.connected){
+        const d=backupAgeDays(driveCfg.lastSync);
+        const changed=!driveCfg.lastSync||(driveCfg.lastLocalChange&&new Date(driveCfg.lastLocalChange)>new Date(driveCfg.lastSync));
+        if(changed&&(d===null||d>=3))return{text:d===null?'لم تُرفع نسختك إلى درايف بعد':`مضت ${d} ${daysWord(d)} على آخر نسخة في درايف`,act:'ارفع الآن',fn:'nudgeBackupNow()'};
+        return null;
+    }
+    const f=backupAgeDays(localStorage.getItem('lastManualBackup'));
+    if(f===null||f>=7)return{text:f===null?'لم تحفظ نسخة احتياطية بعد':`مضت ${f} ${daysWord(f)} على آخر نسخة احتياطية`,act:'احفظ الآن',fn:'openBackupCenter()'};
+    return null;
+}
+function renderBackupNudge(){
+    const el=document.getElementById('backup-nudge');if(!el)return;
+    const s=backupNudgeState();
+    if(!s){el.style.display='none';return;}
+    el.innerHTML=`<i class="fa-solid fa-cloud-arrow-up"></i><span>${s.text}</span>
+        <button class="bn-act clickable" onclick="${s.fn}">${s.act}</button>
+        <button class="bn-x clickable" onclick="snoozeBackupNudge()" aria-label="لاحقاً"><i class="fa-solid fa-xmark"></i></button>`;
+    el.style.display='flex';
+}
+function snoozeBackupNudge(){try{localStorage.setItem('bkNudgeSnooze',commitDayKey());}catch(e){}renderBackupNudge();}
+function nudgeBackupNow(){driveSyncNow(false).then(renderBackupNudge);}
+
 // "1 أكتوبر · 10:00 ص" بأرقام التطبيق نفسها
 function fmtStamp(isoStr){
     const d=new Date(isoStr);if(isNaN(d.getTime()))return '';
@@ -12237,14 +13002,8 @@ function updateDriveState(){
             : 'لم تسجّل الدخول بعد.';
     }
 }
-// شبكة أمان: تذكير أسبوعي بنسخة محلية حتى مع وجود درايف
-function checkBackupReminder(){
-    const last=localStorage.getItem('lastManualBackup');
-    const days=last?Math.floor((Date.now()-new Date(last).getTime())/86400000):999;
-    if(days>=7&&!driveCfg.connected){
-        setTimeout(()=>showToast('مضى وقت على آخر نسخة احتياطية — صدّر نسخة من الروتين'),3500);
-    }
-}
+// شبكة أمان: التذكير صار شريطاً هادئاً في صفحة المهام (renderBackupNudge) بدل إشعار عابر
+function checkBackupReminder(){renderBackupNudge();}
 
 // حمولة النسخة الاحتياطية — مصدر واحد للتصدير اليدوي وللمزامنة مع درايف
 function buildBackupPayload(){
@@ -12286,6 +13045,8 @@ function exportData(){
         setTimeout(()=>URL.revokeObjectURL(url),4000);
         localStorage.setItem('lastManualBackup',new Date().toISOString());
         showToast('تم حفظ النسخة: '+name);
+        renderBackupNudge();
+        if(document.getElementById('backup-modal').style.display==='flex')openBackupCenter();
     }catch(e){showToast('تعذّر إنشاء ملف النسخة');}
 }
 function importData(){
@@ -12315,24 +13076,14 @@ function importData(){
             showCustomConfirm(
                 `النسخة بتاريخ ${when}<br><span style="font-size:11px;color:var(--ink-3);">${parts.join(' · ')||'بيانات'}</span><br><br>سيحلّ محتواها محلّ كل بياناتك الحالية. هل تتابع؟`,
                 ()=>{
-                    const map={
-                        routineDatabase:'routineDB', fixedSleepDatabase:'sleepFixedDB',
-                        storedDailyTasks:'dailyTasksDB', hierarchicalGoalsDatabase:'hGoalsDB',
-                        subjectsDatabase:'subjectsDB', booksDatabase:'booksDB',
-                        seriesDatabase:'seriesDB', newSeriesDatabase:'newSeriesDB',
-                        worshipDatabase:'worshipDB', stationTimesDB:'stationTimesDB',
-                        periodTasksDB:'periodTasksDB', historyDB:'historyDB',
-                        sportsDatabase:'sportsDB', behaviorDatabase:'behaviorDB',
-                        commitmentDB:'commitmentDB', commitLogDB:'commitLogDB',
-                        scheduledTasksDB:'scheduledTasksDB', prayerSettings:'prayerSettings'
-                    };
-                    try{
-                        Object.keys(map).forEach(k=>{
-                            if(p[k]!==undefined)localStorage.setItem(map[k],JSON.stringify(p[k]));
-                        });
-                        showToast('تم الاستيراد — جارٍ إعادة التحميل');
-                        setTimeout(()=>location.reload(),900);
-                    }catch(err){showToast('لا مساحة كافية لاستيراد هذه النسخة');}
+                    // لقطة من حالتك الآن أولاً: إن كان الملف خاطئاً تعود إليها من مركز النسخ
+                    saveSnapshot('pre-import').then(()=>{
+                        try{
+                            applyBackupPayload(p);
+                            showToast('تم الاستيراد — جارٍ إعادة التحميل');
+                            setTimeout(()=>location.reload(),900);
+                        }catch(err){showToast('لا مساحة كافية لاستيراد هذه النسخة');}
+                    });
                 },
                 {acceptLabel:'<i class="fa-solid fa-download"></i> نعم، استورد',acceptColor:'var(--status-delay)'}
             );
@@ -12430,7 +13181,46 @@ function renderLibraryPanels(){
     else if(currentLibTab==='behavior')renderLibBehavior();
     libUpdateSummaries();
     liftCoreCards();
+    decorateLibCards();
+    renderLibHelp();
 }
+// كل ما كان يُفتح بالضغط المطوّل له الآن زر ⋯ ظاهر، والبطاقات البسيطة تُفتح بضغطة
+function decorateLibCards(){
+    const mk=fn=>{
+        const b=document.createElement('button');
+        b.className='lib-more clickable';b.setAttribute('aria-label','خيارات');
+        b.innerHTML='<i class="fa-solid fa-ellipsis"></i>';
+        b.addEventListener('click',e=>{e.stopPropagation();fn();});
+        // لا يبدأ الضغط المطوّل ولا السحب من الزر نفسه
+        ['mousedown','touchstart'].forEach(ev=>b.addEventListener(ev,e=>e.stopPropagation(),{passive:true}));
+        return b;
+    };
+    document.querySelectorAll('.lib-panel [data-longpress-parent]').forEach(el=>{
+        if(el.querySelector(':scope > .lib-more'))return;
+        const [id,type]=el.getAttribute('data-longpress-parent').split('|');
+        const btn=mk(()=>openLibLongpressModal('parent',type,id,null));
+        const exp=el.querySelector(':scope > .lib-expand-btn');
+        exp?el.insertBefore(btn,exp):el.appendChild(btn);
+    });
+    document.querySelectorAll('.lib-panel [data-longpress-simple]').forEach(el=>{
+        if(el.querySelector(':scope > .lib-more'))return;
+        const [type,id]=el.getAttribute('data-longpress-simple').split('|');
+        el.appendChild(mk(()=>openSimpleItemEdit(type,id)));
+        if(!el.onclick){el.classList.add('clickable');el.onclick=()=>openSimpleItemEdit(type,id);}
+    });
+    document.querySelectorAll('.lib-panel [data-longpress-unit]').forEach(el=>{
+        const acts=el.querySelector('.lib-unit-actions');
+        if(!acts||acts.querySelector('.lib-more'))return;
+        const [pid,uid,type]=el.getAttribute('data-longpress-unit').split('|');
+        acts.insertBefore(mk(()=>openLibLongpressModal('unit',type,pid,uid)),acts.firstChild);
+    });
+}
+// شرح من ثلاثة أسطر يظهر حتى تضغط «فهمت»، ثم لا يعود
+function renderLibHelp(){
+    let seen=false;try{seen=localStorage.getItem('libHelpSeen')==='1';}catch(e){}
+    const el=document.getElementById('lib-help');if(el)el.style.display=seen?'none':'block';
+}
+function dismissLibHelp(){try{localStorage.setItem('libHelpSeen','1');}catch(e){}renderLibHelp();}
 
 // ---- ملخّص التقدّم أعلى كل لوحة ----
 function libCount(list,unitsKey,isDone){
@@ -12461,6 +13251,11 @@ function libUpdateSummaries(){
     const coreCount=sportsDatabase.filter(x=>x.isCore).length;
     set('lib-sum-sports',sportsDatabase.length?`${sportsDatabase.length} عنصر · ${coreCount} رئيسية`:'لا عناصر بعد');
 
+    // عدد العناصر تحت اسم كل قسم في الشبكة
+    [['subjects',subjectsDatabase],['books',booksDatabase],['series',seriesDatabase],['newseries',newSeriesDatabase],
+     ['worship',worshipDatabase],['sports',sportsDatabase],['behavior',behaviorDatabase]].forEach(([k,db])=>
+        set('lib-cnt-'+k,(db||[]).length?String(db.length):'—'));
+
     const wo=libCount(worshipDatabase,'pages',u=>(u.masteryPercent||0)>=100);
     set('lib-sum-worship',worshipDatabase.length?
         (wo.t?line(wo,'','صفحة محفوظة'):`${worshipDatabase.length} عبادة مسجّلة`)
@@ -12470,7 +13265,7 @@ function libUpdateSummaries(){
 // ---- مواد الفصل ----
 function renderLibSubjects(){
     const c=document.getElementById('lib-subjects-list');if(!c)return;
-    if(!subjectsDatabase.length){c.innerHTML=`<div class="empty-zone-hint">لا توجد مواد. اضغط (+) لإضافة مادة جديدة</div>`;return;}
+    if(!subjectsDatabase.length){c.innerHTML=`<div class="empty-zone-hint">لا توجد مواد. اضغط زر الإضافة أعلاه لإضافة مادة جديدة</div>`;return;}
     c.innerHTML=subjectsDatabase.map(s=>{
         const lectures=s.lectures||[];
         const total=lectures.length;
@@ -12539,7 +13334,7 @@ function renderLibSubjects(){
 // ---- الكتب ----
 function renderLibBooks(){
     const c=document.getElementById('lib-books-list');if(!c)return;
-    if(!booksDatabase.length){c.innerHTML=`<div class="empty-zone-hint">لا توجد كتب. اضغط (+) لإضافة كتاب</div>`;return;}
+    if(!booksDatabase.length){c.innerHTML=`<div class="empty-zone-hint">لا توجد كتب. اضغط زر الإضافة أعلاه لإضافة كتاب</div>`;return;}
     c.innerHTML=booksDatabase.map(b=>{
         const mode=b.mode||'study'; // الكتب القديمة بدون حقل mode تُعامل كوضع "دراسة" تلقائياً
         const panelId=`book-panel-${b.id}`;
@@ -12638,7 +13433,7 @@ function renderLibBooks(){
 // ---- السلاسل ----
 function renderLibSeries(){
     const c=document.getElementById('lib-series-list');if(!c)return;
-    if(!seriesDatabase.length){c.innerHTML=`<div class="empty-zone-hint">لا توجد سلاسل. اضغط (+) لإضافة سلسلة جديدة</div>`;return;}
+    if(!seriesDatabase.length){c.innerHTML=`<div class="empty-zone-hint">لا توجد سلاسل. اضغط زر الإضافة أعلاه لإضافة سلسلة جديدة</div>`;return;}
     c.innerHTML=seriesDatabase.map(s=>{
         const episodes=s.episodes||[];
         const total=episodes.length;
@@ -12700,7 +13495,7 @@ function renderLibSeries(){
 // ---- السلاسل (مسلسلات/محتوى ترفيهي) — جديدة كلياً، مستقلة تماماً عن بيانات فقه النفس (seriesDatabase) ----
 function renderLibNewSeries(){
     const c=document.getElementById('lib-newseries-list');if(!c)return;
-    if(!newSeriesDatabase.length){c.innerHTML=`<div class="empty-zone-hint">لا توجد سلاسل. اضغط (+) لإضافة سلسلة جديدة</div>`;return;}
+    if(!newSeriesDatabase.length){c.innerHTML=`<div class="empty-zone-hint">لا توجد سلاسل. اضغط زر الإضافة أعلاه لإضافة سلسلة جديدة</div>`;return;}
     c.innerHTML=newSeriesDatabase.map(s=>{
         const episodes=s.episodes||[];
         const total=episodes.length;
@@ -12762,7 +13557,7 @@ function renderLibNewSeries(){
 // ---- العبادات (قراءة / حفظ) ----
 function renderLibWorship(){
     const c=document.getElementById('lib-worship-list');if(!c)return;
-    if(!worshipDatabase.length){c.innerHTML=`<div class="empty-zone-hint">لا توجد عبادات مسجّلة. اضغط (+) لإضافة قراءة أو حفظ أو أذكار</div>`;return;}
+    if(!worshipDatabase.length){c.innerHTML=`<div class="empty-zone-hint">لا توجد عبادات مسجّلة. اضغط زر الإضافة أعلاه لإضافة قراءة أو حفظ أو أذكار</div>`;return;}
     c.innerHTML=worshipDatabase.map(w=>{
         const panelId=`worship-panel-${w.id}`;
         let pct=0,statLine='',unitsHtml='',typeLabel='',iconClass='';
@@ -14093,6 +14888,7 @@ function toggleAppNotifications(){
 // الإقلاع
 // ================================================================
 (function init(){
+    migrateStationTimes(); // الفترات المحفوظة كساعات ثابتة تصير إزاحات تتبع الأذان (قبل أي حساب لحدّ اليوم)
     checkDayTransition(); // إغلاق ما انقضى من أيام — أول شيء
     migrateTaskDates();   // بعد الإغلاق: ما بقي من مهام قديمة يُربط بتاريخه
     applyStartDayGrace(commitDayKey());
@@ -14110,10 +14906,11 @@ function toggleAppNotifications(){
     updateDoneFeedbackState();
     updateDriveState();
     checkBackupReminder();
-    // مزامنة صامتة عند الفتح إن بقي رمز صالح، وإلا فالنسخة اليومية مع أول لمسة
+    // مزامنة صامتة عند الفتح إن بقي رمز صالح — بلا أي نافذة جوجل
     if(driveCfg.connected&&driveCfg.auto&&navigator.onLine&&driveTokenValid())
         setTimeout(()=>driveSyncNow(true),6000);
     armDailyDriveBackup();
+    setTimeout(saveDailySnapshot,2500);   // لقطة بداية اليوم على الجهاز
     requestPersistentStorage();
     maybeOfferDriveOnFirstRun();
     document._weekTaskDeleteMode=null;
