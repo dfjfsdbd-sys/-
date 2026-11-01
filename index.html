@@ -294,6 +294,15 @@
         .task-meta-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--line-3); }
         .task-meta-num { font-variant-numeric: tabular-nums; }
         .task-chevron { color: var(--ink-3); font-size: var(--fs-xs); flex-shrink: 0; }
+        /* صورة المادة/المحاضرة أو أيقونتها على البطاقة — تظهر فقط إن وُضعت */
+        .task-avatar {
+            width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; font-size: 15px;
+            background: var(--card-tint, var(--surface-2)); color: var(--task-accent, var(--ink-2));
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .task-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .task-card .task-avatar + .task-info { margin-right: 0; }
         .task-card.is-done { background: transparent; border-style: dashed; box-shadow: none; }
         .task-card.is-done .task-title { color: var(--ink-3); text-decoration: line-through; }
         /* وسم "رئيسية" وحده يميّز المهمة؛ لونها يبقى لون تصنيفها */
@@ -314,9 +323,15 @@
             color: var(--ink-2); font-family: inherit; font-size: 11px; font-weight: 500;
             transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
         }
-        .type-chip i { font-size: 15px; color: var(--ink-3); transition: color 0.18s ease; }
+        .type-chip i { font-size: 15px; color: var(--tc, var(--ink-3)); opacity: 0.72; transition: color 0.18s ease, opacity 0.18s ease; }
         .type-chip.selected { font-weight: 600; }
-        .type-chip.selected i { color: inherit; }
+        .type-chip.selected i { color: inherit; opacity: 1; }
+        /* عنوان نافذة الإضافة: لأي يوم ستُضاف، سطر صغير تحته */
+        .am-title { flex-wrap: wrap; }
+        .am-title small { flex-basis: 100%; font-size: 11px; font-weight: 500; color: var(--ink-3); margin-top: 3px; }
+        .am-title small:empty { display: none; }
+        .pill-ico { width: 20px; height: 20px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+        .pill-ico-i { font-size: 11px; }
         .type-chip:active { transform: scale(0.95); }
         .modal-pick-area { margin-bottom: 14px; text-align: right; }
         .pick-pool { display: flex; flex-wrap: wrap; gap: 2px; margin: 2px 0; }
@@ -330,7 +345,10 @@
             border-radius: var(--r-sm); font-family: inherit; cursor: pointer;
             transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
         }
-        .et-chip { padding: 10px 4px; font-size: 12px; }
+        .et-chip { padding: 8px 4px 7px; font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+        .et-chip b { font-weight: inherit; }
+        .et-chip small { font-size: 9.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+        .et-chip.selected small { color: inherit; opacity: 0.75; }
         .et-chip.selected, .et-day.selected { background: var(--accent-tint); border-color: var(--accent-line); color: var(--accent-color); font-weight: 600; }
         .et-days { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
         .et-day { flex-shrink: 0; min-width: 62px; padding: 8px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -589,6 +607,7 @@
             padding: 2px 8px; border-radius: var(--r-pill); vertical-align: middle;
             color: #ef7a7b; background: rgba(238,82,83,0.10); border: 1px solid rgba(238,82,83,0.28);
         }
+        .core-badge.is-secondary { color: #d9a865; background: rgba(224,160,74,0.09); border-color: rgba(224,160,74,0.26); }
         .week-task-card {
             background-color: var(--card-bg); padding: 10px 12px; border-radius: 12px; margin-bottom: 8px;
             display: flex; flex-direction: column; gap: 3px; border-right: 4px solid var(--cat-study);
@@ -1010,6 +1029,11 @@
             background: rgba(238,82,83,0.08); color: rgba(238,82,83,0.8); border: 1px solid rgba(238,82,83,0.2);
         }
         .cm-tag.soft { background: var(--surface-2); color: var(--ink-3); border-color: var(--line-1); }
+        .cp-total { display: flex; align-items: baseline; gap: 10px; padding: 2px 4px 12px; border-bottom: 1px solid var(--line-1); margin-bottom: 6px; }
+        .cp-total b { font-size: 22px; font-weight: 700; color: var(--ink-1); font-variant-numeric: tabular-nums; }
+        .cp-total span { font-size: 11px; color: var(--ink-3); }
+        .cp-group { display: flex; justify-content: space-between; align-items: center; margin: 14px 4px 4px; font-size: 11px; color: var(--ink-3); font-weight: 600; }
+        .cp-group b { color: var(--ink-2); font-variant-numeric: tabular-nums; }
         .cm-check.part { background: rgba(224,160,74,0.12); border-color: rgba(224,160,74,0.4); color: var(--status-work); }
         /* أساسي/ثانوي: شارة تُبدَّل بضغطة */
         .cm-imp {
@@ -1112,6 +1136,9 @@
         .cmm-sum-sub { font-size: 10.5px; color: var(--ink-3); margin-top: 4px; line-height: 1.7; }
         .cmm-section { padding: 16px 0; border-top: 1px solid var(--line-1); }
         .cmm-section:first-of-type { border-top: none; padding-top: 0; }
+        .cmm-more { margin: 14px 0 0; }
+        .f-fold.cmm-more > .cmm-section { padding: 14px 13px; }
+        .f-fold.cmm-more > .cmm-section:first-of-type { border-top: 1px solid var(--line-1); padding-top: 14px; }
         .cmm-head { font-size: 12.5px; font-weight: 600; color: var(--ink-1); margin-bottom: 5px; text-align: right; }
         .cmm-hint { font-size: 10.5px; color: var(--ink-3); line-height: 1.7; margin-bottom: 11px; text-align: right; }
         .cmm-two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -1884,14 +1911,7 @@
             margin-top: 8px; background: none; border: 1px solid var(--line-1); border-radius: var(--r-pill);
             color: var(--ink-2); font-family: inherit; font-size: 11.5px; padding: 6px 16px; cursor: pointer;
         }
-        /* زر ⋯ ظاهر على كل بطاقة ووحدة: بديل واضح عن الضغط المطوّل */
-        .lib-more {
-            flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
-            background: transparent; border: 1px solid transparent; color: var(--ink-3); font-size: 13px;
-            display: inline-flex; align-items: center; justify-content: center;
-        }
-        .lib-more:active { background: var(--surface-3); }
-        .lib-unit-actions .lib-more { width: 26px; height: 26px; font-size: 12px; }
+        .lib-pct { color: var(--ink-2); font-weight: 600; font-variant-numeric: tabular-nums; }
         .lib-head .pl-add { margin-right: 0; width: 32px; height: 32px; font-size: 13px; }
 
         .lib-card {
@@ -1919,6 +1939,12 @@
             border-radius: 8px; transition: background 0.15s, color 0.15s;
         }
         .lib-reorder-handle:hover, .lib-reorder-handle.dragging { color: var(--accent-color); background: rgba(76,184,212,0.08); }
+        /* المقبض على الحافة اليمنى يحمل شريط اللون (أو رقم الوحدة): من هنا تُسحب البطاقة */
+        .lib-reorder-handle.has-bar, .lib-reorder-handle.has-num { touch-action: none; }
+        .lib-reorder-handle.has-bar { width: 18px; margin-left: 4px; }
+        .lib-reorder-handle.has-num { width: 30px; }
+        .lib-reorder-handle.has-num .lib-unit-num { pointer-events: none; }
+        .lib-expand-btn { display: none !important; }
         .lib-reorder-handle:active { cursor: grabbing; }
         .lib-card.reorder-dragging, .lib-unit-row.reorder-dragging { opacity: 0.4; }
         .lib-card.reorder-drop-before, .lib-unit-row.reorder-drop-before { box-shadow: inset 0 3px 0 var(--accent-color); }
@@ -2374,9 +2400,10 @@
                 <label class="f-label">التصنيف</label>
                 <div class="seg-switch" id="lib-longpress-core-seg">
                     <button class="seg-opt active" data-core="0" onclick="pickLongpressCore(0)">عادية</button>
-                    <button class="seg-opt" data-core="1" onclick="pickLongpressCore(1)">مهمة رئيسية</button>
+                    <button class="seg-opt" data-core="1" onclick="pickLongpressCore(1)">ثانوية</button>
+                    <button class="seg-opt" data-core="2" onclick="pickLongpressCore(2)">أساسية</button>
                 </div>
-                <div class="rt-hint" style="padding:8px 2px 0;">الرئيسية تدخل شروط التعهّد. تختار في صفحة التعهّد إن كانت أساسية (لا يكتمل اليوم بدونها) أو ثانوية (ترفع نسبة يومك).</div>
+                <div class="rt-hint" style="padding:8px 2px 0;"><b>أساسية</b>: من التعهّد، ولا يكتمل اليوم بدونها. <b>ثانوية</b>: من التعهّد، ترفع نسبة يومك ولا تكسره وحدها. <b>عادية</b>: خارج التعهّد.</div>
             </div>
 
             <div id="lib-longpress-rec-section" class="f-row" style="display:none;">
@@ -2394,7 +2421,7 @@
                 <div id="lib-icon-picker" class="icon-picker"></div>
             </div>
             <div id="lib-longpress-icon-section" class="f-row" style="display:none;">
-                <label class="f-label">صورة العنصر (تحلّ محلّ الأيقونة)</label>
+                <label class="f-label" id="lib-longpress-icon-label">صورة العنصر (تحلّ محلّ الأيقونة)</label>
                 <div style="display:flex;align-items:center;gap:10px;">
                     <img id="lib-longpress-icon-preview" src="" class="f-icon-preview" style="display:none;">
                     <button type="button" onclick="document.getElementById('lib-longpress-icon-input').click()" class="f-upload-btn"><i class="fa-solid fa-image"></i> اختر صورة</button>
@@ -2626,9 +2653,9 @@
 <!-- نافذة إضافة مهمة -->
 <div id="add-task-modal" class="custom-modal-overlay">
     <div class="custom-modal-content">
-        <h3 class="m-title"><i class="fa-solid fa-plus"></i> <span id="add-task-heading">مهمة جديدة</span></h3>
+        <h3 class="m-title am-title"><i class="fa-solid fa-plus"></i> <span id="add-task-heading">مهمة جديدة</span><small id="add-task-when"></small></h3>
         <button class="core-cta clickable" id="btn-distribute-core" style="display:none;" onclick="distributeCoreFromModal()">
-            <span><span class="core-badge" style="margin:0 0 0 7px;">رئيسية</span> توزيع المهام الرئيسية على بقية الأسبوع</span>
+            <span><i class="fa-solid fa-route" style="color:var(--accent-color);margin-left:6px;"></i> وزّع التزامات التعهّد على بقية الأسبوع</span>
             <i class="fa-solid fa-chevron-left"></i>
         </button>
         <!-- ١) النوع: كل نوع يفتح قائمته من المكتبة، و«عامة» لمهمة حرّة تكتب اسمها -->
@@ -3081,30 +3108,31 @@
     <div class="rt-card">
         <div class="rt-budget-hero">
             <div class="rt-budget-num" id="stat-day-pure-free">24 ساعة</div>
-            <div class="rt-budget-cap">ساعات فراغ صافية</div>
+            <div class="rt-budget-cap">فراغ صافٍ بعد النوم والروتين والصلاة ومهام اليوم</div>
         </div>
+        <!-- ما يأخذ من يومك، ثم الفراغ مفصّلاً على الفترات -->
         <div class="rt-breakdown">
-            <div class="rt-line clickable" onclick="toggleFreeTimeDetail()">
-                <span class="rt-line-name"><i class="fa-solid fa-hourglass-half"></i> تفصيل الفراغ</span>
-                <span class="rt-line-val"><i class="fa-solid fa-chevron-down" id="free-time-chevron"></i></span>
-            </div>
-            <div id="free-time-detail-panel" style="display:none;">
-                <div class="free-time-detail-box"><div id="free-time-periods-list"></div></div>
+            <div class="rt-line">
+                <span class="rt-line-name"><i class="fa-solid fa-bed" style="color:var(--status-wait);"></i> النوم</span>
+                <span class="rt-line-val" id="stat-day-sleep">—</span>
             </div>
             <div class="rt-line">
                 <span class="rt-line-name"><i class="fa-solid fa-graduation-cap" style="color:var(--cat-study);"></i> المحاضرات الثابتة</span>
-                <span class="rt-line-val" id="stat-day-uni">0 ساعة</span>
-            </div>
-            <div class="rt-line">
-                <span class="rt-line-name"><i class="fa-solid fa-bed" style="color:var(--status-wait);"></i> النوم المقرّر</span>
-                <span class="rt-line-val" id="stat-day-sleep">0 ساعة</span>
+                <span class="rt-line-val" id="stat-day-uni">—</span>
             </div>
             <div class="rt-line clickable" onclick="togglePrayerStat()">
-                <span class="rt-line-name"><i class="fa-solid fa-mosque" style="color:var(--cat-god);"></i> رصيد الصلوات</span>
-                <span class="rt-line-val"><span id="stat-day-prayers">2.5 ساعة</span> <i class="fa-solid fa-chevron-down" id="prayer-stat-chevron" style="font-size:9px;"></i></span>
+                <span class="rt-line-name"><i class="fa-solid fa-mosque" style="color:var(--cat-god);"></i> وقت الصلوات</span>
+                <span class="rt-line-val"><span id="stat-day-prayers">—</span> <i class="fa-solid fa-chevron-down" id="prayer-stat-chevron" style="font-size:9px;"></i></span>
             </div>
             <div id="prayer-stat-detail" style="display:none;">
                 <div class="rt-hint">نصف ساعة محجوزة عند كل أذان من الصلوات الخمس، تُخصم تلقائياً من الفراغ.</div>
+            </div>
+            <div class="rt-line clickable" onclick="toggleFreeTimeDetail()">
+                <span class="rt-line-name"><i class="fa-solid fa-hourglass-half"></i> الفراغ حسب الفترات</span>
+                <span class="rt-line-val"><i class="fa-solid fa-chevron-down" id="free-time-chevron" style="font-size:9px;"></i></span>
+            </div>
+            <div id="free-time-detail-panel" style="display:none;">
+                <div class="free-time-detail-box"><div id="free-time-periods-list"></div></div>
             </div>
         </div>
     </div>
@@ -3172,8 +3200,8 @@
                 <div class="pw-range" id="pw-range"></div>
             </div>
             <div class="plan-head-acts">
-                <button class="plan-btn dist clickable" id="pw-dist-btn" onclick="confirmDistributeCore()" aria-label="توزيع المهام الرئيسية" title="توزيع المهام الرئيسية على بقية الأسبوع">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i><span>وزّع</span>
+                <button class="plan-btn dist clickable" id="pw-dist-btn" onclick="confirmDistributeCore()" aria-label="وزّع التعهّد" title="وزّع التزامات التعهّد على بقية الأسبوع">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i><span>وزّع التعهّد</span>
                 </button>
                 <button class="plan-btn cal clickable" onclick="openPlanCalendar()" aria-label="التقويم">
                     <i class="fa-solid fa-calendar-days"></i><span>الشهر</span>
@@ -3204,7 +3232,7 @@
         <ol>
             <li>المكتبة مخزن لكل ما تدرسه أو تتابعه: اختر القسم المناسب وأضف إليه.</li>
             <li>اضغط <b>+ مهمة</b> بجانب أي محاضرة أو درس لتضعه في يومك، والتطبيق يتذكّر أين وصلت.</li>
-            <li>اجعل العنصر <b>رئيسياً</b> (من زر <i class="fa-solid fa-ellipsis"></i>) ليدخل في التزامك ويتوزّع على أسبوعك.</li>
+            <li><b>ضغطة</b> على البطاقة تفتح محاضراتها، و<b>ضغطة مطوّلة</b> تفتح تعديلها (الاسم، الصورة، أساسية أو ثانوية في التعهّد)، و<b>السحب من حافتها اليمنى</b> يرتّبها.</li>
         </ol>
         <button class="lh-ok clickable" onclick="dismissLibHelp()">فهمت</button>
     </div>
@@ -3424,7 +3452,7 @@
         <label class="f-label">التصنيف</label>
         <div class="seg-switch" id="core-seg-subject">
             <button class="seg-opt active" onclick="pickAddCore('subject',0)">عادية</button>
-            <button class="seg-opt" onclick="pickAddCore('subject',1)">مهمة رئيسية</button>
+            <button class="seg-opt" onclick="pickAddCore('subject',1)">ثانوية</button><button class="seg-opt" onclick="pickAddCore('subject',2)">أساسية</button>
         </div>
         <div class="core-rec" id="core-rec-subject" style="display:none;">
             <span class="core-rec-label" id="core-rec-label-subject">كم مرة في الأسبوع؟</span>
@@ -3529,7 +3557,7 @@
         <label class="f-label">التصنيف</label>
         <div class="seg-switch" id="core-seg-book">
             <button class="seg-opt active" onclick="pickAddCore('book',0)">عادية</button>
-            <button class="seg-opt" onclick="pickAddCore('book',1)">مهمة رئيسية</button>
+            <button class="seg-opt" onclick="pickAddCore('book',1)">ثانوية</button><button class="seg-opt" onclick="pickAddCore('book',2)">أساسية</button>
         </div>
         <div class="core-rec" id="core-rec-book" style="display:none;">
             <span class="core-rec-label" id="core-rec-label-book">كم مرة في الأسبوع؟</span>
@@ -3596,7 +3624,7 @@
         <label class="f-label">التصنيف</label>
         <div class="seg-switch" id="core-seg-series">
             <button class="seg-opt active" onclick="pickAddCore('series',0)">عادية</button>
-            <button class="seg-opt" onclick="pickAddCore('series',1)">مهمة رئيسية</button>
+            <button class="seg-opt" onclick="pickAddCore('series',1)">ثانوية</button><button class="seg-opt" onclick="pickAddCore('series',2)">أساسية</button>
         </div>
         <div class="core-rec" id="core-rec-series" style="display:none;">
             <span class="core-rec-label" id="core-rec-label-series">كم مرة في الأسبوع؟</span>
@@ -3663,7 +3691,7 @@
         <label class="f-label">التصنيف</label>
         <div class="seg-switch" id="core-seg-newseries">
             <button class="seg-opt active" onclick="pickAddCore('newseries',0)">عادية</button>
-            <button class="seg-opt" onclick="pickAddCore('newseries',1)">مهمة رئيسية</button>
+            <button class="seg-opt" onclick="pickAddCore('newseries',1)">ثانوية</button><button class="seg-opt" onclick="pickAddCore('newseries',2)">أساسية</button>
         </div>
         <div class="core-rec" id="core-rec-newseries" style="display:none;">
             <span class="core-rec-label" id="core-rec-label-newseries">كم مرة في الأسبوع؟</span>
@@ -3734,7 +3762,7 @@
         <label class="f-label">التصنيف</label>
         <div class="seg-switch" id="core-seg-worship">
             <button class="seg-opt active" onclick="pickAddCore('worship',0)">عادية</button>
-            <button class="seg-opt" onclick="pickAddCore('worship',1)">مهمة رئيسية</button>
+            <button class="seg-opt" onclick="pickAddCore('worship',1)">ثانوية</button><button class="seg-opt" onclick="pickAddCore('worship',2)">أساسية</button>
         </div>
         <div class="core-rec" id="core-rec-worship" style="display:none;">
             <span class="core-rec-label" id="core-rec-label-worship">كم مرة في الأسبوع؟</span>
@@ -3995,7 +4023,7 @@
         <label class="f-label">التصنيف</label>
         <div class="seg-switch" id="core-seg-simpleedit">
             <button class="seg-opt active" onclick="pickAddCore('simpleedit',0)">عادية</button>
-            <button class="seg-opt" onclick="pickAddCore('simpleedit',1)">مهمة رئيسية</button>
+            <button class="seg-opt" onclick="pickAddCore('simpleedit',1)">ثانوية</button><button class="seg-opt" onclick="pickAddCore('simpleedit',2)">أساسية</button>
         </div>
         <div class="core-rec" id="core-rec-simpleedit" style="display:none;">
             <span class="core-rec-label" id="core-rec-label-simpleedit">كم مرة في الأسبوع؟</span>
@@ -4063,7 +4091,7 @@
         <label class="f-label">التصنيف</label>
         <div class="seg-switch" id="core-seg-sports">
             <button class="seg-opt active" onclick="pickAddCore('sports',0)">عادية</button>
-            <button class="seg-opt" onclick="pickAddCore('sports',1)">مهمة رئيسية</button>
+            <button class="seg-opt" onclick="pickAddCore('sports',1)">ثانوية</button><button class="seg-opt" onclick="pickAddCore('sports',2)">أساسية</button>
         </div>
         <div class="core-rec" id="core-rec-sports" style="display:none;">
             <span class="core-rec-label" id="core-rec-label-sports">كم مرة في الأسبوع؟</span>
@@ -4117,7 +4145,7 @@
         <label class="f-label">التصنيف</label>
         <div class="seg-switch" id="core-seg-behavior">
             <button class="seg-opt active" onclick="pickAddCore('behavior',0)">عادية</button>
-            <button class="seg-opt" onclick="pickAddCore('behavior',1)">مهمة رئيسية</button>
+            <button class="seg-opt" onclick="pickAddCore('behavior',1)">ثانوية</button><button class="seg-opt" onclick="pickAddCore('behavior',2)">أساسية</button>
         </div>
         <div class="core-rec" id="core-rec-behavior" style="display:none;">
             <span class="core-rec-label" id="core-rec-label-behavior">كم مرة في الأسبوع؟</span>
@@ -4211,18 +4239,9 @@
         <h3 class="m-title"><i class="fa-solid fa-sliders"></i> إدارة التعهّد</h3>
         <div class="cmm-summary" id="cmm-summary"></div>
 
-        <!-- كيف يُحكم على اليوم: أساسي/ثانوي لكل شرط + حدّ النجاح -->
+        <!-- ١) التعهّد نفسه -->
         <div class="cmm-section">
-            <div class="cmm-head">شروط اليوم</div>
-            <div class="cmm-hint"><b>الأساسي</b> لا يكتمل اليوم بدونه. <b>الثانوي</b> يرفع نسبة يومك ولا يكسره وحده. يسري من اليوم، والأيام الماضية تبقى بحكمها.</div>
-            <div id="cmm-reqs" class="cmm-reqs"></div>
-            <button class="cmm-btn clickable" style="width:100%;justify-content:center;margin-top:8px;" onclick="closeCommitManage();openCommitAddPicker()"><i class="fa-solid fa-plus"></i> أضف التزاماً من المكتبة</button>
-            <div class="cmm-head" style="margin-top:16px;">حدّ نجاح اليوم</div>
-            <div class="cmm-hint">أقلّ نسبة يُعدّ بها اليوم مكتملاً (مع تحقّق الأساسيات). وهو أيضاً حدّ نجاح تقييم السلوك.</div>
-            <div class="chips-container" id="cmm-threshold"></div>
-        </div>
-
-        <div class="cmm-section">
+            <div class="cmm-head">التعهّد</div>
             <div class="f-row">
                 <label class="f-label">ما الذي تستعدّ له؟</label>
                 <input type="text" id="cmm-reward" style="width:100%;text-align:right;">
@@ -4237,41 +4256,49 @@
                     <input type="date" id="cmm-start" style="width:100%;">
                 </div>
             </div>
-            <button class="btn-prime clickable" onclick="saveCommitBasics()">حفظ التعديلات</button>
+            <button class="btn-prime clickable" onclick="saveCommitBasics()">حفظ</button>
         </div>
 
+        <!-- ٢) كيف يُحكم على اليوم: الشروط وأهميتها وحدّ النجاح -->
         <div class="cmm-section">
-            <div class="cmm-head">تعديل الأيام</div>
-            <div class="cmm-hint">«إرجاع يوم» يضيف يوماً على مدتك فيتأخّر موعد النهاية. كل تعديل يُسجَّل ويمكن التراجع عنه.</div>
-            <div class="cmm-adjust">
-                <button class="cmm-btn clickable" onclick="commitStepBack()"><i class="fa-solid fa-rotate-left"></i> إرجاع يوم</button>
-                <div class="cmm-add">
-                    <input type="number" id="cmm-add-days" value="3" min="1" max="120" inputmode="numeric">
-                    <button class="cmm-btn clickable" onclick="commitAddDays()"><i class="fa-solid fa-plus"></i> إضافة أيام</button>
-                </div>
-            </div>
-            <div id="cmm-adjust-log"></div>
-        </div>
-
-        <div class="cmm-section">
-            <div class="cmm-head">إن نقصت حصّة أسبوعية</div>
-            <div class="cmm-hint">مثال: ثلاث حلقات أسبوعياً وأنجزت اثنتين. يسري الخيار على الأسابيع القادمة.</div>
-            <div id="cmm-policy" class="cmm-options"></div>
-        </div>
-
-        <div class="cmm-section">
-            <button class="rt-line rt-line-btn clickable" id="cmm-prayers-toggle" onclick="toggleCommitPrayers()" style="border-bottom:none;">
-                <span class="rt-line-name"><i class="fa-solid fa-mosque"></i> الصلوات الخمس من شروط اليوم</span>
+            <div class="cmm-head">شروط اليوم</div>
+            <div class="cmm-hint"><b>الأساسي</b> لا يكتمل اليوم بدونه. <b>الثانوي</b> يرفع نسبة يومك ولا يكسره وحده. يسري من اليوم، والأيام الماضية تبقى بحكمها.</div>
+            <div id="cmm-reqs" class="cmm-reqs"></div>
+            <button class="rt-line rt-line-btn clickable" id="cmm-prayers-toggle" onclick="toggleCommitPrayers()" style="border-bottom:none;margin-top:4px;">
+                <span class="rt-line-name"><i class="fa-solid fa-mosque"></i> الصلوات الخمس من الشروط</span>
                 <span class="rt-switch"></span>
             </button>
+            <button class="cmm-btn clickable" style="width:100%;justify-content:center;margin-top:6px;" onclick="closeCommitManage();openCommitAddPicker()"><i class="fa-solid fa-plus"></i> أضف أو أزِل التزاماً</button>
+            <div class="cmm-head" style="margin-top:16px;">حدّ نجاح اليوم</div>
+            <div class="cmm-hint">أقلّ نسبة يُعدّ بها اليوم مكتملاً (مع تحقّق الأساسيات)، وهو حدّ نجاح تقييم السلوك أيضاً.</div>
+            <div class="chips-container" id="cmm-threshold"></div>
         </div>
 
-        <div class="cmm-section cmm-danger">
-            <button class="cmm-danger-btn clickable" onclick="restartCommitment()"><i class="fa-solid fa-rotate"></i> إعادة التعهّد من البداية</button>
-            <button class="cmm-danger-btn clickable" onclick="openResetStats()"><i class="fa-solid fa-eraser"></i> تصفير سجلّ الإنجاز</button>
-            <button class="cmm-danger-btn clickable" onclick="endCommitment()"><i class="fa-solid fa-flag"></i> إنهاء التعهّد</button>
-        </div>
-        <button class="cmm-new clickable" onclick="startNewCommitmentFromManage()"><i class="fa-solid fa-plus"></i> بدء تعهّد جديد</button>
+        <!-- ٣) ما يُحتاج نادراً: مطويّ حتى لا يزحم النافذة -->
+        <details class="f-fold cmm-more">
+            <summary>خيارات متقدّمة</summary>
+            <div class="cmm-section">
+                <div class="cmm-head">إن نقصت حصّة أسبوعية</div>
+                <div class="cmm-hint">مثال: ثلاث حلقات أسبوعياً وأنجزت اثنتين. الحصص الثانوية لا تضيف أياماً أبداً.</div>
+                <div id="cmm-policy" class="cmm-options"></div>
+            </div>
+            <div class="cmm-section">
+                <div class="cmm-head">تعديل الأيام يدوياً</div>
+                <div class="cmm-hint">«إرجاع يوم» يضيف يوماً على مدتك. كل تعديل يُسجَّل ويمكن التراجع عنه.</div>
+                <div class="cmm-adjust">
+                    <button class="cmm-btn clickable" onclick="commitStepBack()"><i class="fa-solid fa-rotate-left"></i> إرجاع يوم</button>
+                    <div class="cmm-add">
+                        <input type="number" id="cmm-add-days" value="3" min="1" max="120" inputmode="numeric">
+                        <button class="cmm-btn clickable" onclick="commitAddDays()"><i class="fa-solid fa-plus"></i> إضافة أيام</button>
+                    </div>
+                </div>
+                <div id="cmm-adjust-log"></div>
+            </div>
+            <div class="cmm-section cmm-danger">
+                <button class="cmm-danger-btn clickable" onclick="restartCommitment()"><i class="fa-solid fa-rotate"></i> إعادة التعهّد من اليوم الأول</button>
+                <button class="cmm-danger-btn clickable" onclick="endCommitment()"><i class="fa-solid fa-flag"></i> إنهاء التعهّد</button>
+            </div>
+        </details>
         <button class="btn-prime btn-ghost clickable" style="margin-top:12px;" onclick="closeCommitManage()">إغلاق</button>
     </div>
 </div>
@@ -4669,7 +4696,7 @@ let routineDatabase=JSON.parse(localStorage.getItem('routineDB'))||{sun:[],mon:[
 let fixedSleepDatabase=JSON.parse(localStorage.getItem('sleepFixedDB'))||{sun:[{from:"23:00",to:"04:30"},{from:"14:00",to:"15:30"}],mon:[{from:"23:00",to:"04:30"},{from:"14:00",to:"15:30"}],tue:[{from:"23:00",to:"04:30"},{from:"14:00",to:"15:30"}],wed:[{from:"23:00",to:"04:30"},{from:"14:00",to:"15:30"}],thu:[{from:"23:00",to:"04:30"},{from:"14:00",to:"15:30"}],fri:[{from:"23:30",to:"05:00"},{from:"14:30",to:"16:00"}],sat:[{from:"23:30",to:"05:00"},{from:"14:30",to:"16:00"}]};
 let hierarchicalGoalsDatabase=JSON.parse(localStorage.getItem('hGoalsDB'))||[];
 let storedDailyTasks=JSON.parse(localStorage.getItem('dailyTasksDB'))||[];
-let subjectsDatabase=JSON.parse(localStorage.getItem('subjectsDB'))||[{id:'sub-1',name:'التشريح 💀',color:'#4a9ee0',lectures:[]},{id:'sub-2',name:'علم الأدوية 💊',color:'#e0a04a',lectures:[]}];
+let subjectsDatabase=JSON.parse(localStorage.getItem('subjectsDB'))||[{id:'sub-1',name:'التشريح',color:'#4a9ee0',lectures:[]},{id:'sub-2',name:'علم الأدوية',color:'#e0a04a',lectures:[]}];
 let booksDatabase=JSON.parse(localStorage.getItem('booksDB'))||[];
 let seriesDatabase=JSON.parse(localStorage.getItem('seriesDB'))||[];
 // قاعدة بيانات مستقلة تماماً لتبويب "السلاسل" الجديد (مسلسلات/محتوى ترفيهي) — لا علاقة لها بـ seriesDatabase (فقه النفس)
@@ -6242,9 +6269,19 @@ function syncEditTaskRangeTitle(){
     if(next&&inp.value.trim()===editTaskDraft.autoTitle){inp.value=next;editTaskDraft.autoTitle=next;}
 }
 // شرائح الفترات والأيام — مشتركة بين نافذة التعديل ونافذة الإضافة من المكتبة
+// الفترة مع بدايتها الفعلية تحتها، فتعرف متى ستكون المهمة
 function stationChipsHtml(selected,pickFn){
-    return stationKeys.map(sk=>
-        `<button class="et-chip${selected===sk?' selected':''}" onclick="${pickFn}('${sk}')">${STATION_SHORT[sk]}</button>`).join('');
+    return stationKeys.map(sk=>{
+        const from=getStationEffectiveTimes(sk).from;
+        return `<button class="et-chip${selected===sk?' selected':''}" onclick="${pickFn}('${sk}')"><b>${STATION_SHORT[sk]}</b>${from?`<small>${formatTime12(from)}</small>`:''}</button>`;
+    }).join('');
+}
+// صورة العنصر أو أيقونته داخل شريحته في نافذة الإضافة
+function libPillIcon(it){
+    if(!it)return '';
+    if(it.iconImage)return `<img class="pill-ico" src="${it.iconImage}" alt="">`;
+    if(it.iconName)return `<i class="fa-solid fa-${it.iconName} pill-ico-i" style="color:${it.color||'inherit'};"></i>`;
+    return '';
 }
 function dayChipsHtml(selected,pickFn){
     const days=Array.from({length:7},(_,i)=>addDaysIso(logicalTodayIso,i));
@@ -6922,7 +6959,7 @@ function switchModalStudyTab(tab){
     renderModalSubjectsPool();
 }
 
-function renderModalSubjectsPool(){const c=document.getElementById('modal-subjects-injection-pool');if(!c)return;if(!subjectsDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا توجد مواد، أضفها من صفحة المكتبة.</div>';return;}c.innerHTML=subjectsDatabase.map(s=>`<div class="subject-badge-card clickable" style="border-color:${s.color};" onclick="selectSubjectForTask('${s.id}')">${s.name}</div>`).join('');}
+function renderModalSubjectsPool(){const c=document.getElementById('modal-subjects-injection-pool');if(!c)return;if(!subjectsDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا توجد مواد، أضفها من صفحة المكتبة.</div>';return;}c.innerHTML=subjectsDatabase.map(s=>`<div class="subject-badge-card clickable" style="border-color:${s.color};" onclick="selectSubjectForTask('${s.id}')">${libPillIcon(s)}${s.name}</div>`).join('');}
 function selectSubjectForTask(id){
     selectedModalSubjectId=id;selectedModalUnitId=null;selectedModalParentId=id;selectedModalUnitKind='subject';
     const s=subjectsDatabase.find(x=>x.id===id);if(!s)return;
@@ -6944,7 +6981,7 @@ function selectSubjectForTask(id){
 }
 function backToSubjectsList(){selectedModalSubjectId=null;selectedModalUnitId=null;selectedModalParentId=null;document.getElementById('modal-lectures-panel').style.display='none';renderModalSubjectsPool();refreshModalAutoTitle();}
 
-function renderModalSeriesPool(){const c=document.getElementById('modal-series-injection-pool');if(!c)return;if(!seriesDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا توجد سلاسل، أضفها من صفحة المكتبة.</div>';return;}c.innerHTML=seriesDatabase.map(s=>`<div class="subject-badge-card clickable" style="border-color:${s.color};" onclick="selectSeriesForTask('${s.id}')">${s.name}</div>`).join('');}
+function renderModalSeriesPool(){const c=document.getElementById('modal-series-injection-pool');if(!c)return;if(!seriesDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا توجد سلاسل، أضفها من صفحة المكتبة.</div>';return;}c.innerHTML=seriesDatabase.map(s=>`<div class="subject-badge-card clickable" style="border-color:${s.color};" onclick="selectSeriesForTask('${s.id}')">${libPillIcon(s)}${s.name}</div>`).join('');}
 function selectSeriesForTask(seriesId){
     selectedModalUnitId=null;selectedModalParentId=seriesId;selectedModalUnitKind='series';
     const s=seriesDatabase.find(x=>x.id===seriesId);if(!s)return;
@@ -6963,7 +7000,7 @@ function selectSeriesForTask(seriesId){
 }
 function backToSeriesList(){selectedModalParentId=null;selectedModalUnitId=null;document.getElementById('modal-episodes-panel').style.display='none';renderModalSeriesPool();refreshModalAutoTitle();}
 
-function renderModalNewSeriesPool(){const c=document.getElementById('modal-newseries-injection-pool');if(!c)return;if(!newSeriesDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا توجد سلاسل، أضفها من صفحة المكتبة.</div>';return;}c.innerHTML=newSeriesDatabase.map(s=>`<div class="subject-badge-card clickable" style="border-color:${s.color};" onclick="selectNewSeriesForTask('${s.id}')">${s.name}</div>`).join('');}
+function renderModalNewSeriesPool(){const c=document.getElementById('modal-newseries-injection-pool');if(!c)return;if(!newSeriesDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا توجد سلاسل، أضفها من صفحة المكتبة.</div>';return;}c.innerHTML=newSeriesDatabase.map(s=>`<div class="subject-badge-card clickable" style="border-color:${s.color};" onclick="selectNewSeriesForTask('${s.id}')">${libPillIcon(s)}${s.name}</div>`).join('');}
 function selectNewSeriesForTask(seriesId){
     selectedModalUnitId=null;selectedModalParentId=seriesId;selectedModalUnitKind='newseries';
     const s=newSeriesDatabase.find(x=>x.id===seriesId);if(!s)return;
@@ -6988,7 +7025,7 @@ function renderModalBooksPool(){
     c.innerHTML=booksDatabase.map(b=>{
         const mode=b.mode||'study';
         const modeLabel=mode==='reading'?'قراءة':mode==='memorize'?'حفظ':'دراسة';
-        return`<div class="subject-badge-card clickable" style="border-color:${b.color};" onclick="selectBookForTask('${b.id}')">${b.name} <span style="font-size:9px;color:var(--text-muted);">(${modeLabel})</span></div>`;
+        return`<div class="subject-badge-card clickable" style="border-color:${b.color};" onclick="selectBookForTask('${b.id}')">${libPillIcon(b)}${b.name} <span style="font-size:9px;color:var(--text-muted);">(${modeLabel})</span></div>`;
     }).join('');
 }
 let pendingBookReadRange=null;
@@ -7112,7 +7149,7 @@ function renderModalWorshipPool(){
     const c=document.getElementById('modal-worship-injection-pool');if(!c)return;
     if(!worshipDatabase.length){c.innerHTML='<div class="empty-zone-hint">لا توجد عبادات. أضفها من صفحة المكتبة.</div>';return;}
     c.innerHTML=worshipDatabase.map(w=>{
-        return`<div class="subject-badge-card clickable" style="border-color:${w.color};" onclick="selectWorshipForTask('${w.id}')">${w.name}</div>`;
+        return`<div class="subject-badge-card clickable" style="border-color:${w.color};" onclick="selectWorshipForTask('${w.id}')">${libPillIcon(w)}${w.name}</div>`;
     }).join('');
 }
 function selectWorshipForTask(worshipId){
@@ -7192,13 +7229,17 @@ function defaultStationFor(cat,iso){
 }
 // ---- متى؟ اليوم والفترة داخل النافذة نفسها ----
 let modalAddDraft={date:null,station:'morning',stationTouched:false};
+// اليوم لا يُختار هنا: من صفحة المهام الإضافة لليوم، ومن التخطيط ليومها الذي ضغطته.
+// يظهر التاريخ تحت العنوان فقط، والفترة وحدها تُختار.
 function renderModalWhenChips(){
     const forGoal=!!(pendingWeekDayTarget&&pendingWeekDayTarget.day===null);
-    document.getElementById('modal-day-row').style.display=forGoal?'none':'block';
+    document.getElementById('modal-day-row').style.display='none';
     document.getElementById('modal-station-row').style.display=forGoal?'none':'block';
     document.getElementById('modal-goal-note').style.display=forGoal?'block':'none';
-    if(forGoal)return;
-    document.getElementById('modal-days').innerHTML=dayChipsHtml(modalAddDraft.date,'pickModalDate');
+    const when=document.getElementById('add-task-when');
+    if(forGoal){if(when)when.innerText='';return;}
+    const iso=modalAddDraft.date||logicalTodayIso,dd=dateFromIso(iso),offW=daysBetween(logicalTodayIso,iso);
+    if(when)when.innerText=`${offW===0?'لليوم':(offW===1?'للغد':'ليوم')} · ${ST_DAY_NAMES[dd.getDay()]} ${dd.getDate()} ${ST_MONTHS[dd.getMonth()]}`;
     document.getElementById('modal-stations').innerHTML=stationChipsHtml(modalAddDraft.station,'pickModalStation');
     document.getElementById('input-modal-station').value=modalAddDraft.station;
     const off=daysBetween(logicalTodayIso,modalAddDraft.date||logicalTodayIso);
@@ -7231,7 +7272,8 @@ function selectModalChip(c){
         const isSel=x.getAttribute('data-cat')===c;
         x.classList.toggle('selected',isSel);
         const cc=chipColors[x.getAttribute('data-cat')]||'var(--accent-color)';
-        // المختار: خلفية بلون التصنيف خفيفة ونصّه بلونه — بلا كتلة ساطعة
+        // كل نوع بأيقونة بلونه فيُعرف بنظرة؛ المختار خلفيته بلونه خفيفة — بلا كتلة ساطعة
+        x.style.setProperty('--tc',cc);
         if(isSel){x.style.background=tintOf(cc,0.16);x.style.color=cc;x.style.borderColor=cc;}
         else{x.style.background='';x.style.color='';x.style.borderColor='';}
     });
@@ -7339,14 +7381,15 @@ function distributeCoreFromModal(){
 }
 function confirmDistributeCore(){
     const items=getCoreItems();
-    if(!items.length){showToast('لا مهام رئيسية بعد — حدّدها من المكتبة');return;}
+    if(!items.length){showToast('لا التزامات في تعهّدك بعد — أضفها من صفحة التعهّد');return;}
     const left=remainingDatesOfWeek(activePlanWeekContext).length;
     const daily=items.filter(p=>p.rec.type!=='quota').length,quota=items.length-daily;
     const parts=[];
-    if(daily)parts.push(`${daily} ${daily===1?'التزام':'التزامات'} على الأيام`);
+    if(daily)parts.push(`${daily} ${daily===1?'التزام':'التزامات'} على كل يوم متبقٍّ`);
     if(quota)parts.push(`حصص ${quota} ${quota===1?'عنصر':'عناصر'} في صندوق الأهداف`);
-    showCustomConfirm(`توزيع المهام الرئيسية على ${left} ${daysWord(left)} متبقية من ${planWeekLabel(activePlanWeekContext)}؟<br>
-        <span style="font-size:11px;color:var(--ink-3);">${parts.join(' · ')}. ما وُزّع سابقاً لا يتكرر.</span>`,
+    // يوزّع التزامات التعهّد وحدها (أساسية وثانوية)؛ المهام العادية لا تُمسّ
+    showCustomConfirm(`توزيع التزامات تعهّدك على ${left} ${daysWord(left)} متبقية من ${planWeekLabel(activePlanWeekContext)}؟<br>
+        <span style="font-size:11px;color:var(--ink-3);">${parts.join(' · ')}. يشمل الأساسية والثانوية فقط — مهامك العادية لا تُمسّ، وما وُزّع سابقاً لا يتكرر.</span>`,
         distributeCoreTasks,
         {acceptLabel:'<i class="fa-solid fa-wand-magic-sparkles"></i> وزّع',acceptColor:'var(--cat-work)',icon:'wand-magic-sparkles'});
 }
@@ -7657,14 +7700,31 @@ function tintOf(color,alpha){
 const LIB_ICONS=['book-open','graduation-cap','spa','leaf','pen-fancy','lightbulb',
     'star','heart','moon','sun','mosque','book-quran','dumbbell','shield-halved',
     'brain','microscope','flask','compass','feather','fire'];
+// الوحدة المرتبطة بالمهمة (محاضرة، درس، حلقة، صفحة) داخل عنصرها
+function taskLinkedUnit(t,item){
+    if(!t||!t.linkedUnitId||!item)return null;
+    return (allUnitsOf(item)||[]).find(x=>x.id===t.linkedUnitId)||null;
+}
+// صورة البطاقة: صورة المحاضرة إن وُضعت، وإلا صورة المادة، وإلا أيقونتها — ولا شيء إن لم يُختر شيء
+function taskAvatarHtml(t){
+    if(!t||t.isPrayerAnchor)return '';
+    const f=taskLibrarySource(t);if(!f)return '';
+    const it=f.item,u=taskLinkedUnit(t,it);
+    const img=(u&&u.iconImage)||it.iconImage;
+    if(img)return `<span class="task-avatar"><img src="${img}" alt="" loading="lazy"></span>`;
+    if(it.iconName)return `<span class="task-avatar"><i class="fa-solid fa-${it.iconName}"></i></span>`;
+    return '';
+}
 function paintCompletionAvatar(modalId,task){
     const el=document.getElementById(modalId+'-avatar');
     if(!el)return;
     if(!el.dataset.fallback)el.dataset.fallback=el.innerHTML;
     const f=taskLibrarySource(task);
     const it=f&&f.item;
-    if(it&&it.iconImage){
-        el.innerHTML=`<img src="${it.iconImage}" class="cw-avatar-img" alt="">`;
+    const u=taskLinkedUnit(task,it);
+    const img=(u&&u.iconImage)||(it&&it.iconImage);
+    if(img){
+        el.innerHTML=`<img src="${img}" class="cw-avatar-img" alt="">`;
     }else if(it&&it.iconName){
         el.innerHTML=`<i class="fa-solid fa-${it.iconName}"></i>`;
     }else{
@@ -8237,9 +8297,9 @@ function openSimpleItemEdit(type,id){
     simpleEditColor=it.color||'var(--cat-sport)';
     document.querySelectorAll('#simple-edit-colors .color-swatch').forEach(c=>
         c.classList.toggle('selected',c.getAttribute('data-color')===simpleEditColor));
-    pickAddCore('simpleedit',it.isCore?1:0);
+    pickAddCore('simpleedit',coreChoiceOf(it));
     const r=it.recurrence||{type:'daily'};
-    addCoreState['simpleedit']={core:it.isCore?1:0,times:(r.type==='weekly')?(r.times||3):7};
+    addCoreState['simpleedit']={core:coreChoiceOf(it),times:(r.type==='weekly')?(r.times||3):7};
     document.getElementById('core-times-simpleedit').value=addCoreState['simpleedit'].times;
 
     document.getElementById('simple-edit-modal').style.display='flex';
@@ -8313,6 +8373,7 @@ function saveSimpleItemEdit(){
     const core=readAddCore('simpleedit');
     it.isCore=core.isCore;
     if(core.recurrence)it.recurrence=core.recurrence;
+    if(core.coreLevel==='secondary')it.coreLevel='secondary';else delete it.coreLevel;
     (type==='sports')?saveSports():saveBehavior();
     closeSimpleItemEdit();renderLibrary();renderDailyTasks();showToast('تم الحفظ');
 }
@@ -9014,8 +9075,9 @@ function renderDailyTasks(){
             const spentBadge=task.totalSecondsSpent>0?`<span class="task-meta-sep"></span><span class="task-meta-num" style="color:var(--status-done);">${Math.floor(task.totalSecondsSpent/60)} د تركيز</span>`:'';
             const core=taskIsCore(task);
             activeCard=`<div class="task-card clickable${core?' is-core':''}" draggable="true" id="task-dom-${task.id}" style="--task-accent:${sc};--card-tint:${tintOf(sc,0.07)};" onclick="openFocusStudio('${task.id}',event)">
+                ${taskAvatarHtml(task)}
                 <div class="task-info">
-                    <div class="task-title"><span>${task.title}</span>${core?'<span class="core-badge">رئيسية</span>':''}</div>
+                    <div class="task-title"><span>${task.title}</span>${core?taskCoreBadge(task):''}</div>
                     <div class="task-meta-preview">
                         <span class="task-tag">${cat.name}</span>
                         ${(task.status==='parking'&&taskDateIso(task))?`<span class="task-meta-sep"></span><span>من ${ST_DAY_NAMES[dateFromIso(taskDateIso(task)).getDay()]} ${dateFromIso(taskDateIso(task)).getDate()}</span>`:''}
@@ -9250,7 +9312,7 @@ function renderFreeTimeDetail(){
         sl.forEach(s=>{if(s.from&&s.to&&calcOverlap(p.from,p.to,s.from,s.to)>0)busySlots.push({from:s.from,to:s.to});});
         rl.forEach(s=>{if(!s.isSuspended&&s.from&&s.to&&calcOverlap(p.from,p.to,s.from,s.to)>0)busySlots.push({from:s.from,to:s.to});});
         // أبسط تمثيل: نعرض الفراغ الإجمالي مع الوقت الدقيق
-        const freeLabel=fr>0?`<span style="color:${col};font-weight:bold;font-family:monospace;">${fr.toFixed(1)} س فراغ</span>`:`<span style="color:var(--status-delay);font-size:10px;">مشغولة</span>`;
+        const freeLabel=fr>0?`<span style="color:${col};font-weight:600;font-variant-numeric:tabular-nums;">${fmtHrs(fr)} فراغ</span>`:`<span style="color:var(--status-delay);font-size:10px;">مشغولة</span>`;
         html+=`<div class="free-period-row">
             <span class="free-period-label" style="font-size:10px;">${p.name}</span>
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
@@ -9271,11 +9333,13 @@ function calcOverlap(a1,a2,b1,b2){
     const x1=tm(a1),x2=tm(a2);
     const y1=tm(b1),y2=tm(b2);
     const simple=(s1,s2,e1,e2)=>{const s=Math.max(s1,e1),e=Math.min(s2,e2);return s<e?(e-s)/60:0;};
-    if(y2<y1){
-        // الفترة b (نوم/روتين/صلاة) تعبر منتصف الليل: نقسمها لجزأين (قبل الساعة 12 وبعدها) ونجمع التداخل مع كل جزء
-        return simple(x1,x2,y1,1440)+simple(x1,x2,0,y2);
-    }
-    return simple(x1,x2,y1,y2);
+    // أيّ من الفترتين قد تعبر منتصف الليل (فترة العشاء حتى الفجر، أو نوم الليل): تُقسم كل منهما
+    // لجزأين قبل الساعة 12 وبعدها ويُجمع التداخل. كان تقسيم الثانية وحدها يجعل تداخل نوم الليل
+    // مع فترة العشاء صفراً، فيظهر فراغ العشاء أكبر من حقيقته.
+    const segs=(s,e)=>e<s?[[s,1440],[0,e]]:[[s,e]];
+    let sum=0;
+    segs(x1,x2).forEach(A=>segs(y1,y2).forEach(B=>{sum+=simple(A[0],A[1],B[0],B[1]);}));
+    return sum;
 }
 
 // ================================================================
@@ -9619,10 +9683,9 @@ function renderCurrentDaySlots(){
                     data-rt-kind="sleep" data-rt-index="${i}" onclick="openRoutineActions('sleep',${i})">
             <div class="rt-slot-main">
                 <div class="rt-slot-name"><i class="fa-solid fa-bed rt-kind"></i> ${name}</div>
-                <div class="rt-slot-time">${formatTime12(p.from)} — ${formatTime12(p.to)} · ${calcHDiff(p.from,p.to)} ساعة${off?' · '+offLabel(currentSelectedDay):''}</div>
+                <div class="rt-slot-time">${formatTime12(p.from)} — ${formatTime12(p.to)} · ${fmtHrs(calcHDiff(p.from,p.to))}${off?' · '+offLabel(currentSelectedDay):''}</div>
             </div>
-            <span class="rt-more"><i class="fa-solid fa-ellipsis"></i></span>
-        </div>`;
+                    </div>`;
     });
     slots.forEach((s,i)=>{
         const sp=s.isSuspended;
@@ -9642,15 +9705,14 @@ function renderCurrentDaySlots(){
                 <div class="rt-slot-name">${lt}</div>
                 <div class="rt-slot-time">${fromF} — ${toF}${sp?' · '+offLabel(currentSelectedDay):''}</div>
             </div>
-            <span class="rt-more"><i class="fa-solid fa-ellipsis"></i></span>
-        </div>`;
+                    </div>`;
     });
     c.innerHTML=html||`<div class="empty-zone-hint">لا يوجد روتين مخصص لهذا اليوم</div>`;
     const fr=Math.max(0,24-tocc);
-    document.getElementById('stat-day-uni').innerText=tu.toFixed(1)+" ساعة";
-    document.getElementById('stat-day-sleep').innerText=ts.toFixed(1)+" ساعة";
+    document.getElementById('stat-day-uni').innerText=fmtHrs(tu);
+    document.getElementById('stat-day-sleep').innerText=fmtHrs(ts);
     const pr=document.getElementById('stat-day-prayers');
-    if(pr)pr.innerText=prayerReservedHours().toFixed(1).replace(/\.0$/,'')+" ساعة";
+    if(pr)pr.innerText=fmtHrs(prayerReservedHours());
     const prd=document.querySelector('#prayer-stat-detail .rt-hint');
     if(prd)prd.innerText=`${prayerSettings.prayerDuration||30} دقيقة محجوزة بعد كل أذان من الصلوات الخمس، تُخصم تلقائياً من الفراغ — تغيّرها من «أوقات الصلاة».`;
     let dayTasksSeconds=0;
@@ -9660,9 +9722,16 @@ function renderCurrentDaySlots(){
         dayTasksSeconds+=(t.expectedSeconds||0);
     });
     const frAfterTasks=Math.max(0,fr-(dayTasksSeconds/3600));
-    document.getElementById('stat-day-pure-free').innerText=frAfterTasks.toFixed(1)+" ساعة";
+    document.getElementById('stat-day-pure-free').innerText=fmtHrs(frAfterTasks,'لا فراغ');
     if(freeTimeDetailOpen)renderFreeTimeDetail();
     highlightCurrentDayInGrid();
+}
+// "14 ساعة"، "3 ساعات"، "7.5 ساعة" — بلا "14.0" ولا "0.0"
+function fmtHrs(h,zero){
+    const v=Math.round(Math.max(0,h)*10)/10;
+    if(!v)return zero||'—';
+    if(v%1)return `${v} ساعة`;
+    return `${v} ${v>=3&&v<=10?'ساعات':'ساعة'}`;
 }
 function highlightCurrentDayInGrid(){document.querySelectorAll('.days-grid .day-chip').forEach(c=>c.classList.remove('today-indicator'));const tc=document.getElementById('routine-day-'+currentActualDayKey);if(tc)tc.classList.add('today-indicator');}
 
@@ -9830,7 +9899,7 @@ function renderLibSports(){
                 <div class="lib-longpress-zone-edit" data-longpress-simple="sports|${x.id}">
                     <div class="lib-card-color-bar" style="background:${x.color||'var(--cat-sport)'};"></div>
                     <div class="lib-card-info">
-                        <div class="lib-card-name"><span>${x.name}</span>${x.isCore?'<span class="core-badge">رئيسية</span>':''}</div>
+                        <div class="lib-card-name"><span>${x.name}</span>${coreBadge(x)}</div>
                         <div class="lib-card-stats"><span>${kindLabel}</span>${meta}</div>
                         ${bar}
                     </div>
@@ -9921,7 +9990,7 @@ function renderLibBehavior(){
                 <div class="lib-longpress-zone-edit" data-longpress-simple="behavior|${x.id}">
                     <div class="lib-card-color-bar" style="background:${x.color};"></div>
                     <div class="lib-card-info">
-                        <div class="lib-card-name"><span>${x.name}</span>${x.isCore?'<span class="core-badge">رئيسية</span>':''}</div>
+                        <div class="lib-card-name"><span>${x.name}</span>${coreBadge(x)}</div>
                         <div class="lib-card-stats">
                             <span>${kindLabel}</span>
                             ${x.measured?`<span>${x.direction==='atLeast'?'لا يقلّ عن':'لا يتجاوز'} ${x.limit} ${x.unit||''}</span>`:''}
@@ -10012,6 +10081,17 @@ function toggleItemCore(id){
     showToast(f.item.isCore?'صارت مهمة رئيسية':'رجعت مهمة عادية');
 }
 
+// مستوى العنصر في التعهّد: أساسية أو ثانوية (ما حُفظ قديماً بلا مستوى = أساسية)
+function coreLevelOf(item){return (item&&item.coreLevel==='secondary')?'secondary':'essential';}
+function coreBadge(item){
+    if(!item||!item.isCore)return '';
+    const sec=coreLevelOf(item)==='secondary';
+    return `<span class="core-badge${sec?' is-secondary':''}">${sec?'ثانوية':'أساسية'}</span>`;
+}
+function taskCoreBadge(t){
+    const f=taskLibrarySource(t);
+    return (f&&f.item.isCore)?coreBadge(f.item):'<span class="core-badge">أساسية</span>';
+}
 // هل هذه المهمة اليومية مرتبطة بعنصر رئيسي؟
 function taskIsCore(t){
     if(!t)return false;
@@ -10139,16 +10219,38 @@ function dailyRequirements(){
 // يكتمل اليوم إذا تحقّقت الأساسيات كلها وبلغت نسبته حدّ النجاح (60% افتراضياً).
 // بلا ثانويات يبقى الحكم كما كان تماماً: كل الشروط مطلوبة.
 const REQ_WEIGHT={essential:2,secondary:1};
+// المستوى يُحفظ في عنصر المكتبة نفسه (coreLevel)، فيبقى عبر التعهّدات ويُختار من المكتبة أيضاً.
+// الصلوات ليست عنصر مكتبة، فمستواها في التعهّد.
 function reqImportance(id){
+    const f=(id===PRAYERS_REQ_ID)?null:findLibraryItem(id);
+    if(f)return coreLevelOf(f.item);
     const m=commitmentDB&&commitmentDB.reqImportance;
     return (m&&m[id]==='secondary')?'secondary':'essential';
 }
 function setReqImportance(id,imp){
+    const f=(id===PRAYERS_REQ_ID)?null:findLibraryItem(id);
+    if(f){
+        if(imp==='secondary')f.item.coreLevel='secondary';else delete f.item.coreLevel;
+        saveLibraryType(f.type);
+        return;
+    }
     if(!commitmentDB)return;
     commitmentDB.reqImportance=commitmentDB.reqImportance||{};
     if(imp==='secondary')commitmentDB.reqImportance[id]='secondary';
     else delete commitmentDB.reqImportance[id];
     saveCommitment();
+}
+// ترقية: ما اختير «ثانوياً» من صفحة التعهّد قبل هذا التحديث ينتقل إلى عنصره في المكتبة
+function migrateCoreLevels(){
+    const m=commitmentDB&&commitmentDB.reqImportance;if(!m)return;
+    let ch=false;
+    Object.keys(m).forEach(id=>{
+        if(id===PRAYERS_REQ_ID)return;
+        const f=findLibraryItem(id);if(!f)return;
+        if(m[id]==='secondary'&&!f.item.coreLevel){f.item.coreLevel='secondary';saveLibraryType(f.type);}
+        delete m[id];ch=true;
+    });
+    if(ch)saveCommitment();
 }
 function toggleReqImportance(id){
     const next=reqImportance(id)==='essential'?'secondary':'essential';
@@ -10268,13 +10370,14 @@ function evaluateWeek(W,carryIn,upToIso){
         const carried=carryIn[p.id]||0;
         let required=prorated+carried;
         if(p.rec.type==='weekly')required=Math.min(required,effDays);   // مرة في اليوم على الأكثر
-        out[p.id]={name:p.name,type:p.rec.type,required,got:got[p.id],carried,
+        out[p.id]={name:p.name,type:p.rec.type,required,got:got[p.id],carried,imp:reqImportance(p.id),
                    shortfall:Math.max(0,required-got[p.id])};
     });
     return{from,effDays,items:out};
 }
+// الحصّة الثانوية تُعرض وتُرحَّل، لكن نقصها لا يضيف أياماً على المدة
 function weekPenaltyFor(items,policy){
-    const short=Object.values(items).reduce((a,x)=>a+(x.shortfall||0),0);
+    const short=Object.values(items).reduce((a,x)=>a+(x.imp==='secondary'?0:(x.shortfall||0)),0);
     if(policy==='breakOne')return short>0?1:0;
     if(policy==='breakPerUnit')return short;
     return 0;
@@ -10863,45 +10966,64 @@ function renderCommitment(){
     <div class="section-title"><i class="fa-solid fa-calendar-days"></i> التقويم</div>
     <div class="st-card">${renderCommitCalendar(st)}</div>
 
-    <div class="section-title"><i class="fa-solid fa-chart-line"></i> تقدّم الأهداف</div>
+    <div class="section-title"><i class="fa-solid fa-chart-line"></i> تقدّم التزاماتك</div>
     <div class="st-card">${renderCoreProgress(st)}</div>`;
 }
 
-// أشرطة تقدّم لكل هدف رئيسي طويل الأمد، مقروءة من المكتبة نفسها
+// تقدّم كل التزام نحو هدفه في التعهّد:
+//  • ما له وحدات أو صفحات: بقدر ما أُتقن منه (المحاضرة نصف المتقنة تُحسب نصفاً)
+//  • العادات والأذكار والتمارين: الأيام المنجزة من مدة التعهّد كلها — «12 من 60»
+//  • الوزن: المسافة المقطوعة نحو الهدف
+function coreItemProgress(p,st,dayIdx){
+    const f=findLibraryItem(p.id);if(!f)return null;
+    const it=f.item;
+    if(p.kind==='track'){
+        const last=lastSportValue(p.id);
+        const cur=last?last.value:(p.startValue||0);
+        const span=((p.target||0)-(p.startValue||0))||1;
+        return{pct:Math.max(0,Math.min(100,Math.round(((cur-(p.startValue||0))/span)*100))),label:`${cur} من ${p.target} ${p.unit||''}`};
+    }
+    const simple=(f.type==='worship'&&it.type==='simple')||f.type==='behavior'||f.type==='sports';
+    const ip=simple?null:itemProgress(it);
+    if(ip!==null){
+        const units=allUnitsOf(it);
+        const label=units?`${units.filter(u=>unitProgress(u)>=1).length} من ${units.length} مكتملة`
+            :`${it.pagesReadCount||0} من ${it.totalPages} صفحة`;
+        return{pct:Math.round(ip*100),label};
+    }
+    const dur=Math.max(1,parseInt(commitmentDB&&commitmentDB.durationDays)||90);
+    const daily=p.rec.type==='daily';
+    const target=daily?dur:Math.max(1,Math.round(dur/7*(p.rec.times||3)));
+    let ok=0;
+    (dayIdx||[]).forEach(([d,idx])=>{if(requirementMetOn({id:p.id,kind:'item'},d,idx))ok++;});
+    return{pct:Math.min(100,Math.round(ok/target*100)),label:`${ok} من ${target} ${daily?'يوماً':'مرة'}`};
+}
+// مجمَّعة حسب القسم: لكل قسم نسبته (متوسط عناصره) وفوقها النسبة الكلية
 function renderCoreProgress(st){
     const items=getCoreItems();
-    if(!items.length)return '<div class="st-empty">علّم مهامك الرئيسية من المكتبة لتظهر هنا.</div>';
-    return items.map(p=>{
-        const f=findLibraryItem(p.id);if(!f)return '';
-        const it=f.item;
-        let pct=0,label='';
-        if(p.kind==='track'){
-            const last=lastSportValue(p.id);
-            const cur=last?last.value:(p.startValue||0);
-            const span=((p.target||0)-(p.startValue||0))||1;
-            pct=Math.max(0,Math.min(100,Math.round(((cur-(p.startValue||0))/span)*100)));
-            label=`${cur} من ${p.target} ${p.unit||''}`;
-        }else if((f.type==='worship'&&it.type==='simple')||f.type==='behavior'||(f.type==='sports'&&p.kind!=='number')){
-            // التزام بلا وحدات: نقيس الاستمرارية داخل التعهّد
-            let ok=0,tot=0;
-            if(st){for(let i=0;i<st.elapsed;i++){const d=dayVerdictDetail(addDaysIso(st.start,i));
-                const r=d&&d.items&&d.items.find(x=>x.id===p.id);if(r){tot++;if(r.ok)ok++;}}}
-            pct=tot?Math.round((ok/tot)*100):0;
-            label=tot?`${ok} من ${tot} يوماً`:'يبدأ العدّ من الغد';
-        }else{
-            const units=allUnitsOf(it)||[];
-            const done=units.filter(u=>u.completed||(u.masteryPercent||0)>=100).length;
-            pct=units.length?Math.round((done/units.length)*100):0;
-            label=units.length?`${done} من ${units.length}`:'لا وحدات';
-        }
-        return `<div class="st-cat-row" style="--c:${p.color};">
+    if(!items.length)return '<div class="st-empty">أضف التزاماتك من «شروط اليوم» لتظهر هنا.</div>';
+    // فهرس أيام التعهّد يُبنى مرة واحدة لكل العناصر
+    const dayIdx=[];
+    if(st)for(let i=0;i<=st.elapsed;i++){const d=addDaysIso(st.start,i);if(d>st.today)break;dayIdx.push([d,dayIndex(d)]);}
+    const groups={};
+    items.forEach(p=>{
+        const r=coreItemProgress(p,st,dayIdx);if(!r)return;
+        (groups[p.source]=groups[p.source]||[]).push({p,...r});
+    });
+    const all=Object.values(groups).flat();
+    const avg=a=>a.length?Math.round(a.reduce((s,x)=>s+x.pct,0)/a.length):0;
+    const row=x=>`<div class="st-cat-row" style="--c:${x.p.color};">
             <div class="st-cat-top">
-                <span class="st-cat-name">${p.name}</span>
-                <span class="st-cat-val">${label} · ${pct}%</span>
+                <span class="st-cat-name">${x.p.name}</span>
+                <span class="st-cat-val">${x.label} · ${x.pct}%</span>
             </div>
-            <div class="st-cat-bar"><div class="st-cat-fill" style="width:${pct}%;"></div></div>
+            <div class="st-cat-bar"><div class="st-cat-fill" style="width:${x.pct}%;"></div></div>
         </div>`;
-    }).join('');
+    const order=['subject','book','series','newseries','worship','behavior','sports'];
+    const multi=Object.keys(groups).length>1;
+    return `<div class="cp-total"><b>${avg(all)}%</b><span>إجمالي تقدّم التزاماتك</span></div>`+
+        order.filter(k=>groups[k]).map(k=>(multi?`<div class="cp-group"><span>${CA_SECTIONS[k]}</span><b>${avg(groups[k])}%</b></div>`:'')
+            +groups[k].map(row).join('')).join('');
 }
 
 // نسبة شروط اليوم المتحققة (لمنحنى التعهّد)
@@ -13184,35 +13306,32 @@ function renderLibraryPanels(){
     decorateLibCards();
     renderLibHelp();
 }
-// كل ما كان يُفتح بالضغط المطوّل له الآن زر ⋯ ظاهر، والبطاقات البسيطة تُفتح بضغطة
+// إيماءات بدل الأزرار: ضغطة تفتح، ضغطة مطوّلة تعدّل، والسحب من الحافة اليمنى يرتّب.
+// شريط اللون (وفي الوحدات رقمها) ينتقل إلى مقبض السحب نفسه، فيكون هو مكان الإمساك.
 function decorateLibCards(){
-    const mk=fn=>{
-        const b=document.createElement('button');
-        b.className='lib-more clickable';b.setAttribute('aria-label','خيارات');
-        b.innerHTML='<i class="fa-solid fa-ellipsis"></i>';
-        b.addEventListener('click',e=>{e.stopPropagation();fn();});
-        // لا يبدأ الضغط المطوّل ولا السحب من الزر نفسه
-        ['mousedown','touchstart'].forEach(ev=>b.addEventListener(ev,e=>e.stopPropagation(),{passive:true}));
-        return b;
-    };
-    document.querySelectorAll('.lib-panel [data-longpress-parent]').forEach(el=>{
-        if(el.querySelector(':scope > .lib-more'))return;
-        const [id,type]=el.getAttribute('data-longpress-parent').split('|');
-        const btn=mk(()=>openLibLongpressModal('parent',type,id,null));
-        const exp=el.querySelector(':scope > .lib-expand-btn');
-        exp?el.insertBefore(btn,exp):el.appendChild(btn);
+    document.querySelectorAll('.lib-panel .lib-card-header').forEach(h=>{
+        const handle=h.querySelector(':scope > .lib-reorder-handle');
+        const zone=h.querySelector(':scope > .lib-longpress-zone-edit');
+        if(!handle||!zone||handle.classList.contains('has-bar'))return;
+        const bar=zone.querySelector(':scope > .lib-card-color-bar');
+        if(bar)handle.appendChild(bar);
+        handle.classList.add('has-bar');
+        h.insertBefore(handle,h.firstChild);
     });
+    document.querySelectorAll('.lib-panel .lib-unit-row').forEach(r=>{
+        const handle=r.querySelector(':scope > .lib-reorder-handle');
+        const zone=r.querySelector(':scope > .lib-longpress-zone-edit');
+        if(!handle||!zone||handle.classList.contains('has-num'))return;
+        const num=zone.querySelector(':scope > .lib-unit-num');
+        if(num)handle.appendChild(num);
+        handle.classList.add('has-num');
+        r.insertBefore(handle,r.firstChild);
+    });
+    // السلوك والرياضة: الضغطة تفتح التعديل مباشرة (ليست لهما وحدات تُفتح)
     document.querySelectorAll('.lib-panel [data-longpress-simple]').forEach(el=>{
-        if(el.querySelector(':scope > .lib-more'))return;
+        if(el.onclick)return;
         const [type,id]=el.getAttribute('data-longpress-simple').split('|');
-        el.appendChild(mk(()=>openSimpleItemEdit(type,id)));
-        if(!el.onclick){el.classList.add('clickable');el.onclick=()=>openSimpleItemEdit(type,id);}
-    });
-    document.querySelectorAll('.lib-panel [data-longpress-unit]').forEach(el=>{
-        const acts=el.querySelector('.lib-unit-actions');
-        if(!acts||acts.querySelector('.lib-more'))return;
-        const [pid,uid,type]=el.getAttribute('data-longpress-unit').split('|');
-        acts.insertBefore(mk(()=>openLibLongpressModal('unit',type,pid,uid)),acts.firstChild);
+        el.classList.add('clickable');el.onclick=()=>openSimpleItemEdit(type,id);
     });
 }
 // شرح من ثلاثة أسطر يظهر حتى تضغط «فهمت»، ثم لا يعود
@@ -13222,34 +13341,66 @@ function renderLibHelp(){
 }
 function dismissLibHelp(){try{localStorage.setItem('libHelpSeen','1');}catch(e){}renderLibHelp();}
 
+// ---- التقدّم الجزئي: كل وحدة تُحسب بقدر إتقانها ----
+// محاضرة من عشرين دُرست أول مرة (50%) ترفع المادة 2.5%، وبالمراجعة (75%) تصير 3.75%،
+// فيتحرّك الشريط مع كل جلسة لا عند اكتمال المحاضرة فقط.
+function unitProgress(u){
+    const mp=u?(u.masteryPercent||0):0;
+    if(mp>0)return Math.min(1,mp/100);
+    return (u&&u.completed)?1:0;
+}
+function unitsPct(arr){
+    const a=arr||[];
+    return a.length?Math.round(a.reduce((s,u)=>s+unitProgress(u),0)/a.length*100):0;
+}
+// تقدّم عنصر مكتبة كاملاً (0..1): بالوحدات، أو بالصفحات المقروءة لكتب القراءة
+function itemProgress(it){
+    if(!it)return null;
+    if(it.totalPages&&(it.mode==='reading'||it.type==='reading'))return Math.min(1,(it.pagesReadCount||0)/it.totalPages);
+    const units=allUnitsOf(it);
+    if(units&&units.length)return units.reduce((s,u)=>s+unitProgress(u),0)/units.length;
+    return null;
+}
+
 // ---- ملخّص التقدّم أعلى كل لوحة ----
 function libCount(list,unitsKey,isDone){
-    let t=0,d=0;
-    (list||[]).forEach(p=>{
-        (p[unitsKey]||[]).forEach(u=>{t++;if(isDone(u))d++;});
+    let t=0,d=0,p=0;
+    (list||[]).forEach(par=>{
+        (par[unitsKey]||[]).forEach(u=>{t++;if(isDone(u))d++;p+=unitProgress(u);});
     });
-    return{t,d};
+    return{t,d,p};
 }
 function libUpdateSummaries(){
     const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.innerText=txt;};
-    const line=(n,c,word)=>n.t?`${n.d} من ${n.t} ${word} · ${Math.round((n.d/n.t)*100)}%`:`${c} — لا وحدات بعد`;
+    // نسبة القسم: متوسط تقدّم عناصره (كل كتاب بوزن واحد، وداخله بصفحاته أو دروسه)
+    const secPct=db=>{
+        const vals=(db||[]).map(itemProgress).filter(v=>v!==null);
+        return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*100):null;
+    };
+    const line=(db,c,n,word)=>{
+        const p=secPct(db);
+        if(p===null)return `${c} — لا وحدات بعد`;
+        return `${c} · التقدّم ${p}%${n.t?` · ${n.d} من ${n.t} ${word}`:''}`;
+    };
 
     const su=libCount(subjectsDatabase,'lectures',u=>(u.masteryPercent||0)>=100);
-    set('lib-sum-subjects',subjectsDatabase.length?line(su,`${subjectsDatabase.length} مادة`,'محاضرة مكتملة'):'لا مواد بعد');
+    // 1 مادة، 3 مواد، 11 مادة — جمع القلّة بين 3 و10
+    const DUAL={'مادة':'مادتان','كتاب':'كتابان','سلسلة':'سلسلتان'};
+    const cnt=(n,one,few)=>n===2&&DUAL[one]?DUAL[one]:`${n} ${n>=3&&n<=10?few:one}`;
+    set('lib-sum-subjects',subjectsDatabase.length?line(subjectsDatabase,cnt(subjectsDatabase.length,'مادة','مواد'),su,'محاضرة مكتملة'):'لا مواد بعد');
 
     const bo=libCount(booksDatabase,'lessons',u=>u.completed||(u.masteryPercent||0)>=100);
-    set('lib-sum-books',booksDatabase.length?line(bo,`${booksDatabase.length} كتاب`,'درساً مكتملاً'):'لا كتب بعد');
+    set('lib-sum-books',booksDatabase.length?line(booksDatabase,cnt(booksDatabase.length,'كتاب','كتب'),bo,'درساً مكتملاً'):'لا كتب بعد');
 
     const se=libCount(seriesDatabase,'episodes',u=>u.completed||(u.masteryPercent||0)>=100);
-    set('lib-sum-series',seriesDatabase.length?line(se,`${seriesDatabase.length} سلسلة`,'حلقة مكتملة'):'لا سلاسل بعد');
+    set('lib-sum-series',seriesDatabase.length?line(seriesDatabase,cnt(seriesDatabase.length,'سلسلة','سلاسل'),se,'حلقة مكتملة'):'لا سلاسل بعد');
 
     const ns=libCount(newSeriesDatabase,'episodes',u=>u.completed||(u.masteryPercent||0)>=100);
-    set('lib-sum-newseries',newSeriesDatabase.length?line(ns,`${newSeriesDatabase.length} سلسلة`,'حلقة مكتملة'):'لا سلاسل بعد');
+    set('lib-sum-newseries',newSeriesDatabase.length?line(newSeriesDatabase,cnt(newSeriesDatabase.length,'سلسلة','سلاسل'),ns,'حلقة مكتملة'):'لا سلاسل بعد');
 
-    const behCore=behaviorDatabase.filter(x=>x.isCore).length;
-    set('lib-sum-behavior',behaviorDatabase.length?`${behaviorDatabase.length} سلوك · ${behCore} رئيسية`:'لا سلوكيات بعد');
-    const coreCount=sportsDatabase.filter(x=>x.isCore).length;
-    set('lib-sum-sports',sportsDatabase.length?`${sportsDatabase.length} عنصر · ${coreCount} رئيسية`:'لا عناصر بعد');
+    const coreWord=db=>{const c=db.filter(x=>x.isCore).length;return c?` · ${c} في التعهّد`:'';};
+    set('lib-sum-behavior',behaviorDatabase.length?`${behaviorDatabase.length} سلوك${coreWord(behaviorDatabase)}`:'لا سلوكيات بعد');
+    set('lib-sum-sports',sportsDatabase.length?`${sportsDatabase.length} عنصر${coreWord(sportsDatabase)}`:'لا عناصر بعد');
 
     // عدد العناصر تحت اسم كل قسم في الشبكة
     [['subjects',subjectsDatabase],['books',booksDatabase],['series',seriesDatabase],['newseries',newSeriesDatabase],
@@ -13257,8 +13408,9 @@ function libUpdateSummaries(){
         set('lib-cnt-'+k,(db||[]).length?String(db.length):'—'));
 
     const wo=libCount(worshipDatabase,'pages',u=>(u.masteryPercent||0)>=100);
+    const wp=secPct(worshipDatabase);
     set('lib-sum-worship',worshipDatabase.length?
-        (wo.t?line(wo,'','صفحة محفوظة'):`${worshipDatabase.length} عبادة مسجّلة`)
+        `${worshipDatabase.length} عبادة${wp!==null?` · التقدّم ${wp}%`:''}${wo.t?` · ${wo.d} من ${wo.t} صفحة محفوظة`:''}${coreWord(worshipDatabase)}`
         :'لا عبادات بعد');
 }
 
@@ -13271,7 +13423,7 @@ function renderLibSubjects(){
         const total=lectures.length;
         const done=lectures.filter(l=>l.masteryPercent>=100).length;
         const inProg=lectures.filter(l=>l.masteryPercent>0&&l.masteryPercent<100).length;
-        const pct=total>0?Math.round((done/total)*100):0;
+        const pct=unitsPct(lectures);
         const panelId=`subj-panel-${s.id}`;
         const nextId=nextUnitId(lectures);
         const unitsHtml=lectures.map((l,i)=>{
@@ -13309,10 +13461,10 @@ function renderLibSubjects(){
                     <div class="lib-card-color-bar" style="background:${s.color};"></div>
                     ${subjIconHtml}
                     <div class="lib-card-info">
-                        <div class="lib-card-name"><span>${s.name}</span>${s.isCore?'<span class="core-badge">رئيسية</span>':''}</div>
+                        <div class="lib-card-name"><span>${s.name}</span>${coreBadge(s)}</div>
                         <div class="lib-card-stats">
                             <span>${total} محاضرة</span>
-                            <span style="color:var(--status-done);">${done} مكتملة</span>
+                            ${done?`<span style="color:var(--status-done);">${done} مكتملة</span>`:''}<span class="lib-pct">${pct}%</span>
                             ${inProg>0?`<span style="color:var(--status-work);">${inProg} جارية</span>`:''}
                         </div>
                         <div class="lib-progress-bar-bg"><div class="lib-progress-bar-fill" style="width:${pct}%;background:${s.color};"></div></div>
@@ -13354,8 +13506,8 @@ function renderLibBooks(){
             const pages=b.pages||[];
             const total=pages.length;
             const done=pages.filter(p=>(p.masteryPercent||0)>=100).length;
-            pct=total>0?Math.round((done/total)*100):0;
-            statLine=`<span>${total} صفحة</span><span style="color:var(--status-done);">${done} مكتملة</span>`;
+            pct=unitsPct(pages);
+            statLine=`<span>${total} صفحة</span>${done?`<span style="color:var(--status-done);">${done} مكتملة</span>`:''}<span class="lib-pct">${pct}%</span>`;
             const nextId=nextUnitId(pages);
             unitsHtml=pages.map((p,i)=>{
                 const mp=p.masteryPercent||0;const mc=masteryColor(mp);
@@ -13378,8 +13530,8 @@ function renderLibBooks(){
             const lessons=b.lessons||[];
             const total=lessons.length;
             const done=lessons.filter(l=>l.completed).length;
-            pct=total>0?Math.round((done/total)*100):0;
-            statLine=`<span>${total} ${b.unitType||'درس'}</span><span style="color:var(--status-done);">${done} مكتمل</span>`;
+            pct=unitsPct(lessons);
+            statLine=`<span>${total} ${b.unitType||'درس'}</span>${done?`<span style="color:var(--status-done);">${done} مكتمل</span>`:''}<span class="lib-pct">${pct}%</span>`;
             const nextId=nextUnitId(lessons);
             unitsHtml=lessons.map((l,i)=>{
                 const completed=!!l.completed;
@@ -13412,7 +13564,7 @@ function renderLibBooks(){
                     <div class="lib-card-color-bar" style="background:${b.color};"></div>
                     ${iconHtml}
                     <div class="lib-card-info">
-                        <div class="lib-card-name"><span>${b.name}</span><span class="lib-type-label">${modeLabel}</span>${b.isCore?'<span class="core-badge">رئيسية</span>':''}</div>
+                        <div class="lib-card-name"><span>${b.name}</span><span class="lib-type-label">${modeLabel}</span>${coreBadge(b)}</div>
                         <div class="lib-card-stats">${statLine}</div>
                         <div class="lib-progress-bar-bg"><div class="lib-progress-bar-fill" style="width:${pct}%;background:${b.color};"></div></div>
                     </div>
@@ -13438,7 +13590,7 @@ function renderLibSeries(){
         const episodes=s.episodes||[];
         const total=episodes.length;
         const done=episodes.filter(e=>e.completed).length;
-        const pct=total>0?Math.round((done/total)*100):0;
+        const pct=unitsPct(episodes);
         const panelId=`series-panel-${s.id}`;
         const nextId=nextUnitId(episodes);
         const unitsHtml=episodes.map((e,i)=>{
@@ -13471,10 +13623,10 @@ function renderLibSeries(){
                     <div class="lib-card-color-bar" style="background:${s.color};"></div>
                     ${seriesIconHtml}
                     <div class="lib-card-info">
-                        <div class="lib-card-name"><span>${s.name}</span>${s.isCore?'<span class="core-badge">رئيسية</span>':''}</div>
+                        <div class="lib-card-name"><span>${s.name}</span>${coreBadge(s)}</div>
                         <div class="lib-card-stats">
                             <span>${total} ${s.unitType||'حلقة'}</span>
-                            <span style="color:var(--status-done);">${done} مكتملة</span>
+                            ${done?`<span style="color:var(--status-done);">${done} مكتملة</span>`:''}<span class="lib-pct">${pct}%</span>
                         </div>
                         <div class="lib-progress-bar-bg"><div class="lib-progress-bar-fill" style="width:${pct}%;background:${s.color};"></div></div>
                     </div>
@@ -13500,7 +13652,7 @@ function renderLibNewSeries(){
         const episodes=s.episodes||[];
         const total=episodes.length;
         const done=episodes.filter(e=>e.completed).length;
-        const pct=total>0?Math.round((done/total)*100):0;
+        const pct=unitsPct(episodes);
         const panelId=`newseries-panel-${s.id}`;
         const nextId=nextUnitId(episodes);
         const unitsHtml=episodes.map((e,i)=>{
@@ -13533,10 +13685,10 @@ function renderLibNewSeries(){
                     <div class="lib-card-color-bar" style="background:${s.color};"></div>
                     ${newSeriesIconHtml}
                     <div class="lib-card-info">
-                        <div class="lib-card-name"><span>${s.name}</span>${s.isCore?'<span class="core-badge">رئيسية</span>':''}</div>
+                        <div class="lib-card-name"><span>${s.name}</span>${coreBadge(s)}</div>
                         <div class="lib-card-stats">
                             <span>${total} ${s.unitType||'حلقة'}</span>
-                            <span style="color:var(--status-done);">${done} مكتملة</span>
+                            ${done?`<span style="color:var(--status-done);">${done} مكتملة</span>`:''}<span class="lib-pct">${pct}%</span>
                         </div>
                         <div class="lib-progress-bar-bg"><div class="lib-progress-bar-fill" style="width:${pct}%;background:${s.color};"></div></div>
                     </div>
@@ -13575,8 +13727,8 @@ function renderLibWorship(){
             const pages=w.pages||[];
             const total=pages.length;
             const done=pages.filter(p=>p.masteryPercent>=100).length;
-            pct=total>0?Math.round((done/total)*100):0;
-            statLine=`<span>${total} صفحة</span><span style="color:var(--status-done);">${done} مكتملة</span>`;
+            pct=unitsPct(pages);
+            statLine=`<span>${total} صفحة</span>${done?`<span style="color:var(--status-done);">${done} مكتملة</span>`:''}<span class="lib-pct">${pct}%</span>`;
             const nextId=nextUnitId(pages);
             unitsHtml=pages.map((p,i)=>{
                 const mp=p.masteryPercent||0;const mc=masteryColor(mp);
@@ -13614,7 +13766,7 @@ function renderLibWorship(){
                     <div class="lib-card-color-bar" style="background:${w.color};"></div>
                     ${iconHtml}
                     <div class="lib-card-info">
-                        <div class="lib-card-name"><span>${w.name}</span>${khatmaBadge}${typeLabel?`<span class="lib-type-label">${typeLabel}</span>`:''}${w.isCore?'<span class="core-badge">رئيسية</span>':''}</div>
+                        <div class="lib-card-name"><span>${w.name}</span>${khatmaBadge}${typeLabel?`<span class="lib-type-label">${typeLabel}</span>`:''}${coreBadge(w)}</div>
                         <div class="lib-card-stats">${statLine}</div>
                         ${w.type!=='simple'?`<div class="lib-progress-bar-bg"><div class="lib-progress-bar-fill" style="width:${pct}%;background:${w.color};"></div></div>`:''}
                     </div>
@@ -13764,7 +13916,7 @@ function submitAddBook(){
         }
         booksDatabase.push({id:'book-'+Date.now(),name,mode:'study',unitType,color:selectedBookColor,iconImage:uploadedBookIconData,lessons,...readAddCore('book')});
     }
-    saveBooks();closeAddBookModal();renderLibrary();showToast('تمت إضافة الكتاب 📖');
+    saveBooks();closeAddBookModal();renderLibrary();showToast('تمت إضافة الكتاب');
 }
 
 // ---- إضافة سلسلة مع توليد حلقات بالجملة ----
@@ -13808,7 +13960,7 @@ function submitAddSeries(){
         episodes.push({id:'ep-'+Date.now()+'-'+i,name:`${unitType} ${i}`,masteryPercent:0,completed:false,expectedSeconds:episodeExpectedSeconds});
     }
     seriesDatabase.push({id:'series-'+Date.now(),name,unitType,color:selectedSeriesColor,iconImage:pendingSeriesIcon,episodes,...readAddCore('series')});
-    saveSeries();closeAddSeriesModal();renderLibrary();showToast(`تم إنشاء السلسلة بـ ${count} ${unitType} 🎬`,'var(--cat-series)');
+    saveSeries();closeAddSeriesModal();renderLibrary();showToast(`تم إنشاء السلسلة بـ ${count} ${unitType}`,'var(--cat-series)');
 }
 // إضافة حلقات دفعة إضافية لسلسلة موجودة — تصير عبر نافذة bulk-add-units-modal الموحّدة (انظر أسفل الملف)
 
@@ -13853,7 +14005,7 @@ function submitAddNewSeries(){
         episodes.push({id:'newep-'+Date.now()+'-'+i,name:`${unitType} ${i}`,masteryPercent:0,completed:false,expectedSeconds:episodeExpectedSeconds});
     }
     newSeriesDatabase.push({id:'newseries-'+Date.now(),name,unitType,color:selectedNewSeriesColor,iconImage:pendingNewSeriesIcon,episodes,...readAddCore('newseries')});
-    saveNewSeries();closeAddNewSeriesModal();renderLibrary();showToast(`تم إنشاء السلسلة بـ ${count} ${unitType} 🎬`,'var(--cat-newseries)');
+    saveNewSeries();closeAddNewSeriesModal();renderLibrary();showToast(`تم إنشاء السلسلة بـ ${count} ${unitType}`,'var(--cat-newseries)');
 }
 // إضافة حلقات دفعة إضافية (تبويب السلاسل الترفيهي) — تصير عبر نافذة bulk-add-units-modal الموحّدة (انظر أسفل الملف)
 
@@ -13912,7 +14064,7 @@ function submitBulkAddUnits(){
         saveNewSeries();toastColor='var(--cat-newseries)';
     } else return;
     const parentIdSaved=parentId,typeSaved=type;
-    closeBulkAddUnitsModal();renderLibrary();showToast(`تمت إضافة ${count} ${prefix} 📦`,toastColor);
+    closeBulkAddUnitsModal();renderLibrary();showToast(`تمت إضافة ${count} ${prefix}`,toastColor);
     const prefixMap={book:'book-panel-',series:'series-panel-',newseries:'newseries-panel-'};
     const panelId=(prefixMap[typeSaved]||'')+parentIdSaved;
     setTimeout(()=>{const p=document.getElementById(panelId);if(p&&!p.classList.contains('open'))toggleLibPanel(panelId);},100);
@@ -14439,17 +14591,21 @@ function syncCoreTimes(scope){
     if(isNaN(v))return;                       // نترك الحقل أثناء الكتابة
     v=Math.max(1,Math.min(max,v));
     if(String(v)!==el.value)el.value=v;
-    addCoreState[scope]={core:1,times:v};
+    addCoreState[scope]={core:(addCoreState[scope]&&addCoreState[scope].core)||1,times:v};
 }
 // يُستدعى عند الحفظ: يعيد الحقول التي تُضاف إلى العنصر
+// core: 0 عادية، 1 ثانوية، 2 أساسية
 function readAddCore(scope){
     const st=addCoreState[scope]||{core:0};
     if(!st.core)return{isCore:false};
     const el=document.getElementById('core-times-'+scope);
     if(el){const v=parseInt(el.value);if(!isNaN(v)&&v>0)st.times=v;}
-    if(isQuotaScope(scope))return{isCore:true,recurrence:{type:'quota',perWeek:st.times||3}};
-    return{isCore:true,recurrence:(st.times>=7)?{type:'daily'}:{type:'weekly',times:st.times}};
+    const coreLevel=st.core===1?'secondary':'essential';
+    if(isQuotaScope(scope))return{isCore:true,coreLevel,recurrence:{type:'quota',perWeek:st.times||3}};
+    return{isCore:true,coreLevel,recurrence:(st.times>=7)?{type:'daily'}:{type:'weekly',times:st.times}};
 }
+// اختيار المبدّل من حال العنصر المحفوظ
+function coreChoiceOf(item){return (item&&item.isCore)?(coreLevelOf(item)==='secondary'?1:2):0;}
 function resetAddCore(scope){
     addCoreState[scope]={core:0,times:isQuotaScope(scope)?3:7};
     pickAddCore(scope,0);
@@ -14487,7 +14643,10 @@ function openLibLongpressModal(kind,dbType,parentId,unitId){
     longpressTarget={kind,dbType,parentId,unitId};
     pendingLongpressIcon=null;longpressIconRemoved=false;
     const hasColor=(kind==='parent');
-    document.getElementById('lib-longpress-title').innerHTML=`<i class="fa-solid fa-pen"></i> تعديل ${kind==='parent'?'العنصر':'الوحدة'}`;
+    // الوحدة باسمها: المحاضرة، الدرس، الحلقة، الصفحة
+    const parentOf=kind==='parent'?null:getLibEntity('parent',dbType.replace(/-memorize$/,''),parentId,null);
+    const unitWord=kind==='parent'?'':(/-memorize$/.test(dbType)?'الصفحة':'ال'+unitTypeWordFor(dbType,parentOf));
+    document.getElementById('lib-longpress-title').innerHTML=`<i class="fa-solid fa-pen"></i> تعديل ${kind==='parent'?'العنصر':unitWord}`;
     document.getElementById('lib-longpress-name').value=entity.name;
     document.getElementById('lib-longpress-color-section').style.display=hasColor?'block':'none';
     if(hasColor){
@@ -14501,7 +14660,7 @@ function openLibLongpressModal(kind,dbType,parentId,unitId){
     const recSec=document.getElementById('lib-longpress-rec-section');
     coreSec.style.display=hasColor?'block':'none';
     if(hasColor){
-        longpressCoreChoice=entity.isCore?1:0;
+        longpressCoreChoice=coreChoiceOf(entity);
         pickLongpressCore(longpressCoreChoice);
         const r=entity.recurrence||{type:'daily'};
         const isQuota=(r.type==='quota')||['subject','book','series','newseries'].includes(longpressTarget.dbType)
@@ -14519,11 +14678,13 @@ function openLibLongpressModal(kind,dbType,parentId,unitId){
         longpressCoreChoice=0;
     }
     // قسم الأيقونة المخصصة - فقط للعناصر الرئيسية (ليس الوحدات الفرعية)
-    document.getElementById('lib-longpress-icon-section').style.display=hasColor?'block':'none';
+    // الصورة لكل عنصر ولكل وحدة (محاضرة، درس، حلقة): تظهر على بطاقة المهمة. الأيقونة البديلة للعناصر فقط
+    document.getElementById('lib-longpress-icon-section').style.display='block';
+    document.getElementById('lib-longpress-icon-label').innerText=hasColor?'صورة العنصر (تحلّ محلّ الأيقونة)':`صورة ${unitWord} (تظهر على بطاقة مهمتها)`;
     document.getElementById('lib-longpress-iconname-section').style.display=hasColor?'block':'none';
     if(hasColor)renderIconPicker(entity.iconName||'');
     const iconPrev=document.getElementById('lib-longpress-icon-preview');
-    if(hasColor&&entity.iconImage){iconPrev.src=entity.iconImage;iconPrev.style.display='block';}
+    if(entity.iconImage){iconPrev.src=entity.iconImage;iconPrev.style.display='block';}
     else iconPrev.style.display='none';
     document.getElementById('lib-longpress-icon-input').value='';
     // قسم محرر نسبة الإتقان - فقط للوحدات الفرعية (ليس العناصر الرئيسية)
@@ -14577,9 +14738,10 @@ function saveLongpressEdit(){
         if(pendingLongpressIcon)entity.iconImage=pendingLongpressIcon;
         else if(longpressIconRemoved)entity.iconImage=null;
         entity.iconName=pendingIconName||null;
-        const wasCore=!!entity.isCore, willCore=(longpressCoreChoice===1);
+        const wasCore=!!entity.isCore, willCore=(longpressCoreChoice>0);
+        const setLevel=()=>{if(longpressCoreChoice===1)entity.coreLevel='secondary';else delete entity.coreLevel;};
         const applyCore=()=>{
-            entity.isCore=willCore;
+            entity.isCore=willCore;setLevel();
             if(willCore)entity.recurrence=readLongpressRecurrence();
             persistLibChange(longpressTarget.dbType);
             closeLibLongpressModal();renderLibrary();renderDailyTasks();showToast('تم الحفظ');
@@ -14593,9 +14755,11 @@ function saveLongpressEdit(){
             showCustomConfirm(msg,applyCore,{acceptLabel:'<i class="fa-solid fa-check"></i> نعم، غيّر التصنيف',acceptColor:'var(--cat-work)'});
             return;   // لا نكمل الحفظ الآن — ينتظر التأكيد
         }
-        entity.isCore=willCore;
+        entity.isCore=willCore;setLevel();
         if(willCore)entity.recurrence=readLongpressRecurrence();
     } else {
+        if(pendingLongpressIcon)entity.iconImage=pendingLongpressIcon;
+        else if(longpressIconRemoved)delete entity.iconImage;
         if(longpressMasterySelection!==null){
             let dbType=longpressTarget.dbType;
             if(dbType==='worship'){
@@ -14868,13 +15032,13 @@ function toggleAppNotifications(){
         localStorage.setItem('periodNotificationsEnabled','true');
         startNotificationSystem();
         refreshNotificationToggleUI();
-        showToast('تم تفعيل الإشعارات 🔔','var(--accent-color)');
+        showToast('تم تفعيل الإشعارات','var(--accent-color)');
     } else {
         Notification.requestPermission().then(perm=>{
             if(perm==='granted'){
                 localStorage.setItem('periodNotificationsEnabled','true');
                 startNotificationSystem();
-                showToast('تم تفعيل الإشعارات 🔔','var(--accent-color)');
+                showToast('تم تفعيل الإشعارات','var(--accent-color)');
             } else {
                 localStorage.setItem('periodNotificationsEnabled','false');
                 showToast('لم يتم منح إذن الإشعارات');
@@ -14889,6 +15053,7 @@ function toggleAppNotifications(){
 // ================================================================
 (function init(){
     migrateStationTimes(); // الفترات المحفوظة كساعات ثابتة تصير إزاحات تتبع الأذان (قبل أي حساب لحدّ اليوم)
+    migrateCoreLevels();   // أساسي/ثانوي ينتقل من التعهّد إلى عنصر المكتبة
     checkDayTransition(); // إغلاق ما انقضى من أيام — أول شيء
     migrateTaskDates();   // بعد الإغلاق: ما بقي من مهام قديمة يُربط بتاريخه
     applyStartDayGrace(commitDayKey());
