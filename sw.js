@@ -1,164 +1,127 @@
 /* ================================================================
-   Service Worker — المنظومة الإنتاجية
+   Service Worker — منظومتي (النسخة 2)
    ----------------------------------------------------------------
-   الاستراتيجية:
-   - index.html: الشبكة أولاً ثم الذاكرة. هكذا تصلك التحديثات فور رفعها،
-     ويظل التطبيق يعمل كاملاً بلا إنترنت.
-   - الأيقونات وملفات الخطوط الخارجية: الذاكرة أولاً مع تحديث صامت في الخلفية.
-   - أي شيء آخر: الشبكة، ومع الفشل نعود للذاكرة.
+   - صفحة التطبيق (index.html): الشبكة أولاً، وبلا نت من الذاكرة.
+   - ملفات التطبيق (css/js/الأيقونات): من الذاكرة فوراً. بتنخزّن كلها
+     عند التثبيت، فالتطبيق بيشتغل كامل بلا نت من أول مرة.
+   - الخطوط وصور يوتيوب المصغّرة: من الذاكرة، وبتنخزّن أول ما تنطلب.
+   - طلبات جوجل درايف، القرآن، الأطعمة، يوتيوب: للشبكة مباشرة.
 
-   عند تعديل index.html ارفع الملف فقط — لا حاجة لتغيير رقم النسخة،
-   لأن index.html يُجلب من الشبكة أولاً. ارفع الرقم فقط إن غيّرت هذا الملف
-   أو الأيقونات، لتُمسح النسخ القديمة.
+   ★ كل ما تعدّل أي ملف بالتطبيق: غيّر رقم VERSION تحت وارفع sw.js معه.
+     التطبيق بيطلعلك «في نسخة جديدة — حدّث».
    ================================================================ */
 
-const CACHE_VERSION = 'v4';
-const CACHE_NAME = `montheoma-${CACHE_VERSION}`;
+const VERSION = '2.0.0';
+const CACHE = `manzumati-${VERSION}`;
+const RUNTIME = 'manzumati-runtime';
 
-// ملفات الهيكل الأساسي التي تُخزَّن عند أول تشغيل
 const SHELL = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-180.png',
-  './icon-32.png'
+  './', './index.html', './manifest.json',
+  './icon-32.png', './icon-180.png', './icon-192.png', './icon-512.png', './maskable-192.png', './maskable-512.png',
+  './css/app.css',
+  './js/app.js', './js/store.js', './js/db.js', './js/ui.js', './js/icons.js', './js/dates.js', './js/prayer.js',
+  './js/shifts.js', './js/rewards.js', './js/tasks.js', './js/parse.js', './js/legacy.js', './js/worship.js',
+  './js/habits.js', './js/commit.js', './js/notify.js', './js/library.js', './js/youtube.js', './js/sport.js', './js/drive.js',
+  './js/data/adhkar.js', './js/data/quran-meta.js', './js/data/foods.js',
+  './js/views/components.js', './js/views/capture.js', './js/views/today.js', './js/views/worship.js',
+  './js/views/habits.js', './js/views/daysheet.js', './js/views/plan.js', './js/views/goals.js',
+  './js/views/study.js', './js/views/focus.js', './js/views/books.js', './js/views/series.js',
+  './js/views/tracks.js', './js/views/progress.js', './js/views/commit.js', './js/views/rewards.js',
+  './js/views/sport.js', './js/views/settings.js',
 ];
+const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap';
 
-// موارد خارجية نخزّنها مسبقاً ليعمل التطبيق بلا إنترنت من أول مرة
-const EXTERNAL = [
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap'
-];
-
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      // addAll تفشل كلها إن فشل ملف واحد، لذا نضيف كل ملف على حدة
-      .then(cache => Promise.all(
-        SHELL.map(url => cache.add(url).catch(() => null)).concat(
-          EXTERNAL.map(url =>
-            fetch(url, { mode: 'no-cors' })
-              .then(r => cache.put(url, r))
-              .catch(() => null)
-          )
-        )
-      ))
-      .then(() => self.skipWaiting())
-  );
+self.addEventListener('install', (event) => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    // كل ملف لحاله: فشل ملف واحد ما بيوقّف التثبيت
+    await Promise.all(SHELL.map((u) => cache.add(new Request(u, { cache: 'reload' })).catch(() => null)));
+    const rt = await caches.open(RUNTIME);
+    await fetch(FONTS_CSS).then((r) => r.ok && rt.put(FONTS_CSS, r)).catch(() => null);
+    // أول تثبيت، أو الانتقال من النسخة الأولى (montheoma): منشتغل فوراً.
+    // التحديثات العادية بتستنى زر «حدّث» من التطبيق
+    const fromV1 = (await caches.keys()).some((k) => k.startsWith('montheoma-'));
+    if (!self.registration.active || fromV1) self.skipWaiting();
+  })());
 });
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-      ))
-      .then(() => self.clients.claim())
-  );
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((k) => k !== CACHE && k !== RUNTIME).map((k) => caches.delete(k)));
+    await self.clients.claim();
+  })());
 });
 
-function isHtml(request) {
-  return request.mode === 'navigate' ||
-         (request.headers.get('accept') || '').includes('text/html');
-}
-
-// نداءات جوجل لا تُخزَّن ولا تمرّ عبر الكاش إطلاقاً
-function isGoogleApi(url) {
-  return url.hostname.includes('googleapis.com') ||
-         url.hostname.includes('accounts.google.com') ||
-         url.hostname.includes('gstatic.com') && url.pathname.includes('gsi');
-}
-
-function isStatic(url) {
-  return /\.(png|jpg|jpeg|svg|ico|webp|woff2?|ttf|css)$/i.test(url.pathname) ||
-         url.hostname.includes('fonts.gstatic.com') ||
-         url.hostname.includes('fonts.googleapis.com') ||
-         url.hostname.includes('cdnjs.cloudflare.com');
-}
-
-self.addEventListener('fetch', event => {
-  const request = event.request;
-  if (request.method !== 'GET') return;
-
-  const url = new URL(request.url);
-
-  // المصادقة والمزامنة تمرّ مباشرة للشبكة
-  if (isGoogleApi(url)) return;
-
-  // 1) صفحة التطبيق: الشبكة أولاً حتى تصل التحديثات فوراً،
-  //    ومع انقطاع الشبكة نعود للنسخة المخزّنة فلا تظهر صفحة "لا يوجد اتصال".
-  //    ignoreSearch مهم: رابط التشغيل قد يحمل معاملات إضافية (?source=pwa)
-  //    فلا يطابق المفتاح المخزّن بدونها.
-  if (isHtml(request)) {
-    event.respondWith(
-      fetch(request)
-        .then(response => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then(c => c.put('./index.html', copy));
-          }
-          return response;
-        })
-        .catch(() =>
-          caches.match('./index.html', { ignoreSearch: true })
-            .then(r => r || caches.match(request, { ignoreSearch: true }))
-            .then(r => r || caches.match('./', { ignoreSearch: true }))
-            .then(r => r || new Response(
-              '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8">' +
-              '<body style="background:#0b0b0f;color:#f2f2f7;font-family:sans-serif;' +
-              'display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center">' +
-              '<div>النسخة المخزّنة غير جاهزة بعد.<br>افتح التطبيق مرة واحدة والإنترنت متصل.</div></body></html>',
-              { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-            ))
-        )
-    );
-    return;
-  }
-
-  // 2) الأيقونات والخطوط: الذاكرة أولاً مع تحديث صامت
-  if (isStatic(url)) {
-    event.respondWith(
-      caches.match(request, { ignoreSearch: false }).then(cached => {
-        const network = fetch(request)
-          .then(response => {
-            if (response && (response.ok || response.type === 'opaque')) {
-              const copy = response.clone();
-              caches.open(CACHE_NAME).then(c => c.put(request, copy));
-            }
-            return response;
-          })
-          .catch(() => cached);
-        return cached || network;
-      })
-    );
-    return;
-  }
-
-  // 3) الباقي: الشبكة ثم الذاكرة عند الفشل
-  event.respondWith(
-    fetch(request).catch(() => caches.match(request))
-  );
-});
-
-// يسمح للصفحة بطلب تفعيل نسخة جديدة فوراً
-self.addEventListener('message', event => {
+self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
 
-/* ----------------------------------------------------------------
-   النقر على الإشعار: نركّز نافذة التطبيق المفتوحة إن وُجدت،
-   ولا نفتح تبويباً جديداً في كل مرة.
-   ---------------------------------------------------------------- */
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
-      for (const client of list) {
-        if ('focus' in client) return client.focus();
+const isHtml = (req) => req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
+const BYPASS = /(googleapis\.com\/(drive|upload|oauth)|accounts\.google\.com|alquran\.cloud|openfoodfacts|youtube\.com|youtube-nocookie\.com|piped|invidious|googlevideo)/;
+const RUNTIME_CACHE = /(fonts\.googleapis\.com|fonts\.gstatic\.com|i\.ytimg\.com)/;
+
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (BYPASS.test(url.href) || url.pathname.endsWith('/__backup.json')) return;
+
+  // 1) صفحة التطبيق: الشبكة أولاً
+  if (url.origin === location.origin && isHtml(req)) {
+    event.respondWith((async () => {
+      try {
+        const res = await fetch(req);
+        if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put('./index.html', copy)); }
+        return res;
+      } catch {
+        return (await caches.match('./index.html', { ignoreSearch: true }))
+          || (await caches.match('./', { ignoreSearch: true }))
+          || new Response('<!doctype html><meta charset="utf-8"><body style="background:#0E1320;color:#E8ECF6;font-family:sans-serif;display:grid;place-items:center;height:100vh;margin:0;text-align:center" dir="rtl">افتح التطبيق مرة والنت شغّال، وبعدها بيشتغل بلا نت.</body>', { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
       }
-      if (self.clients.openWindow) return self.clients.openWindow('./index.html');
-    })
-  );
+    })());
+    return;
+  }
+
+  // 2) ملفات التطبيق: من الذاكرة، وإذا مو موجودة من الشبكة ومنخزّنها
+  if (url.origin === location.origin) {
+    event.respondWith((async () => {
+      const cached = await caches.match(req, { ignoreSearch: true });
+      if (cached) return cached;
+      try {
+        const res = await fetch(req);
+        if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
+        return res;
+      } catch {
+        return new Response('', { status: 504 });
+      }
+    })());
+    return;
+  }
+
+  // 3) الخطوط والصور المصغّرة: من الذاكرة، ومنخزّنها أول مرة
+  if (RUNTIME_CACHE.test(url.hostname)) {
+    event.respondWith((async () => {
+      const cached = await caches.match(req);
+      if (cached) return cached;
+      try {
+        const res = await fetch(req);
+        if (res && (res.ok || res.type === 'opaque')) { const copy = res.clone(); caches.open(RUNTIME).then((c) => c.put(req, copy)); }
+        return res;
+      } catch {
+        return cached || new Response('', { status: 504 });
+      }
+    })());
+  }
+});
+
+// الضغط على إشعار: منفتح نافذة التطبيق الموجودة بدل تبويب جديد
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const target = event.notification.data?.url || './#/today';
+  event.waitUntil((async () => {
+    const list = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const c of list) { if ('focus' in c) { c.navigate?.(target).catch?.(() => {}); return c.focus(); } }
+    if (self.clients.openWindow) return self.clients.openWindow(target);
+  })());
 });
