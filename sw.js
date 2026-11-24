@@ -11,7 +11,7 @@
      التطبيق بيطلعلك «في نسخة جديدة — حدّث».
    ================================================================ */
 
-const VERSION = '2.0.0';
+const VERSION = '2.5.0';
 const CACHE = `manzumati-${VERSION}`;
 const RUNTIME = 'manzumati-runtime';
 
@@ -22,14 +22,21 @@ const SHELL = [
   './js/app.js', './js/store.js', './js/db.js', './js/ui.js', './js/icons.js', './js/dates.js', './js/prayer.js',
   './js/shifts.js', './js/rewards.js', './js/tasks.js', './js/parse.js', './js/legacy.js', './js/worship.js',
   './js/habits.js', './js/commit.js', './js/notify.js', './js/library.js', './js/youtube.js', './js/sport.js', './js/drive.js',
+  './js/events.js', './js/libitems.js', './js/routine.js', './js/sleep.js',
   './js/data/adhkar.js', './js/data/quran-meta.js', './js/data/foods.js',
   './js/views/components.js', './js/views/capture.js', './js/views/today.js', './js/views/worship.js',
   './js/views/habits.js', './js/views/daysheet.js', './js/views/plan.js', './js/views/goals.js',
   './js/views/study.js', './js/views/focus.js', './js/views/books.js', './js/views/series.js',
   './js/views/tracks.js', './js/views/progress.js', './js/views/commit.js', './js/views/rewards.js',
-  './js/views/sport.js', './js/views/settings.js',
+  './js/views/sport.js', './js/views/settings.js', './js/views/taskopen.js', './js/views/khatma.js', './js/views/muhasaba.js', './js/views/morning.js', './js/views/donesheets.js',
+  './js/views/eventform.js', './js/views/review.js', './js/views/routine.js', './js/views/sleepview.js',
+  './js/views/insight.js', './js/views/exams.js', './share.html', './js/hifz.js', './js/views/hifz.js', './js/alarm.js', './js/views/bedside.js',
+  './js/projects.js', './js/views/projects.js', './js/fasting.js', './js/views/fasting.js', './js/data/duas.js', './js/views/duas.js',
+  './js/suggest.js', './js/views/ytshare.js', './js/qaudio.js', './js/badges.js', './js/views/badges.js', './js/views/lock.js',
+  './js/care.js', './js/views/care.js',
 ];
-const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap';
+const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap';
+const FA_CSS = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
@@ -37,7 +44,7 @@ self.addEventListener('install', (event) => {
     // كل ملف لحاله: فشل ملف واحد ما بيوقّف التثبيت
     await Promise.all(SHELL.map((u) => cache.add(new Request(u, { cache: 'reload' })).catch(() => null)));
     const rt = await caches.open(RUNTIME);
-    await fetch(FONTS_CSS).then((r) => r.ok && rt.put(FONTS_CSS, r)).catch(() => null);
+    await Promise.all([FONTS_CSS, FA_CSS].map((u) => fetch(u).then((r) => r.ok && rt.put(u, r)).catch(() => null)));
     // أول تثبيت، أو الانتقال من النسخة الأولى (montheoma): منشتغل فوراً.
     // التحديثات العادية بتستنى زر «حدّث» من التطبيق
     const fromV1 = (await caches.keys()).some((k) => k.startsWith('montheoma-'));
@@ -48,7 +55,8 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter((k) => k !== CACHE && k !== RUNTIME).map((k) => caches.delete(k)));
+    // صوت القرآن المحفوظ للحفظ بيضل بين التحديثات
+    await Promise.all(keys.filter((k) => k !== CACHE && k !== RUNTIME && k !== 'quran-audio').map((k) => caches.delete(k)));
     await self.clients.claim();
   })());
 });
@@ -58,8 +66,8 @@ self.addEventListener('message', (event) => {
 });
 
 const isHtml = (req) => req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
-const BYPASS = /(googleapis\.com\/(drive|upload|oauth)|accounts\.google\.com|alquran\.cloud|openfoodfacts|youtube\.com|youtube-nocookie\.com|piped|invidious|googlevideo)/;
-const RUNTIME_CACHE = /(fonts\.googleapis\.com|fonts\.gstatic\.com|i\.ytimg\.com)/;
+const BYPASS = /(googleapis\.com\/(drive|upload|oauth)|accounts\.google\.com|alquran\.cloud|islamic\.network|everyayah\.com|openfoodfacts|youtube\.com|youtube-nocookie\.com|piped|invidious|googlevideo)/;
+const RUNTIME_CACHE = /(fonts\.googleapis\.com|fonts\.gstatic\.com|i\.ytimg\.com|cdnjs\.cloudflare\.com)/;
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
