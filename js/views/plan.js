@@ -3,7 +3,7 @@ import { h, icon, badge, ring, bar, fill, openSheet, toast, haptic, segmented } 
 import { store, uid } from '../store.js';
 import { logicalToday, PERIOD_SKY } from '../prayer.js';
 import { tasksOn, isDoneOn, sortTasks, dayTaskStats, deadlines } from '../tasks.js';
-import { weekStartOf, weekDates, weekLabel, addDays, parseISO, WEEKDAYS, WEEK_SHORT, WEEK_START, monthLabel, addMonths, daysInMonth, iso, dayLabel, shortDate, daysBetween, time12, tasksText } from '../dates.js';
+import { MONTHS, SHORT_MONTHS, weekStartOf, weekDates, weekLabel, addDays, parseISO, WEEKDAYS, WEEK_SHORT, WEEK_START, monthLabel, addMonths, daysInMonth, iso, dayLabel, shortDate, daysBetween, time12, tasksText, inDaysText } from '../dates.js';
 import { shiftOn, SHIFT_NAMES, nextShiftStart } from '../shifts.js';
 import { dayVerdict, commitActive } from '../commit.js';
 import { prayersDone } from '../worship.js';
@@ -13,6 +13,11 @@ import { openTaskSheet, openCapture } from './capture.js';
 import { openDaySheet } from './daysheet.js';
 import { renderGoalsInline } from './goals.js';
 import { examsBetween, openExam } from './study.js';
+import { EVENT_KINDS, eventsOn, bigEvents } from '../events.js';
+import { openEventForm } from './eventform.js';
+import { openWeekReview, reviewDone } from './review.js';
+import { openActions } from '../ui.js';
+import { renderProjectsInline } from './projects.js';
 
 let mode = 'week';
 let weekStart = null;
@@ -23,11 +28,13 @@ export function renderPlan(ctx) {
   if (!weekStart) weekStart = weekStartOf(today);
   if (!month) month = today.slice(0, 7);
   const root = h('div', { class: 'plan' });
-  root.append(h('header', { class: 'page-head' }, h('h1', null, 'الخطة'),
-    h('div', { class: 'head-actions' }, h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'أضف مهمة', onclick: () => openCapture() }, icon('plus', 20)))));
-  root.append(h('div', { style: { padding: '4px 16px 0' } }, segmented([{ value: 'week', label: 'الأسبوع' }, { value: 'month', label: 'الشهر' }, { value: 'goals', label: 'الأهداف' }], mode, (v) => { mode = v; ctx.refresh(); })));
+  root.append(h('header', { class: 'page-head' }, h('h1', null, 'التخطيط'),
+    h('div', { class: 'head-actions' }, h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'أضف', onclick: () => openActions('أضف', [{ icon: 'plus', label: 'مهمة', run: () => openCapture() }, { icon: 'calendar-plus', label: 'حدث (موعد، مناسبة، سفر)', run: () => openEventForm(null, {}) }]) }, icon('plus', 20)))));
+  root.append(h('div', { style: { padding: '4px 16px 0' } }, segmented([{ value: 'week', label: 'الأسبوع' }, { value: 'month', label: 'الشهر' }, { value: 'year', label: 'السنة' }, { value: 'goals', label: 'الأهداف' }, { value: 'projects', label: 'المشاريع' }], mode, (v) => { mode = v; ctx.refresh(); })));
   if (mode === 'week') root.append(weekView(ctx, today));
   else if (mode === 'month') root.append(monthView(ctx, today));
+  else if (mode === 'year') root.append(yearView(ctx, today));
+  else if (mode === 'projects') root.append(renderProjectsInline(ctx));
   else root.append(renderGoalsInline(ctx));
   return root;
 }
@@ -55,6 +62,8 @@ function weekView(ctx, today) {
         h('div', null, h('b', { class: 'num' }, `${done}/${total}`), h('small', null, 'مهام')),
         commitActive() ? h('div', null, h('b', { class: 'num' }, `${commitDone}/${commitDays || 0}`), h('small', null, 'أيام تعهّد')) : null,
         h('div', null, h('b', { class: 'num gold-text' }, `${pts}`), h('small', null, 'نقطة')))),
+    weekStart <= today ? h('button', { type: 'button', class: `rv-open${reviewDone(weekStart) ? ' done' : ''}`, onclick: () => openWeekReview(weekStart) },
+      icon(reviewDone(weekStart) ? 'check' : 'calendar-check', 14), reviewDone(weekStart) ? 'راجعت هالأسبوع — افتح المراجعة' : 'مراجعة الأسبوع: أرقامك، وين قصّرت، والجاي', icon('chevL', 12)) : null,
     ex.length ? h('div', { class: 'group rows', style: { marginTop: '10px' } }, ex.map((e) => examRow(e, today))) : null,
     h('div', { class: 'wk-days' }, days.map((d) => dayCard(ctx, d, today))));
 }
@@ -64,7 +73,7 @@ function examRow(e, today) {
   return h('button', { type: 'button', class: 'row', onclick: () => openExam(e.id) },
     badge('grad', 'sky', 36),
     h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, `${e.kindLabel}: ${e.subjectName}`), h('span', { class: 'row-sub' }, `${dayLabel(e.date, today)}${e.time ? ` ${time12(e.time)}` : ''} — ${e.lectures} محاضرة`)),
-    h('span', { class: `pill ${n <= 3 ? 'warn' : 'accent'}` }, n === 0 ? 'اليوم' : n > 0 ? `بعد ${n} يوم` : 'مضى'));
+    h('span', { class: `pill ${n <= 3 ? 'warn' : 'accent'}` }, n >= 0 ? inDaysText(n) : 'مضى'));
 }
 
 function dayCard(ctx, d, today) {
@@ -83,73 +92,114 @@ function dayCard(ctx, d, today) {
           pd != null ? h('span', { class: 'pill' }, icon('mosque', 11), `${pd}/5`) : null),
         st.total ? bar(st.done / st.total, { cls: `thin ${st.done === st.total ? 'good' : ''}` }) : null),
       h('span', { class: 'dc-count num' }, st.total ? `${st.done}/${st.total}` : '')),
+    eventsOn(d).length ? h('div', { class: 'dc-evs' }, eventsOn(d).map((e) => h('button', { type: 'button', class: 'dc-ev', style: { '--c': evColor(e) }, onclick: () => openEv(e) }, icon((EVENT_KINDS[e.kind] || EVENT_KINDS.other).icon, 11), e.title, e.time ? h('small', null, time12(e.time)) : null))) : null,
     list.length ? h('div', { class: 'trows' }, list.slice(0, 6).map((t) => taskRow(t, d, { onOpen: (x) => openTaskSheet(x.id, d), today, compact: true }))) : null,
     list.length > 6 ? h('button', { type: 'button', class: 'dc-more', onclick: () => openDaySheet(d) }, `+${list.length - 6} كمان`) : null,
     past ? null : h('button', { type: 'button', class: 'dc-add', onclick: () => openCapture({ date: d }) }, icon('plus', 15), 'أضف'));
 }
 
-/* ---------- الشهر ---------- */
+/* ---------- الشهر: الأحداث بأسمائها، والنوبات، ولوح اليوم تحت ---------- */
+let selDay = null;
+function evColor(e) { return e.kind === 'commit' ? '#35b791' : e.kind === 'ramadan' ? '#35b791' : (EVENT_KINDS[e.kind] || EVENT_KINDS.other).color; }
+function openEv(e) { if (e.source === 'exam') openExam(e.id); else if (e.source === 'event') openEventForm(e.id); }
+
 function monthView(ctx, today) {
   const [y, m] = month.split('-').map(Number);
   const first = new Date(y, m - 1, 1);
   const offset = (first.getDay() - WEEK_START + 7) % 7;
   const dim = daysInMonth(y, m - 1);
-  const from = `${month}-01`, to = `${month}-${String(dim).padStart(2, '0')}`;
-  const exams = examsBetween(from, to);
-  const examDays = new Set(exams.map((e) => e.date));
-  const dueDays = new Set(store.state.tasks.filter((t) => t.due && !t.done).map((t) => t.due));
+  if (!selDay || selDay.slice(0, 7) !== month) selDay = month === today.slice(0, 7) ? today : `${month}-01`;
   const cells = [];
-  for (let i = 0; i < offset; i++) cells.push(h('span'));
+  for (let i = 0; i < offset; i++) cells.push(h('span', { class: 'mc3 out' }));
   for (let dd = 1; dd <= dim; dd++) {
     const d = iso(new Date(y, m - 1, dd));
     const sh = shiftOn(d);
+    const evs = eventsOn(d);
     const st = dayTaskStats(d, today);
     const past = d < today;
     const v = commitActive() ? dayVerdict(d) : 'future';
-    const rate = st.total ? st.done / st.total : null;
     cells.push(h('button', {
-      type: 'button', class: `mc-day${d === today ? ' today' : ''}${past ? ' past' : ''}${sh ? ` sh-${sh.kind}` : ''}${v === 'done' ? ' v-done' : v === 'broken' ? ' v-broken' : ''}`,
-      onclick: () => openDaySheet(d),
+      type: 'button', class: `mc3${d === today ? ' td' : ''}${d === selDay ? ' sel' : ''}${past ? ' past' : ''}${sh ? ` sh-${sh.kind}` : ''}`,
+      onclick: () => { selDay = d; haptic('select'); ctx.refresh(); },
     },
-    h('b', { class: 'num' }, String(dd)),
-    h('span', { class: 'mc-marks' },
-      examDays.has(d) ? h('i', { class: 'mk-exam' }) : null,
-      dueDays.has(d) ? h('i', { class: 'mk-due' }) : null,
-      st.total ? h('i', { class: past ? (rate >= 1 ? 'mk-good' : 'mk-part') : 'mk-task' }) : null),
-    st.total && !past ? h('small', { class: 'num' }, String(st.total - st.done)) : null));
-  }
-  // جدول المواعيد بالشهر
-  const agenda = [];
-  for (let dd = 1; dd <= dim; dd++) {
-    const d = iso(new Date(y, m - 1, dd));
-    if (d < today) continue;
-    const items = [];
-    for (const e of exams.filter((x) => x.date === d)) items.push({ ic: 'grad', tint: 'sky', t: `${e.kindLabel}: ${e.subjectName}`, s: `${e.lectures} محاضرة`, on: () => openExam(e.id) });
-    for (const t of store.state.tasks.filter((x) => x.due === d && !x.done)) items.push({ ic: 'flag', tint: 'gold', t: t.title, s: 'آخر موعد', on: () => openTaskSheet(t.id) });
-    for (const t of tasksOn(d).filter((x) => !x.recur && !isDoneOn(x, d))) items.push({ ic: 'list', tint: 'slate', t: t.title, s: t.time ? time12(t.time) : '', on: () => openTaskSheet(t.id, d) });
-    const sh = shiftOn(d);
-    if (sh?.first) items.unshift({ ic: sh.kind === 'work' ? 'briefcase' : 'house', tint: sh.kind === 'work' ? 'amber' : 'mint', t: sh.kind === 'work' ? 'أول يوم نوبة الشغل' : 'أول يوم بالبيت', s: `${sh.length} أيام` });
-    if (items.length) agenda.push({ d, items });
+    h('b', { class: 'num' }, String(dd), v === 'done' ? h('i', { class: 'mc3-v ok' }) : v === 'broken' ? h('i', { class: 'mc3-v no' }) : null),
+    evs.slice(0, 2).map((e) => h('span', { class: `mc3-ev${e.span ? ` span${e.first ? ' s' : ''}${e.last ? ' e' : ''}` : ''}`, style: { '--c': evColor(e) } }, e.span && !e.first && (parseISO(d).getDay() !== WEEK_START) ? ' ' : e.title)),
+    evs.length > 2 ? h('small', { class: 'mc3-more' }, `+${evs.length - 2}`) : null,
+    !evs.length && st.total ? h('small', { class: `mc3-cnt${past && st.done < st.total ? ' warn' : ''}` }, past ? `${st.done}/${st.total}` : `${st.total} مهام`) : null));
   }
   return h('div', null,
     h('div', { class: 'wk-nav' },
       h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'الشهر السابق', onclick: () => { month = addMonths(month, -1); ctx.refresh(); } }, icon('chevR', 20)),
-      h('button', { type: 'button', class: 'wk-label', onclick: () => { month = today.slice(0, 7); ctx.refresh(); } }, h('b', null, monthLabel(month)), h('small', null, month === today.slice(0, 7) ? 'هذا الشهر' : 'اضغط للرجوع لهالشهر')),
+      h('button', { type: 'button', class: 'wk-label', onclick: () => { month = today.slice(0, 7); selDay = today; ctx.refresh(); } }, h('b', null, monthLabel(month)), h('small', null, month === today.slice(0, 7) ? 'هذا الشهر' : 'اضغط للرجوع لهالشهر')),
       h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'الشهر الجاي', onclick: () => { month = addMonths(month, 1); ctx.refresh(); } }, icon('chevL', 20))),
-    h('div', { class: 'group mc-wrap' },
-      h('div', { class: 'mc-grid mc-week' }, Array.from({ length: 7 }, (_, i) => h('span', null, WEEK_SHORT[(WEEK_START + i) % 7]))),
-      h('div', { class: 'mc-grid' }, cells),
-      h('div', { class: 'mc-legend' },
-        store.state.settings.shift?.enabled ? [h('span', null, h('i', { class: 'lg-home' }), 'بالبيت'), h('span', null, h('i', { class: 'lg-work' }), 'بالشغل')] : null,
-        h('span', null, h('i', { class: 'mk-task' }), 'مهام'),
-        h('span', null, h('i', { class: 'mk-exam' }), 'امتحان'),
-        h('span', null, h('i', { class: 'mk-due' }), 'آخر موعد'))),
-    secTitle('جدول المواعيد', { ic: 'list' }),
-    agenda.length ? h('div', { class: 'group' }, agenda.map(({ d, items }) => [
-      h('div', { class: 'agenda-day' }, h('span', null, dayLabel(d, today)), h('span', null, shortDate(d))),
-      h('div', { class: 'rows' }, items.map((it) => h('button', { type: 'button', class: 'row', onclick: it.on || (() => openDaySheet(d)) },
-        badge(it.ic, it.tint, 32), h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, it.t), it.s ? h('span', { class: 'row-sub' }, it.s) : null)))),
-    ])) : h('div', { class: 'group' }, h('div', { class: 'empty small' }, h('p', null, 'ما في مواعيد جاية بهالشهر.'))));
+    h('div', { class: 'mc3-wrap' },
+      h('div', { class: 'mc3-grid mc3-week' }, Array.from({ length: 7 }, (_, i) => h('span', null, WEEK_SHORT[(WEEK_START + i) % 7]))),
+      h('div', { class: 'mc3-grid' }, cells),
+      h('div', { class: 'mc3-legend' },
+        store.state.settings.shift?.enabled ? [h('span', null, h('i', { style: { background: 'rgba(53,183,145,.55)' } }), 'بالبيت'), h('span', null, h('i', { style: { background: 'rgba(224,160,74,.75)' } }), 'بالشغل')] : null,
+        Object.entries(EVENT_KINDS).filter(([k]) => k !== 'other').map(([, v]) => h('span', null, h('i', { style: { background: v.color } }), v.name)))),
+    dayPanel(ctx, selDay, today));
+}
+
+function dayPanel(ctx, d, today) {
+  const evs = eventsOn(d);
+  const list = sortTasks(tasksOn(d), d);
+  const sh = shiftOn(d);
+  let shPill = null;
+  if (sh) shPill = sh.kind === 'home' && sh.last ? h('span', { class: 'pill warn' }, 'يوم التجهيز') : h('span', { class: `pill ${sh.kind === 'work' ? 'warn' : 'good'}` }, `${SHIFT_NAMES[sh.kind]} ${sh.dayNo}/${sh.length}`);
+  return h('section', { class: 'dp3' },
+    h('div', { class: 'dp3-h' }, h('b', null, `${WEEKDAYS[parseISO(d).getDay()]} ${parseISO(d).getDate()} ${MONTHS[parseISO(d).getMonth()]}`), shPill,
+      h('span', { class: 'muted' }, list.length ? `${list.length} مهام` : ''),
+      h('button', { type: 'button', class: 'link-btn', onclick: () => openDaySheet(d) }, 'التفاصيل')),
+    evs.map((e) => h('button', { type: 'button', class: 'dp3-row', style: { '--c': evColor(e) }, onclick: () => openEv(e) },
+      h('span', { class: 'dp3-k' }, (EVENT_KINDS[e.kind] || EVENT_KINDS.other).name), h('span', { class: 'dp3-t' }, e.title), h('small', null, e.time ? time12(e.time) : e.span ? 'سفر' : ''))),
+    list.length ? h('div', { class: 'trows' }, list.map((t) => taskRow(t, d, { onOpen: (x) => openTaskSheet(x.id, d), today }))) : (!evs.length ? h('p', { class: 'muted', style: { padding: '4px 2px 8px' } }, d < today ? 'ما كان في شي بهاليوم.' : 'فاضي — خطط إله.') : null),
+    d >= today ? h('div', { class: 'dp3-add' },
+      h('button', { type: 'button', onclick: () => openCapture({ date: d }) }, icon('plus', 13), 'مهمة'),
+      h('button', { type: 'button', onclick: () => openEventForm(null, { date: d }) }, icon('calendar-plus', 13), 'حدث')) : null);
+}
+
+/* ---------- السنة ---------- */
+let yearKey = null;
+function yearView(ctx, today) {
+  if (!yearKey) yearKey = today.slice(0, 4);
+  const y = Number(yearKey);
+  const boxes = [];
+  for (let mi = 0; mi < 12; mi++) {
+    const mk = `${y}-${String(mi + 1).padStart(2, '0')}`;
+    const dim = daysInMonth(y, mi);
+    const off = (new Date(y, mi, 1).getDay() - WEEK_START + 7) % 7;
+    let n = 0;
+    const cells = [];
+    for (let i = 0; i < off; i++) cells.push(h('i', { class: 'x' }));
+    for (let dd = 1; dd <= dim; dd++) {
+      const d = iso(new Date(y, mi, dd));
+      const evs = eventsOn(d);
+      if (evs.length) n += evs.filter((e) => !e.span || e.first).length;
+      const sh = shiftOn(d);
+      cells.push(h('i', { class: `${sh?.kind === 'work' ? 'w' : ''}${evs.length ? ' e' : ''}${d === today ? ' t' : ''}`, style: evs.length ? { '--c': evColor(evs[0]) } : null }));
+    }
+    boxes.push(h('button', { type: 'button', class: `ym3${mk === today.slice(0, 7) ? ' cur' : ''}`, onclick: () => { month = mk; mode = 'month'; selDay = mk === today.slice(0, 7) ? today : `${mk}-01`; ctx.refresh(); } },
+      h('span', { class: 'ym3-h' }, h('b', null, MONTHS[mi]), n ? h('small', null, `${n} ${n === 1 ? 'حدث' : 'أحداث'}`) : null),
+      h('span', { class: 'ym3-g' }, cells)));
+  }
+  const big = bigEvents(today, 400);
+  return h('div', null,
+    h('div', { class: 'wk-nav' },
+      h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'السنة السابقة', onclick: () => { yearKey = String(y - 1); ctx.refresh(); } }, icon('chevR', 20)),
+      h('button', { type: 'button', class: 'wk-label', onclick: () => { yearKey = today.slice(0, 4); ctx.refresh(); } }, h('b', null, String(y)), h('small', null, yearKey === today.slice(0, 4) ? 'هالسنة' : 'اضغط للرجوع')),
+      h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'السنة الجاية', onclick: () => { yearKey = String(y + 1); ctx.refresh(); } }, icon('chevL', 20))),
+    h('div', { class: 'ym3-grid' }, boxes),
+    secTitle('الأحداث الكبيرة الجاية', { ic: 'flag', count: big.length || null, action: h('button', { type: 'button', class: 'link-btn', onclick: () => openEventForm(null, { kind: 'occasion' }) }, icon('plus', 14), 'حدث') }),
+    big.length ? h('div', { class: 'big-list' }, big.slice(0, 12).map((e) => {
+      const c = evColor(e);
+      const ic = e.kind === 'commit' ? 'seedling' : e.kind === 'ramadan' ? 'moon' : (EVENT_KINDS[e.kind] || EVENT_KINDS.other).icon;
+      const dt = parseISO(e.date);
+      return h('button', { type: 'button', class: 'big-ev', style: { '--c': c }, onclick: () => (e.source === 'commit' ? ctx.go('progress/commit') : openEv(e)) },
+        h('span', { class: 'be-d' }, h('b', { class: 'num' }, String(dt.getDate())), h('small', null, SHORT_MONTHS[dt.getMonth()])),
+        h('span', { class: 'be-in' }, h('b', null, e.title), h('small', null, `${inDaysText(e.inDays)}${e.lectures ? ` · ${e.lectures} محاضرة` : ''}`)),
+        h('span', { class: 'be-ic' }, icon(ic, 15)));
+    })) : h('div', { class: 'group' }, h('div', { class: 'empty small' }, h('p', null, 'ما في أحداث كبيرة جاية. أضف مناسبة أو سفر أو امتحان.'))));
 }
 
 /* ---------- قائمة التجهيز قبل النوبة ---------- */
@@ -174,7 +224,7 @@ export function openChecklistRun(id, day = logicalToday()) {
       const toggle = (iid) => { store.update((s) => { const x = s.checklists.find((y) => y.id === id); x.runs = x.runs || {}; x.runs[runKey] = { ...(x.runs[runKey] || {}), [iid]: !run[iid] }; }); haptic('select'); render(); };
       const input = h('input', { type: 'text', placeholder: 'أضف غرض (مثلاً: الأوراق، الشاحن، الدوا)', onkeydown: (e) => { if (e.key === 'Enter' && e.target.value.trim()) { const v = e.target.value.trim(); store.update((s) => { s.checklists.find((y) => y.id === id).items.push({ id: uid('ci'), text: v }); }); render(); } } });
       fill(body, [
-        h('p', { class: 'hint' }, work ? `نوبة الشغل الجاية ${dayLabel(work, logicalToday())} — جهّزت ${done} من ${c.items.length}` : 'فعّل النوبات من الإعدادات مشان القائمة تطلع لحالها قبل كل نوبة.'),
+        h('p', { class: 'hint' }, work ? `نوبة الشغل الجاية ${dayLabel(work, logicalToday())} — جهّزت ${done} من ${c.items.length}` : 'فعّل النوبات من الروتين مشان القائمة تطلع لحالها قبل كل نوبة.'),
         c.items.length ? h('div', { class: 'rows sheet-rows' }, c.items.map((i) => h('div', { class: 'row' },
           h('button', { type: 'button', class: `tcheck${run[i.id] ? ' on' : ''}`, onclick: () => toggle(i.id) }, icon('check', 15, { stroke: 2.6 })),
           h('span', { class: `row-main${run[i.id] ? ' dim' : ''}`, onclick: () => toggle(i.id) }, i.text),

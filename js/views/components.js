@@ -13,43 +13,46 @@ export function secTitle(text, { ic, count, action } = {}) {
 }
 
 // صف مهمة: دائرة الإنجاز، العنوان، تفاصيل صغيرة. السحب يمين = تمّت، يسار = لبكرة
-export function taskRow(t, day, { onOpen, showDate = false, today = day, compact = false } = {}) {
+// نفس بطاقة صفحة المهام: شريط بلون النوع، الصورة إن وجدت، الوقت، ودائرة الإنجاز
+export function taskRow(t, day, { onOpen, showDate = false, today = day } = {}) {
   const done = isDoneOn(t, day);
   const tag = TAGS[t.tag] || TAGS.general;
-  const meta = [];
-  if (t.time) meta.push(h('span', { class: 'tm-time' }, icon('clock', 12), time12(t.time)));
-  else if (t.period && showDate === false && compact) meta.push(h('span', null, PERIOD_SHORT[t.period]));
-  if (showDate && t.date) meta.push(h('span', { class: t.date < today && !done ? 'bad' : '' }, icon('calendar', 12), dayLabel(t.date, today)));
+  const c = tintHex(tag.tint);
+  const sep = () => h('i', { class: 'task-meta-sep' });
+  const meta = [h('span', { class: 'task-tag' }, tag.name)];
+  if (showDate && t.date) meta.push(sep(), h('span', { class: t.date < today && !done ? 'bad-txt' : '' }, dayLabel(t.date, today)));
+  if (t.time) meta.push(sep(), h('span', { class: 'task-meta-num' }, icon('clock', 12), time12(t.time)));
+  else if (t.period) meta.push(sep(), h('span', null, PERIOD_SHORT[t.period]));
+  if (t.estimate && !t.time) meta.push(sep(), h('span', { class: 'task-meta-num' }, t.estimate >= 60 ? `${+(t.estimate / 60).toFixed(1)} س` : `${t.estimate} د`));
   if (t.due && !done) {
     const n = daysBetween(today, t.due);
-    meta.push(h('span', { class: n <= 2 ? 'warn' : '' }, icon('flag', 12), n === 0 ? 'آخر يوم اليوم' : n > 0 ? `قبل ${shortDate(t.due)}` : 'فات موعدها'));
+    meta.push(sep(), h('span', { class: n <= 2 ? 'warn-txt' : '' }, icon('flag', 11), n === 0 ? 'آخر يوم اليوم' : n > 0 ? `قبل ${shortDate(t.due)}` : 'فات موعدها'));
   }
-  if (t.recur) meta.push(h('span', null, icon('repeat', 12), RECUR_LABEL(t.recur)));
-  if (t.checklist?.length) meta.push(h('span', null, icon('list', 12), `${t.checklist.filter((c) => c.done).length}/${t.checklist.length}`));
-  if (t.notes) meta.push(h('span', null, icon('note', 12)));
-  if (t.remind != null && t.time) meta.push(h('span', null, icon('bell', 12)));
+  if (t.recur) meta.push(sep(), h('span', null, icon('repeat', 11), RECUR_LABEL(t.recur)));
+  if (t.checklist?.length) meta.push(sep(), h('span', null, icon('list', 11), `${t.checklist.filter((x) => x.done).length}/${t.checklist.length}`));
   const check = h('button', {
-    type: 'button', class: `tcheck${done ? ' on' : ''}`, 'aria-label': done ? 'رجّعها مو منجزة' : 'تمّت',
-    style: { '--tint': tintHex(tag.tint) },
+    type: 'button', class: `tc-check${done ? ' on' : ''}`, 'aria-label': done ? 'رجّعها مو منجزة' : 'تمّت',
     onclick: (e) => { e.stopPropagation(); toggleTask(t, day, row); },
-  }, icon('check', 16, { stroke: 2.6 }));
+  }, icon('check', 18));
   const row = h('div', {
-    class: `trow${done ? ' done' : ''}${t.priority ? ' important' : ''}`, role: 'button', tabindex: '0',
+    class: `task-card compact${done ? ' is-done' : ''}`, role: 'button', tabindex: '0',
+    style: { '--task-accent': c, '--card-tint': `color-mix(in srgb, ${c} 10%, transparent)` },
     onclick: () => onOpen?.(t),
     onkeydown: (e) => { if (e.key === 'Enter') onOpen?.(t); },
   },
-  check,
-  h('div', { class: 'trow-main' },
-    h('div', { class: 'trow-title' }, t.priority ? icon('star', 13, { fill: 'currentColor' }) : null, h('span', null, t.title)),
-    meta.length ? h('div', { class: 'trow-meta' }, meta) : null),
-  t.link?.image ? badge('book', 'slate', 34, t.link.image) : null);
+  t.link?.image ? h('span', { class: 'task-avatar' }, h('img', { src: t.link.image, alt: '', loading: 'lazy' })) : null,
+  h('div', { class: 'task-info' },
+    h('div', { class: 'task-title' }, h('span', null, t.title), t.priority ? h('span', { class: 'core-badge' }, 'أساسية') : null),
+    h('div', { class: 'task-meta-preview' }, meta)),
+  check);
   if (!done) {
     swipeable(row, {
-      onRight: () => toggleTask(t, day, row),
-      onLeft: t.recur ? null : () => {
+      onLeft: () => toggleTask(t, day, row),
+      onRight: t.recur ? null : () => {
         const to = addDays(day < today ? today : day, 1);
+        const from = t.date;
         moveTask(t.id, to);
-        toast(`انتقلت لـ ${dayLabel(to, today)}`, { action: 'تراجع', onAction: () => moveTask(t.id, t.date) });
+        toast(`انتقلت لـ ${dayLabel(to, today)}`, { action: 'تراجع', onAction: () => moveTask(t.id, from) });
       },
     });
   }
@@ -86,3 +89,16 @@ export function statTile({ ic, tint, label, value, sub, onClick }) {
 }
 
 export const tasksState = () => store.state.tasks;
+
+// بطاقة عنصر بصورته (مادة، سلسلة، كتاب): غلاف فوق، الاسم، سطر صغير، وشريط
+export function itemCard({ tint, ic, image, title, sub, pct, tag, tagCls = 'warn', onClick }) {
+  const c = tintHex(tint);
+  return h('button', { type: 'button', class: 'icard', style: { '--c': c }, onclick: onClick },
+    h('span', { class: `ic-cov${image ? ' img' : ''}` },
+      image ? h('img', { src: image, alt: '', loading: 'lazy' }) : icon(ic, 30),
+      tag ? h('span', { class: `ic-tag ${tagCls}` }, tag) : null),
+    h('span', { class: 'ic-bd' },
+      h('b', null, title),
+      sub ? h('small', null, sub) : null,
+      pct != null ? h('span', { class: 'ic-bar' }, h('span', { class: 'ic-tr' }, h('i', { style: { width: `${Math.round(Math.min(1, pct) * 100)}%` } })), h('em', { class: 'num' }, `${Math.round(Math.min(1, pct) * 100)}%`)) : null));
+}

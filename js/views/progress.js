@@ -1,15 +1,16 @@
 // إنجازي: المستوى والنقاط، التعهّد، منحنى الأيام، والأرقام اللي بتفرّح
-import { h, icon, badge, ring, bar } from '../ui.js';
+import { h, icon, badge, ring, bar, fill } from '../ui.js';
 import { store } from '../store.js';
-import { addDays, parseISO, WEEK_SHORT, weekStartOf, durText, daysText, monthLabel, shortDate } from '../dates.js';
+import { addDays, parseISO, WEEKDAYS, weekStartOf, durText, daysText, monthLabel, shortDate } from '../dates.js';
 import { levelOf, totalPoints, balance, pointsOn, pointsBetween } from '../rewards.js';
 import { commitActive, commitStats, dayVerdict, verdictPct, dayDetail } from '../commit.js';
 import { dayTaskStats } from '../tasks.js';
 import { prayersDone, pagesReadOn, prayerOn } from '../worship.js';
-import { activeHabits, habitOk } from '../habits.js';
+import { activeHabits, habitOk, passThreshold } from '../habits.js';
 import { secTitle } from './components.js';
 import { openDaySheet } from './daysheet.js';
 import { goalPace } from './goals.js';
+import { weakCard, areasCard } from './insight.js';
 
 // نسبة يوم شاملة: المهام + الصلوات + العادات (للمنحنى والخريطة)
 export function dayScore(d, today) {
@@ -29,43 +30,54 @@ export function renderProgress(ctx) {
   const today = ctx.today;
   const lv = levelOf(totalPoints());
   const weekFrom = weekStartOf(today);
-  const root = h('div', null, h('header', { class: 'page-head' }, h('h1', null, 'إنجازي'),
-    h('div', { class: 'head-actions' }, h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'المكافآت', onclick: () => ctx.open('progress/rewards') }, icon('gift', 20)))));
-  // المستوى
-  root.append(h('div', { class: 'lvl-card' },
+  const root = h('div', null, h('header', { class: 'page-head' }, h('h1', null, 'الإنجاز'),
+    h('div', { class: 'head-actions' },
+      h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'الأوسمة', onclick: () => ctx.open('progress/badges') }, icon('medal', 20)),
+      h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'المكافآت', onclick: () => ctx.open('progress/rewards') }, icon('gift', 20)))));
+  // وين مقصّر هالأسبوع، والمجالات
+  root.append(h('div', { class: 'in-wrap' }, weakCard(ctx)));
+  const areas = areasCard(ctx);
+  if (areas) root.append(secTitle('المجالات هالأسبوع', { ic: 'chart', action: h('span', { class: 'sec-hint' }, 'مقارنة بالأسبوع الماضي') }), areas);
+  // النقاط
+  root.append(secTitle('النقاط والمستوى', { ic: 'medal' }), h('div', { class: 'lvl-card' },
     ring(lv.pct, 86, { stroke: 6, color: 'var(--gold)', label: String(lv.level) }),
     h('div', { class: 'lvl-info' },
       h('small', null, `المستوى ${lv.level}`),
       h('strong', null, lv.title),
-      h('span', null, `${lv.need - lv.into} نقطة للمستوى الجاي`),
+      h('span', null, `باقي ${lv.need - lv.into} نقطة للمستوى ${lv.level + 1}`),
       bar(lv.pct, { cls: 'gold' })),
     h('div', { class: 'lvl-pts' },
-      h('div', null, h('b', { class: 'num' }, String(pointsOn(today))), h('small', null, 'اليوم')),
-      h('div', null, h('b', { class: 'num' }, String(pointsBetween(weekFrom, today))), h('small', null, 'الأسبوع')),
-      h('button', { type: 'button', onclick: () => ctx.open('progress/rewards') }, h('b', { class: 'num' }, String(balance())), h('small', null, 'رصيدك')))));
+      h('div', null, h('b', { class: 'num good-t' }, `+${pointsOn(today)}`), h('small', null, 'نقاط اليوم')),
+      h('div', null, h('b', { class: 'num' }, `+${pointsBetween(weekFrom, today)}`), h('small', null, 'نقاط الأسبوع')),
+      h('button', { type: 'button', onclick: () => ctx.open('progress/rewards') }, h('b', { class: 'num gold-t' }, String(balance())), h('small', null, 'رصيد المكافآت', icon('chevL', 10))))));
   // التعهّد
   if (commitActive()) {
     const st = commitStats(today);
-    root.append(h('button', { type: 'button', class: 'cm-hero', onclick: () => ctx.open('progress/commit') },
+    const last7 = Array.from({ length: 7 }, (_, i) => addDays(today, i - 6));
+    root.append(secTitle('التعهّد', { ic: 'seedling' }), h('button', { type: 'button', class: 'cm-hero', onclick: () => ctx.open('progress/commit') },
       h('div', { class: 'cmh-top' },
         h('div', null, h('small', null, 'تتجهّز لـ'), h('strong', null, store.state.commitment.reward || 'التعهّد')),
         icon('chevL', 18)),
       h('div', { class: 'cmh-nums' },
-        h('div', null, h('b', { class: 'num' }, `${st.dayNumber}`), h('small', null, `من ${st.totalDays}`)),
-        h('div', null, h('b', { class: 'num good' }, String(st.done + (st.todayDone ? 1 : 0))), h('small', null, 'يوم مكتمل')),
+        h('div', null, h('b', { class: 'num' }, `${st.dayNumber}`), h('small', null, `يوم من ${st.totalDays}`)),
+        h('div', null, h('b', { class: 'num good' }, String(st.done + (st.todayDone ? 1 : 0))), h('small', null, 'مكتمل')),
         h('div', null, h('b', { class: 'num bad' }, String(st.broken)), h('small', null, 'ناقص')),
         h('div', null, h('b', { class: 'num' }, String(st.streak)), h('small', null, 'ورا بعض'))),
       bar(st.pct, { cls: 'good' }),
+      h('div', { class: 'cm-chain' }, h('small', null, 'آخر 7 أيام'), h('span', null, last7.map((d) => {
+        const v = dayVerdict(d);
+        return h('i', { class: d === today ? (v === 'done' ? 'y' : 't') : v === 'done' ? 'y' : v === 'broken' ? 'n' : 'x' }, d === today && v !== 'done' ? '؟' : v === 'done' ? icon('check', 9) : v === 'broken' ? icon('close', 9) : '');
+      }))),
       h('span', { class: 'cmh-end' }, st.completed ? 'أتممت التعهّد — الله يبارك' : `باقي ${daysText(st.remaining)} سليمة — النهاية ${shortDate(st.endIso)}`)));
   } else {
     root.append(h('button', { type: 'button', class: 'banner tap', onclick: () => ctx.open('progress/commit') }, h('span', { class: 'banner-ic' }, icon('shield', 22)), h('p', null, h('b', null, 'ابدأ تعهّد'), h('br'), 'فترة تركيز (60 يوم مثلاً) بشروط يومية: صلوات، أذكار، عادات تتركها أو تبنيها'), icon('chevL', 18)));
   }
-  // منحنى آخر 14 يوم
-  const days = Array.from({ length: 14 }, (_, i) => addDays(today, i - 13));
-  const scores = days.map((d) => dayScore(d, today));
-  root.append(secTitle('آخر أسبوعين', { ic: 'trend' }), h('div', { class: 'group chart-card' }, curve(days, scores, today)));
+  // آخر أسبوعين: أعمدة بثلاث ألوان، وبالضغط بيطلع تفصيل اليوم
+  const detail = h('div', { class: 'day-info' }, 'اضغط على أي يوم لتشوف نسبته وتفاصيله');
+  root.append(secTitle('آخر أسبوعين', { ic: 'chart', action: h('span', { class: 'sec-hint' }, 'اضغط على يوم') }), h('div', { class: 'group chart-card' }, bars(today, detail), legend3(), detail));
   // خريطة 12 أسبوع
-  root.append(secTitle('خريطة الالتزام', { ic: 'grid', count: '12 أسبوع' }), heatmap(today));
+  const hdetail = h('div', { class: 'day-info' }, 'اضغط على أي مربّع لتشوف تفاصيل يومه');
+  root.append(secTitle('خريطة الالتزام', { ic: 'grid', count: '12 أسبوع' }), heatmap(today, hdetail));
   // أرقام الشهر
   const mFrom = `${today.slice(0, 7)}-01`;
   let onTime = 0, prTotal = 0, pages = 0, tasksDone = 0;
@@ -98,41 +110,86 @@ function stat(ic, tint, label, value, sub) {
   return h('div', { class: 'stat-tile' }, badge(ic, tint, 34), h('div', null, h('small', null, label), h('b', { class: 'num' }, value), sub ? h('span', null, sub) : null));
 }
 
-function curve(days, scores, today) {
-  const W = 320, H = 120, pad = 10;
-  const step = (W - pad * 2) / (days.length - 1);
-  const pts = scores.map((s, i) => (s == null ? null : [pad + i * step, H - pad - s * (H - pad * 2)]));
-  let path = '', area = '';
-  const valid = pts.filter(Boolean);
-  if (valid.length) {
-    path = valid.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
-    area = `${path} L${valid[valid.length - 1][0].toFixed(1)},${H - pad} L${valid[0][0].toFixed(1)},${H - pad} Z`;
-  }
-  const svg = `<svg viewBox="0 0 ${W} ${H}" class="curve" preserveAspectRatio="none">
-    <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8E9BFF" stop-opacity=".35"/><stop offset="1" stop-color="#8E9BFF" stop-opacity="0"/></linearGradient></defs>
-    <line x1="${pad}" x2="${W - pad}" y1="${H - pad - 0.6 * (H - pad * 2)}" y2="${H - pad - 0.6 * (H - pad * 2)}" stroke="rgba(242,196,107,.35)" stroke-dasharray="3 4"/>
-    ${area ? `<path d="${area}" fill="url(#cg)"/><path d="${path}" fill="none" stroke="#A1ABFF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>` : ''}
-    ${pts.map((p, i) => (p ? `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${days[i] === today ? 4.5 : 3}" fill="${scores[i] >= 0.6 ? '#4FD1A1' : '#F2A65A'}"/>` : '')).join('')}
-  </svg>`;
-  const wrap = h('div', { class: 'curve-wrap', html: svg });
-  const labels = h('div', { class: 'curve-labels' }, days.map((d) => h('button', { type: 'button', onclick: () => openDaySheet(d), class: d === today ? 'on' : '' }, WEEK_SHORT[parseISO(d).getDay()])));
-  return h('div', null, wrap, labels, h('p', { class: 'chart-note' }, 'الخط الذهبي = 60%. كل نقطة يوم: مهامك وصلواتك وعاداتك. اضغط على يوم لتفتحه.'));
+/* ---------- ثلاث ألوان: مكتمل / جزئي / ضعيف ---------- */
+// نسبة اليوم ولونه: إذا في تعهّد بنعتمد حكمه، وإلا نسبة المهام والصلوات والعادات
+function dayLevel(d, today) {
+  const v = commitActive() ? dayVerdict(d) : 'future';
+  if (v === 'done') return { sc: verdictPct(dayDetail(d)) ?? 1, lvl: 'g', v };
+  const sc = v !== 'future' && v !== 'pending' ? (verdictPct(dayDetail(d)) ?? 0) : dayScore(d, today);
+  if (sc == null) return { sc: null, lvl: 'e', v };
+  const th = passThreshold();
+  return { sc, lvl: v === 'broken' ? (sc >= 0.4 ? 'a' : 'r') : sc >= th ? 'g' : sc >= 0.4 ? 'a' : 'r', v };
+}
+const LVL_NAME = { g: 'مكتمل', a: 'جزئي', r: 'ضعيف', e: 'بلا بيانات' };
+const LVL_COLOR = { g: '#2fae86', a: '#d99a45', r: '#b04a4a' };
+
+function legend3() {
+  return h('div', { class: 'lg3' }, ['g', 'a', 'r'].map((k) => h('span', null, h('i', { style: { background: LVL_COLOR[k] } }), LVL_NAME[k])));
 }
 
-function heatmap(today) {
+// تفصيل يوم تحت الرسمة
+function showDay(el, d, today) {
+  const L = dayLevel(d, today);
+  const st = dayTaskStats(d, today);
+  const pr = prayersDone(d);
+  const hs = activeHabits();
+  const okH = hs.filter((x) => habitOk(d, x.id)).length;
+  const det = commitActive() ? dayDetail(d) : null;
+  const miss = det?.items?.filter((x) => !x.ok).map((x) => x.name) || [];
+  const dt = parseISO(d);
+  fill(el, [
+    h('div', { class: 'di-h' },
+      h('b', null, d === today ? 'اليوم' : `${WEEKDAYS[dt.getDay()]} ${shortDate(d)}`),
+      L.sc != null ? h('span', { class: `di-pill ${L.lvl}` }, `${Math.round(L.sc * 100)}% · ${d === today && L.lvl !== 'g' ? 'لسّا ما خلص' : LVL_NAME[L.lvl]}`) : h('span', { class: 'di-pill' }, LVL_NAME.e),
+      h('button', { type: 'button', class: 'link-btn', onclick: () => openDaySheet(d) }, 'افتح اليوم', icon('chevL', 12))),
+    h('div', { class: 'di-parts' },
+      st.total ? h('span', null, icon('listCheck', 11), `المهام ${st.done}/${st.total}`) : null,
+      h('span', null, icon('mosque', 11), `الصلوات ${pr}/5`),
+      hs.length ? h('span', null, icon('compass', 11), `السلوك ${okH}/${hs.length}`) : null),
+    miss.length ? h('p', { class: 'di-miss' }, 'فاتك: ', miss.join('، ')) : null,
+  ]);
+}
+
+function bars(today, detail) {
+  const days = Array.from({ length: 14 }, (_, i) => addDays(today, i - 13));
+  const th = passThreshold();
+  const cols = [];
+  const wrap = h('div', { class: 'bars3' },
+    h('div', { class: 'b3-th', style: { bottom: `${th * 100}%` } }, h('span', null, `الحد ${Math.round(th * 100)}%`)));
+  for (const d of days) {
+    const L = dayLevel(d, today);
+    const isT = d === today;
+    const col = h('button', {
+      type: 'button', class: `b3${isT ? ' t' : ''} ${L.lvl}`, 'aria-label': d,
+      onclick: () => { cols.forEach((c) => c.classList.remove('sel')); col.classList.add('sel'); showDay(detail, d, today); },
+    }, h('i', { style: { height: `${Math.max(4, Math.round((L.sc ?? 0) * 100))}%` } }));
+    cols.push(col);
+    wrap.append(col);
+  }
+  const labels = h('div', { class: 'b3-lbl' }, days.map((d) => h('span', { class: d === today ? 't' : '' }, d === today ? 'اليوم' : String(parseISO(d).getDate()))));
+  return h('div', null, wrap, labels);
+}
+
+function heatmap(today, detail) {
   const start = addDays(weekStartOf(today), -7 * 11);
   const cols = [];
+  const all = [];
   for (let w = 0; w < 12; w++) {
     const cells = [];
     for (let i = 0; i < 7; i++) {
       const d = addDays(start, w * 7 + i);
-      if (d > today) { cells.push(h('i', { class: 'hm-cell future' })); continue; }
-      const v = commitActive() ? dayVerdict(d) : 'future';
-      const sc = v !== 'future' ? (v === 'done' ? 1 : verdictPct(dayDetail(d)) || 0.1) : dayScore(d, today);
-      const lvl = sc == null ? 0 : sc >= 0.9 ? 4 : sc >= 0.6 ? 3 : sc >= 0.3 ? 2 : sc > 0 ? 1 : 0;
-      cells.push(h('button', { type: 'button', class: `hm-cell l${lvl}${d === today ? ' today' : ''}`, title: d, 'aria-label': d, onclick: () => openDaySheet(d) }));
+      if (d > today) { cells.push(h('i', { class: 'hm3 future' })); continue; }
+      const L = dayLevel(d, today);
+      const cell = h('button', {
+        type: 'button', class: `hm3 ${L.lvl}${d === today ? ' today' : ''}`, 'aria-label': d,
+        onclick: () => { all.forEach((c) => c.classList.remove('sel')); cell.classList.add('sel'); showDay(detail, d, today); },
+      });
+      all.push(cell);
+      cells.push(cell);
     }
     cols.push(h('div', { class: 'hm-col' }, cells));
   }
-  return h('div', { class: 'group hm-wrap' }, h('div', { class: 'hm' }, cols), h('div', { class: 'hm-legend' }, h('span', null, 'أقل'), [0, 1, 2, 3, 4].map((l) => h('i', { class: `hm-cell l${l}` })), h('span', null, 'أكتر')));
+  return h('div', { class: 'group hm-wrap' }, h('div', { class: 'hm' }, cols),
+    h('div', { class: 'lg3' }, ['g', 'a', 'r'].map((k) => h('span', null, h('i', { style: { background: LVL_COLOR[k] } }), LVL_NAME[k])), h('span', null, h('i', { style: { background: 'var(--s3)' } }), LVL_NAME.e)),
+    detail);
 }

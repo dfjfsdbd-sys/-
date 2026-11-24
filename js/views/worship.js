@@ -9,6 +9,9 @@ import { addDays, dayLabel, shortDate, time12, daysText, pagesText, WEEK_SHORT, 
 import { secTitle } from './components.js';
 import { award, POINTS } from '../rewards.js';
 import { invalidateDay } from '../commit.js';
+import { hifzToday, hifzStats } from '../hifz.js';
+import { SUNNAH_SLOTS, sunnahOn, toggleSunnahSlot, rakaatOn, fastInfo, upcomingFasts, qada, qadaPrayersTotal } from '../fasting.js';
+import { openCounter } from './duas.js';
 
 const ADHKAR_ID_ORDER = ['morning', 'evening', 'prayer', 'sleep', 'wake'];
 
@@ -21,8 +24,20 @@ export function renderWorship(ctx) {
   root.append(secTitle('الصلوات', { ic: 'mosque', count: `${done}/5` }));
   root.append(h('div', { class: 'group rows' }, PRAYERS.map((k) => prayerRow(today, k))));
   root.append(prayerWeek(today));
+  // الصيام والقضاء والسنن
+  const fi = fastInfo(today);
+  const nx = upcomingFasts(addDays(today, 1), 1)[0];
+  const qn = qadaPrayersTotal() + (qada().fasts || 0);
+  root.append(h('button', { type: 'button', class: 'group fs-link', onclick: () => ctx.open('tracks/fasting') },
+    badge('moon', 'mint', 44),
+    h('span', { class: 'row-main' },
+      h('span', { class: 'row-title' }, 'الصيام والقضاء والسنن'),
+      h('span', { class: 'row-sub' }, [fi.reasons.length ? `اليوم: ${fi.reasons.map((r) => r.name).join('، ')}` : nx ? `الجاي: ${nx.reasons[0].name} ${dayLabel(nx.d, today)}` : null, `السنن ${rakaatOn(today)}/12`, qn ? `قضاء ${qn}` : null].filter(Boolean).join(' · '))),
+    icon('chevL', 18)));
   // الأذكار
-  root.append(secTitle('الأذكار', { ic: 'beads', action: h('button', { type: 'button', class: 'link-btn', onclick: () => openTasbeeh() }, icon('beads', 16), 'مسبحة') }));
+  root.append(secTitle('الأذكار', { ic: 'beads', action: h('span', { class: 'sec-acts' },
+    h('button', { type: 'button', class: 'link-btn', onclick: () => openCounter() }, icon('beads', 14), 'العدّاد'),
+    h('button', { type: 'button', class: 'link-btn', onclick: () => ctx.open('tracks/duas') }, icon('hands-praying', 14), 'الأدعية')) }));
   root.append(h('div', { class: 'group rows' }, allAdhkarLists().map((l) => {
     const st = adhkarSettings(l.id);
     const d = adhkarDone(today, l.id);
@@ -49,20 +64,16 @@ export function renderWorship(ctx) {
     h('div', { class: 'two', style: { marginTop: '12px' } },
       h('button', { type: 'button', class: 'btn secondary', onclick: () => openQuranLog(today) }, icon('plus', 18), 'سجّل قراءة'),
       h('button', { type: 'button', class: 'btn', onclick: () => openReader(qs.page, today) }, icon('bookOpen', 18), 'افتح المصحف'))));
-  // الحفظ
-  const due = hifzDue(today);
-  root.append(secTitle('الحفظ', { ic: 'brain', action: h('button', { type: 'button', class: 'link-btn', onclick: () => openHifzAdd() }, icon('plus', 16), 'إضافة') }));
-  const hifz = store.state.quran.hifz || [];
-  root.append(h('div', { class: 'group rows' },
-    due.length ? h('div', { class: 'row-note warn-note' }, icon('refresh', 14), ` ${due.length} وحدة بدها مراجعة اليوم`) : null,
-    hifz.length ? hifz.map((x) => {
-      const units = x.units || [];
-      const pct = units.length ? units.reduce((a, u) => a + (u.mastery || 0), 0) / units.length / 100 : 0;
-      return h('button', { type: 'button', class: 'row', onclick: () => openHifz(x.id, today) },
-        badge('brain', x.color || 'gold', 40),
-        h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, x.name), h('span', { class: 'row-sub' }, `${units.filter((u) => u.mastery >= 100).length} من ${units.length} محفوظة`), bar(pct, { cls: 'thin gold' })),
-        icon('chevL', 18));
-    }) : h('div', { class: 'empty small' }, h('p', null, 'أضف سورة أو جزء بدك تحفظه، والتطبيق بيذكّرك بالمراجعة.'))));
+  // الحفظ: شاشته لحالها (الجديد، المراجعة القريبة والبعيدة، وخريطة الأجزاء)
+  const ht = hifzToday(today);
+  const hs = hifzStats(today);
+  root.append(secTitle('الحفظ', { ic: 'brain' }),
+    h('button', { type: 'button', class: 'group hz-link', onclick: () => ctx.open('tracks/hifz') },
+      badge('brain', 'mint', 44),
+      h('span', { class: 'row-main' },
+        h('span', { class: 'row-title' }, ht ? (ht.done ? 'حفظ اليوم خلص' : `اليوم: ${[ht.portion && !ht.log.new ? 'جديد' : null, (ht.near.length && !ht.log.near) || (ht.far.length && !ht.log.far) ? 'مراجعة' : null].filter(Boolean).join(' + ') || 'مراجعة'}`) : 'اعمل خطة حفظ'),
+        h('span', { class: 'row-sub' }, hs.pages ? `${+hs.juzCount.toFixed(1)} جزء محفوظ · ${hs.pages} صفحة` : 'كل يوم جديد بمقدارك، ومراجعة قريبة وبعيدة')),
+      icon('chevL', 18)));
   return root;
 }
 
@@ -93,7 +104,8 @@ export function openPrayerSheet(day, key) {
       h('div', { class: 'status-grid' }, Object.entries(PRAYER_STATUS).map(([k, v]) => h('button', {
         type: 'button', class: `status-btn ${k}`, 'aria-pressed': String(st === k), onclick: () => pick(k),
       }, icon(k === 'missed' ? 'close' : k === 'late' ? 'clock' : k === 'jamaah' ? 'people' : 'check', 22), v.label))),
-      key !== 'asr' ? toggleRow({ title: 'صلّيت السنّة الراتبة', checked: prayerSunnah(day, key), onChange: () => toggleSunnah(day, key) }) : null,
+      SUNNAH_SLOTS.some((sl) => sl.prayer === key) ? h('div', { class: 'ps-sn' }, h('span', null, 'السنّة الراتبة'),
+        h('div', { class: 'chips' }, SUNNAH_SLOTS.filter((sl) => sl.prayer === key).map((sl) => h('button', { type: 'button', class: 'chip small', 'aria-pressed': String(Boolean(sunnahOn(day)[sl.k])), onclick: (e) => { const on = toggleSunnahSlot(day, sl.k); e.currentTarget.setAttribute('aria-pressed', String(on)); haptic('select'); } }, `${sl.name} · ${sl.rak}`)))) : null,
       st ? h('button', { type: 'button', class: 'btn danger block', onclick: () => pick(null) }, 'امسح التسجيل') : null,
     ]);
   });
@@ -217,7 +229,7 @@ export function openQuranLog(day = logicalToday()) {
         const r = addQuranPages(day, n);
         if (day < logicalToday()) invalidateDay(day);
         haptic('success');
-        if (r === -1) toast('مبارك! ختمت القرآن الكريم 🌙', { kind: 'gold', duration: 6000 }); else toast(`سجّلنا ${pagesText(n)}`);
+        if (r === -1) toast('مبارك! ختمت القرآن الكريم', { kind: 'gold', duration: 6000 }); else toast(`سجّلنا ${pagesText(n)}`);
         render();
       };
       fill(body, [
@@ -256,7 +268,7 @@ export function renderQuran(ctx) {
         h('div', null, h('small', null, 'معدّلك'), h('b', { class: 'num' }, `${qs.avg.toFixed(1)} ص/يوم`), h('span', null, qs.eta ? `بتختم تقريباً ${shortDate(qs.eta)}` : 'سجّل قراءتك لنحسب')),
         h('div', null, h('small', null, 'إذا قرأت يومياً'), h('b', { class: 'num' }, `${qs.daily} صفحات`), h('span', null, `بتختم بعد ${daysText(qs.daysToGoal)}`))),
       h('div', { class: 'mini-chart' }, days.map((d) => h('i', { style: { height: `${Math.max(4, (pagesReadOn(d) / max) * 100)}%` }, class: pagesReadOn(d) >= qs.daily ? 'good' : pagesReadOn(d) ? '' : 'nil', title: `${d}: ${pagesReadOn(d)}` }))),
-      h('p', { class: 'muted', style: { marginTop: '8px' } }, streak ? `${daysText(streak)} ورا بعض وإنت قارئ 🔥` : 'ابدأ اليوم سلسلة قراءة'),
+      h('p', { class: 'muted', style: { marginTop: '8px' } }, streak ? `${daysText(streak)} ورا بعض وإنت قارئ` : 'ابدأ اليوم سلسلة قراءة'),
       h('div', { class: 'two', style: { marginTop: '12px' } },
         h('button', { type: 'button', class: 'btn secondary', onclick: () => openQuranLog(today) }, icon('plus', 18), 'سجّل'),
         h('button', { type: 'button', class: 'btn', onclick: () => openReader(qs.page, today) }, icon('bookOpen', 18), 'المصحف'))),
@@ -276,7 +288,7 @@ export function renderQuran(ctx) {
 export function quranActions() { return null; }
 
 // المصحف: نص الصفحة من موقع alquran.cloud (ويتخزّن على الجهاز بعد أول فتح)
-async function fetchPage(n) {
+export async function fetchPage(n) {
   const cached = await kvGet(`qp:${n}`);
   if (cached) return cached;
   const r = await fetch(`https://api.alquran.cloud/v1/page/${n}/quran-uthmani`);

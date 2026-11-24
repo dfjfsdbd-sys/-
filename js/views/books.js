@@ -81,7 +81,7 @@ export function bookActions(ctx) {
   return h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'تعديل', onclick: () => openBookEdit(ctx.params.id) }, icon('edit', 20));
 }
 
-function logPages(bookId, day, to, sec = 0) {
+export function logPages(bookId, day, to, sec = 0) {
   const b = bookById(bookId);
   const from = (b.pagesRead || 0) + 1;
   const pages = to - from + 1;
@@ -117,7 +117,7 @@ function startReading(b, day) {
     onFinish: (sec) => { if (sec >= 30) setTimeout(() => openReadLogAfter(b.id, day, sec), 300); },
   });
 }
-function openReadLogAfter(bookId, day, sec) {
+export function openReadLogAfter(bookId, day, sec) {
   const b = bookById(bookId);
   openSheet('وين وصلت؟', (body, close) => {
     const input = h('input', { type: 'number', inputmode: 'numeric', placeholder: `${(b.pagesRead || 0) + 10}`, 'data-autofocus': true });

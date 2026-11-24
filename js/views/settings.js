@@ -1,14 +1,18 @@
 // الإعدادات: الصلاة والموقع، النوبات، التنبيهات، يوتيوب، والنسخ الاحتياطي
-import { h, icon, badge, fill, openSheet, toast, haptic, chips, toggleRow, confirmSheet, openDatePicker, openPicker, stepper } from '../ui.js';
+import { h, icon, badge, fill, openSheet, toast, haptic, chips, toggleRow, confirmSheet, openDatePicker, openTimePicker, openPicker, stepper } from '../ui.js';
 import { store, backupPayload, isBackup, listSnapshots, saveManualSnapshot, APP_VERSION } from '../store.js';
 import { PRAYER_METHODS, PRAYER_NAMES, adhanFor, locate, clearPrayerCache, logicalToday, hasLocation } from '../prayer.js';
-import { shortDate, time12, calendarToday } from '../dates.js';
-import { shiftSummary, SHIFT_NAMES } from '../shifts.js';
+import { shortDate, time12, calendarToday, WEEKDAYS, parseISO, addDays } from '../dates.js';
+import { shiftSummary, SHIFT_NAMES, startFromLeave, firstWorkFromLeave } from '../shifts.js';
 import { askPermission, notifySupported } from '../notify.js';
 import { isLegacyBackup, fromLegacy } from '../legacy.js';
 import { openChecklistRun } from './plan.js';
 import { driveCfg, connectDrive, disconnectDrive, syncNow, peekRemote, applyRemote, setDriveAuto, driveStale, driveError } from '../drive.js';
 import { secTitle } from './components.js';
+import { routineItems } from '../routine.js';
+import { openPinSetup, disableLock, setLockAfter, enableBio, disableBio, bioAvailable } from './lock.js';
+import { sleepTimes, freeTotal } from '../sleep.js';
+import { fromMin, inDaysText } from '../dates.js';
 
 export function renderSettings(ctx) {
   const s = store.state.settings;
@@ -18,7 +22,30 @@ export function renderSettings(ctx) {
   const sh = s.shift;
   const sum = shiftSummary(today);
   const setS = (fn) => store.update((st) => fn(st.settings));
+  const rh = routineItems('home').length, rw = routineItems('work').length;
+  const slt = sleepTimes(today);
   return h('div', null,
+    h('div', { class: 'rt-links' },
+      h('button', { type: 'button', class: 'rt-link', style: { '--c': '#4cb8d4' }, onclick: () => ctx.open('settings/routine') },
+        h('span', { class: 'ic' }, icon('repeat', 18)),
+        h('b', null, sh.enabled ? 'روتين البيت والشغل' : 'روتيني اليومي'),
+        h('small', null, rh + rw ? (sh.enabled ? `${rh} للبيت · ${rw} للشغل` : `${rh} بنود`) : 'اعمله مرة وحدة وخلّي التطبيق يوزّع')),
+      h('button', { type: 'button', class: 'rt-link', style: { '--c': '#6F86D9' }, onclick: () => ctx.open('settings/sleep') },
+        h('span', { class: 'ic' }, icon('moon', 18)),
+        h('b', null, 'الروتين الثابت والنوم'),
+        h('small', null, `نوم ${time12(fromMin(slt.bed))} · فراغ ${+(freeTotal(today) / 60).toFixed(1)} س`))),
+    secTitle('ملفّي والخصوصية', { ic: 'user-shield' }),
+    h('div', { class: 'group rows' },
+      h('div', { class: 'row' }, h('span', { class: 'row-ic' }, icon('user', 16)), h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'أنا'), h('span', { class: 'row-sub' }, s.gender === 'female' ? 'بيطلع قسم العناية بالمكتبة' : 'بتنحسب السعرات حسبه')),
+        h('div', { class: 'seg mini-seg' }, [['male', 'شاب'], ['female', 'بنت']].map(([v, l]) => h('button', { type: 'button', 'aria-pressed': String((s.gender || store.state.sport.profile?.sex || 'male') === v), onclick: () => store.update((st) => { st.settings.gender = v; st.sport.profile = { ...st.sport.profile, sex: v }; }) }, l)))),
+      toggleRow({ ic: 'lock', title: 'قفل التطبيق برمز', sub: 'رمز من 4 أرقام — قفل من الفضول، مش تشفير', checked: Boolean(s.lock?.on), onChange: (v) => { if (v) openPinSetup(() => ctx.refresh()); else { disableLock(); toast('انشال القفل'); } ctx.refresh(); } }),
+      s.lock?.on ? [
+        h('div', { class: 'row' }, h('span', { class: 'row-ic' }, icon('hourglass-half', 16)), h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'بيقفل بعد ما تطلع')),
+          h('div', { class: 'chips' }, [[0, 'فوراً'], [60, 'دقيقة'], [300, '5 دقائق']].map(([v, l]) => h('button', { type: 'button', class: 'chip small', 'aria-pressed': String((s.lock.after ?? 60) === v), onclick: () => setLockAfter(v) }, l)))),
+        toggleRow({ ic: 'fingerprint', title: 'البصمة', sub: 'إذا جوالك بيدعم', checked: Boolean(s.lock.bio), onChange: async (v) => { if (v) { if (!(await bioAvailable())) { toast('جهازك ما بيدعم البصمة لتطبيقات الويب.', { kind: 'warn' }); ctx.refresh(); return; } await enableBio(); } else disableBio(); ctx.refresh(); } }),
+        h('button', { type: 'button', class: 'row', onclick: () => openPinSetup() }, h('span', { class: 'row-ic' }, icon('key', 16)), h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'غيّر الرمز')), icon('chevL', 16)),
+      ] : null),
+
     secTitle('الصلاة والموقع', { ic: 'mosque' }),
     h('div', { class: 'group rows' },
       h('div', { class: 'row' }, h('span', { class: 'row-ic' }, icon('pin', 18)),
@@ -27,7 +54,6 @@ export function renderSettings(ctx) {
       h('div', { class: 'row-block' }, h('div', { class: 'times-row' }, ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'].map((k) => h('div', null, h('small', null, PRAYER_NAMES[k]), h('b', { class: 'num' }, time12(a[k]).replace(' ', ' ')))))),
       h('button', { type: 'button', class: 'row', onclick: () => openPicker({ title: 'طريقة الحساب', value: p.method, options: Object.entries(PRAYER_METHODS).map(([k, m]) => ({ value: k, label: m.name })), onPick: (v) => { setS((x) => { x.prayer.method = v; }); clearPrayerCache(); } }) },
         h('span', { class: 'row-main' }, h('span', { class: 'row-sub' }, 'طريقة الحساب'), h('span', { class: 'row-title' }, PRAYER_METHODS[p.method]?.name)), icon('chevL', 18)),
-      h('div', { class: 'row' }, h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'العصر')), chips([{ value: 'standard', label: 'الجمهور' }, { value: 'hanafi', label: 'الحنفي' }], p.asrMadhab, (v) => { setS((x) => { x.prayer.asrMadhab = v; }); clearPrayerCache(); })),
       h('div', { class: 'row' }, h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'مدة الصلاة'), h('span', { class: 'row-sub' }, 'الفترة بتبلّش بعد الأذان بهالمدة')), stepper(p.duration || 30, (v) => setS((x) => { x.prayer.duration = v; }), { min: 10, max: 60, step: 5, suffix: ' د' })),
       h('div', { class: 'row' }, h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'بداية فترة الصباح'), h('span', { class: 'row-sub' }, 'بعد الشروق بـ')), stepper(s.periodOffsets?.morning || 0, (v) => setS((x) => { x.periodOffsets = { ...(x.periodOffsets || {}), morning: v }; }), { min: 0, max: 240, step: 15, suffix: ' د' })),
       h('button', { type: 'button', class: 'row', onclick: () => openTune() }, h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'تعديل دقائق كل صلاة'), h('span', { class: 'row-sub' }, 'مشان تطابق أذان مسجدك')), icon('chevL', 18))),
@@ -36,11 +62,16 @@ export function renderSettings(ctx) {
     h('div', { class: 'group rows' },
       toggleRow({ title: 'عندي نوبات', sub: 'أيام بالبيت وأيام بالشغل بالتناوب — بتبين بالتقويم، والتطبيق بيذكّرك تجهّز قبل كل نوبة', checked: sh.enabled, onChange: (v) => setS((x) => { x.shift.enabled = v; if (v && !x.shift.start) x.shift.start = calendarToday(); }) }),
       sh.enabled ? [
-        h('button', { type: 'button', class: 'row', onclick: () => openDatePicker({ value: sh.start, today, title: 'أول يوم بالبيت (بأي دورة)', onPick: (v) => { if (v) setS((x) => { x.shift.start = v; }); } }) },
-          h('span', { class: 'row-main' }, h('span', { class: 'row-sub' }, 'أول يوم بالبيت بأي دورة'), h('span', { class: 'row-title' }, sh.start ? shortDate(sh.start) : 'اختار')), icon('chevL', 18)),
-        h('div', { class: 'row' }, h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'أيام البيت')), stepper(sh.pattern[0]?.days || 7, (v) => setS((x) => { x.shift.pattern[0].days = v; }), { min: 1, max: 30 })),
+        h('button', { type: 'button', class: 'row', onclick: () => openDatePicker({ value: sh.leave?.date || null, today, title: 'بأي يوم بتطلع عالشغل؟ (أي دورة)', onPick: (v) => { if (v) setS((x) => { x.shift.leave = { date: v, time: x.shift.leave?.time || '22:30' }; x.shift.start = startFromLeave(v, x.shift.leave.time, x.shift.pattern); }); } }) },
+          h('span', { class: 'row-ic' }, icon('calendar', 16)),
+          h('span', { class: 'row-main' }, h('span', { class: 'row-sub' }, 'بطلع عالشغل يوم'), h('span', { class: 'row-title' }, sh.leave?.date ? `${WEEKDAYS[parseISO(sh.leave.date).getDay()]} ${shortDate(sh.leave.date)}` : 'اختار يوم طلعة (بأي دورة)')), icon('chevL', 18)),
+        h('button', { type: 'button', class: 'row', onclick: () => openTimePicker({ value: sh.leave?.time || '22:30', onPick: (v) => { if (v) setS((x) => { x.shift.leave = { date: x.shift.leave?.date || calendarToday(), time: v }; x.shift.start = startFromLeave(x.shift.leave.date, v, x.shift.pattern); }); } }) },
+          h('span', { class: 'row-ic' }, icon('clock', 16)),
+          h('span', { class: 'row-main' }, h('span', { class: 'row-sub' }, 'الساعة'), h('span', { class: 'row-title' }, time12(sh.leave?.time || '22:30'))), icon('chevL', 18)),
         h('div', { class: 'row' }, h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'أيام الشغل')), stepper(sh.pattern[1]?.days || 7, (v) => setS((x) => { x.shift.pattern[1].days = v; }), { min: 1, max: 30 })),
-        sum ? h('div', { class: 'row-note' }, `اليوم: ${SHIFT_NAMES[sum.kind]} (${sum.dayNo} من ${sum.length})${sum.nextDate ? ` — ${sum.nextKind === 'work' ? 'الشغل' : 'البيت'} بعد ${sum.daysLeft} يوم` : ''}`) : null,
+        h('div', { class: 'row' }, h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'أيام البيت')), stepper(sh.pattern[0]?.days || 7, (v) => setS((x) => { x.shift.pattern[0].days = v; if (x.shift.leave?.date) x.shift.start = startFromLeave(x.shift.leave.date, x.shift.leave.time, x.shift.pattern); }), { min: 1, max: 30 })),
+        sh.leave?.date ? h('div', { class: 'row-note' }, (() => { const fw = firstWorkFromLeave(sh.leave.date, sh.leave.time); return `يعني أيام الشغل بتبلّش ${WEEKDAYS[parseISO(fw).getDay()]}، وآخر يوم بالبيت (يوم التجهيز) ${WEEKDAYS[parseISO(addDays(fw, -1)).getDay()]}.`; })()) : null,
+        sum ? h('div', { class: 'row-note' }, `اليوم: ${SHIFT_NAMES[sum.kind]} (${sum.dayNo} من ${sum.length})${sum.nextDate ? ` — ${sum.nextKind === 'work' ? 'الشغل' : 'البيت'} ${inDaysText(sum.daysLeft)}` : ''}`) : null,
         h('button', { type: 'button', class: 'row', onclick: () => openChecklistRun(null, today) }, h('span', { class: 'row-ic' }, icon('bag', 18)), h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'أغراض الشغل'), h('span', { class: 'row-sub' }, 'قائمة بتطلعلك آخر يوم بالبيت')), icon('chevL', 18)),
       ] : null),
 
@@ -66,7 +97,7 @@ export function renderSettings(ctx) {
       h('button', { type: 'button', class: 'row', onclick: exportBackup }, h('span', { class: 'row-ic' }, icon('download', 18)), h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'احفظ نسخة كملف'), h('span', { class: 'row-sub' }, 'خليها بدرايف أو أرسلها لحالك'))),
       h('button', { type: 'button', class: 'row', onclick: importBackup }, h('span', { class: 'row-ic' }, icon('upload', 18)), h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'استرجع من ملف'), h('span', { class: 'row-sub' }, 'بيقبل نسخ التطبيق القديم كمان'))),
       h('button', { type: 'button', class: 'row', onclick: openSnapshots }, h('span', { class: 'row-ic' }, icon('refresh', 18)), h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'نسخ تلقائية على الجهاز'), h('span', { class: 'row-sub' }, 'لقطة كل يوم (آخر 10) للرجوع عن أي خطأ')), icon('chevL', 18))),
-    h('p', { class: 'footer' }, `منظومتي ${APP_VERSION}`));
+    h('p', { class: 'footer' }, `المنظومة الإنتاجية ${APP_VERSION}`));
 }
 
 function agoText(ms) {
