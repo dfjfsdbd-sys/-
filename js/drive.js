@@ -108,7 +108,7 @@ async function findFile(name) {
 }
 async function upload() {
   const file = await findFile(FILE);
-  const meta = file ? {} : { name: FILE, description: 'نسخة احتياطية من منظومتي (المنظومة الإنتاجية)' };
+  const meta = file ? {} : { name: FILE, description: 'نسخة احتياطية من المنظومة الإنتاجية' };
   const b = `-------manz${Date.now()}`;
   const body = `--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(backupPayload())}\r\n--${b}--`;
   await dfetch(file ? `https://www.googleapis.com/upload/drive/v3/files/${file.id}?uploadType=multipart` : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {

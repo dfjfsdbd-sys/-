@@ -4,7 +4,7 @@
 import { store, uid } from './store.js';
 import { addDays, daysBetween, weekStartOf } from './dates.js';
 import { prayersDone } from './worship.js';
-import { adhkarDone, adhkarSettings, pagesReadOn, allAdhkarLists } from './worship.js';
+import { adhkarDone, adhkarSettings, pagesReadOn, allAdhkarLists, wirdToday } from './worship.js';
 import { activeHabits, habitScore, habitOk, passThreshold } from './habits.js';
 import { award, revoke, POINTS } from './rewards.js';
 import { logicalToday } from './prayer.js';
@@ -43,7 +43,7 @@ export function dailyRequirements() {
   const c = store.state.commitment;
   if (!c || c.includePrayers !== false) out.push({ id: PRAYERS_REQ, name: 'الصلوات الخمس', icon: 'mosque', kind: 'prayers' });
   for (const l of allAdhkarLists()) if (adhkarSettings(l.id).core) out.push({ id: `adhkar:${l.id}`, name: l.name, icon: l.icon || 'beads', kind: 'adhkar' });
-  if (store.state.quran.core) out.push({ id: 'quran', name: `ورد القرآن (${store.state.settings.quranDaily || 10} صفحات)`, icon: 'quran', kind: 'quran' });
+  if (store.state.quran.core) out.push({ id: 'quran', name: store.state.quran.plan ? 'ورد الختمة' : `ورد القرآن (${store.state.settings.quranDaily || 10} صفحات)`, icon: 'quran', kind: 'quran' });
   for (const h of activeHabits()) if (h.core && (h.rhythm?.type || 'daily') === 'daily') out.push({ id: h.id, name: h.name, icon: h.icon || 'leaf', kind: 'habit' });
   return out.map((r) => ({ ...r, imp: importanceOf(r.id) }));
 }
@@ -61,7 +61,7 @@ function scoreOf(req, day) {
   switch (req.kind) {
     case 'prayers': return prayersDone(day) / 5;
     case 'adhkar': return adhkarDone(day, req.id.slice(7)) ? 1 : 0;
-    case 'quran': return Math.min(1, pagesReadOn(day) / Math.max(1, store.state.settings.quranDaily || 10));
+    case 'quran': { const w = wirdToday(day); return Math.min(1, w.read / Math.max(1, w.target)); }
     case 'habit': return habitScore(day, req.id) ?? 0;
     default: return 0;
   }

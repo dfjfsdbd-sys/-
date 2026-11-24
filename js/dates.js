@@ -91,6 +91,8 @@ export function countText(n, [one, two, few, many]) {
   return `${n} ${many}`;
 }
 export const daysText = (n) => countText(n, ['يوم', 'يومين', 'أيام', 'يوم']);
+// «اليوم / بكرة / بعد يومين / بعد 3 أيام / بعد 11 يوم»
+export const inDaysText = (n) => (n === 0 ? 'اليوم' : n === 1 ? 'بكرة' : `بعد ${daysText(n)}`);
 export const tasksText = (n) => countText(n, ['مهمة وحدة', 'مهمتين', 'مهام', 'مهمة']);
 export const pagesText = (n) => countText(n, ['صفحة', 'صفحتين', 'صفحات', 'صفحة']);
 export const minutesText = (n) => countText(n, ['دقيقة', 'دقيقتين', 'دقائق', 'دقيقة']);

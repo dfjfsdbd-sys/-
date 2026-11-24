@@ -32,8 +32,15 @@ export function h(tag, props, ...children) {
   appendAll(el, children);
   // خانات الأرقام: كروم بيعرضها بأرقام هندية حسب لغة الصفحة، منوحّدها مع باقي التطبيق
   if (tag === 'input' && el.type === 'number') {
-    el.lang = 'en';
+    // كروم بيعرض خانة الرقم بأرقام هندية حسب لغة الجهاز: منخليها نص بلوحة أرقام، ومنحوّل أي رقم هندي ينكتب
+    el.type = 'text';
+    el.classList.add('num-input');
     if (!el.hasAttribute('inputmode')) el.setAttribute('inputmode', 'decimal');
+    el.setAttribute('autocomplete', 'off');
+    el.addEventListener('input', () => {
+      const v = el.value.replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632)).replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776)).replace(/[٫,]/g, '.').replace(/[^\d.\-]/g, '');
+      if (v !== el.value) el.value = v;
+    }, true);
   }
   if (value != null) el.value = value;
   return el;
@@ -338,7 +345,7 @@ export function openMonthPicker({ value, onPick, title = 'الشهر' }) {
 }
 
 // اختيار صورة وتصغيرها (مربعة) لتصلح أيقونة
-export function pickImage({ size = 160 } = {}) {
+export function pickImage({ size = 160, square = true } = {}) {
   return new Promise((resolve) => {
     const inp = h('input', { type: 'file', accept: 'image/*', style: { display: 'none' } });
     inp.addEventListener('change', () => {
@@ -349,10 +356,16 @@ export function pickImage({ size = 160 } = {}) {
       reader.onload = () => {
         const img = new Image();
         img.onload = () => {
-          const s = Math.min(img.width, img.height);
           const cv = document.createElement('canvas');
-          cv.width = size; cv.height = size;
-          cv.getContext('2d').drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
+          if (square) {
+            const s = Math.min(img.width, img.height);
+            cv.width = size; cv.height = size;
+            cv.getContext('2d').drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
+          } else {
+            const k = Math.min(1, size / Math.max(img.width, img.height));
+            cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+            cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+          }
           resolve(cv.toDataURL('image/jpeg', 0.82));
         };
         img.onerror = () => resolve(null);

@@ -5,17 +5,25 @@ import { matchesShiftRule } from './shifts.js';
 import { award, revoke, POINTS } from './rewards.js';
 import { PERIODS, periodOfTime } from './prayer.js';
 
+// أنواع المهام (نفس ألوان وأيقونات النسخة الأولى)
 export const TAGS = {
-  general: { name: 'عام', icon: 'list', tint: 'slate' },
+  general: { name: 'عامة', icon: 'pen', tint: 'slate' },
   study: { name: 'دراسة', icon: 'grad', tint: 'sky' },
-  worship: { name: 'عبادة', icon: 'mosque', tint: 'mint' },
+  book: { name: 'كتب', icon: 'book', tint: 'brown' },
+  worship: { name: 'عبادات', icon: 'mosque', tint: 'mint' },
+  self: { name: 'فقه النفس', icon: 'spa', tint: 'violet' },
+  series: { name: 'سلاسل', icon: 'clapper', tint: 'rose' },
+  sport: { name: 'رياضة', icon: 'dumbbell', tint: 'coral' },
+  behavior: { name: 'سلوك', icon: 'compass', tint: 'sage' },
+  break: { name: 'استراحة', icon: 'mug', tint: 'sage' },
   work: { name: 'شغل', icon: 'briefcase', tint: 'amber' },
-  errand: { name: 'مشاوير وأغراض', icon: 'bag', tint: 'coral' },
+  errand: { name: 'مشاوير وأغراض', icon: 'bag', tint: 'amber' },
   health: { name: 'صحة', icon: 'pill', tint: 'rose' },
-  family: { name: 'أهل وبيت', icon: 'house', tint: 'violet' },
-  sport: { name: 'رياضة', icon: 'dumbbell', tint: 'gold' },
+  family: { name: 'أهل وبيت', icon: 'house', tint: 'blue' },
   marriage: { name: 'تجهيز الزواج', icon: 'ring', tint: 'dawn' },
 };
+// الأنواع اللي بتطلع بشاشة الإضافة، بنفس ترتيب النسخة الأولى
+export const TYPE_ORDER = ['general', 'study', 'book', 'worship', 'self', 'series', 'sport', 'behavior', 'break'];
 
 export function newTask(fields = {}) {
   return {
@@ -130,6 +138,11 @@ export function setDone(id, day, done = true, { score = null } = {}) {
       x.doneAt = done ? Date.now() : null;
       x.doneDay = done ? day : null;
       if (done && x.checklist?.length) x.checklist.forEach((c) => { c.done = true; });
+    }
+    // مهمة خطوة بمشروع: الخطوة بتنعلّم معها
+    if (x.link?.kind === 'project') {
+      const st = (s.projects || []).find((p) => p.id === x.link.itemId)?.phases.flatMap((ph) => ph.steps).find((z) => z.id === x.link.unitId);
+      if (st) { st.done = done; st.doneAt = done ? day : null; }
     }
   });
   if (done) award(key, t.priority ? POINTS.taskImportant : POINTS.task, t.title, day);

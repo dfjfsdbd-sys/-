@@ -3,7 +3,9 @@ import { store } from './store.js';
 import { toast } from './ui.js';
 import { logicalToday, adhanFor, PRAYER_NAMES } from './prayer.js';
 import { tasksOn, isDoneOn } from './tasks.js';
-import { addDays, parseISO, toMin } from './dates.js';
+import { addDays, parseISO, toMin, fromMin, time12 } from './dates.js';
+import { sleepCfg, sleepTimes } from './sleep.js';
+import { fastingCfg, fastInfo } from './fasting.js';
 
 const pad = (n) => String(n).padStart(2, '0');
 function stamp(dayIso, hhmm, plusMin = 0) {
@@ -16,7 +18,7 @@ export function googleCalendarUrl(t, day) {
   const date = t.date || day;
   const start = stamp(date, t.time);
   const end = stamp(date, t.time, Math.max(15, t.estimate || 30));
-  const p = new URLSearchParams({ action: 'TEMPLATE', text: t.title, dates: `${start}/${end}`, details: t.notes || 'من تطبيق منظومتي' });
+  const p = new URLSearchParams({ action: 'TEMPLATE', text: t.title, dates: `${start}/${end}`, details: t.notes || 'من المنظومة الإنتاجية' });
   if (t.recur?.type === 'daily') p.set('recur', 'RRULE:FREQ=DAILY');
   if (t.recur?.type === 'weekly' && t.recur.days?.length) p.set('recur', `RRULE:FREQ=WEEKLY;BYDAY=${t.recur.days.map((d) => ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'][d]).join(',')}`);
   if (t.recur?.type === 'monthly') p.set('recur', 'RRULE:FREQ=MONTHLY');
@@ -62,6 +64,25 @@ function tick() {
         if (atDay === cal && Math.abs(at - nowMin) <= 1 && !fired.has(key)) { fired.add(key); show(t.title, t.remind ? `بعد ${t.remind >= 60 ? `${t.remind / 60} ساعة` : `${t.remind} دقيقة`}` : 'هلق وقتها', key); }
       }
     }
+  }
+  // وقت النوم: «نام هلّق لتلحق الفجر» (محسوب من فجر بكرة)
+  const sl = sleepCfg();
+  if (sl.remind !== false) {
+    const st = sleepTimes(day);
+    const at = parseISO(day);
+    at.setMinutes(st.bed);
+    const key = `s:${day}`;
+    if (Math.abs(now - at) <= 60000 && !fired.has(key)) {
+      fired.add(key);
+      show('نام هلّق لتلحق الفجر', `الفجر ${time12(fromMin(st.fajr))} · لا تنسى أذكار النوم`, key);
+    }
+  }
+  // الليلة اللي قبل صيام سنّة: الساعة 9 بالليل
+  if (fastingCfg().remind !== false && nowMin >= 21 * 60 && nowMin <= 21 * 60 + 1) {
+    const tm = addDays(day, 1);
+    const fi = fastInfo(tm);
+    const key = `f:${tm}`;
+    if (fi.reasons.length && !fired.has(key)) { fired.add(key); show(`بكرة صيام ${fi.reasons.map((r) => r.name).join(' و')}`, 'لا تنسى السحور ونيّة الصيام', key); }
   }
   if (s.prayers) {
     const a = adhanFor(cal);

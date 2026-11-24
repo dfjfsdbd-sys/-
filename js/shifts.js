@@ -21,6 +21,18 @@ export function shiftOn(dayIso) {
   return null;
 }
 
+// «بطلع عالشغل الأربعاء الساعة 10:30 بالليل» ← أول يوم شغل الخميس، والأربعاء آخر يوم بيت (يوم التجهيز)
+// إذا الطلعة بعد الضهر (من الساعة 3) منحسب الشغل من اليوم اللي بعده
+export function firstWorkFromLeave(date, time) {
+  if (!date) return null;
+  return time && time >= '15:00' ? addDays(date, 1) : date;
+}
+export function startFromLeave(date, time, pattern) {
+  const fw = firstWorkFromLeave(date, time);
+  const homeDays = Number(pattern?.[0]?.days) || 7;
+  return fw ? addDays(fw, -homeDays) : null;
+}
+
 // المرحلة التالية من نوع معيّن (أول يوم بالشغل الجاي مثلاً)
 export function nextShiftStart(fromIso, kind, maxDays = 60) {
   for (let i = 0; i <= maxDays; i++) {

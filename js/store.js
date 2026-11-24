@@ -1,7 +1,7 @@
 // الحالة وحفظها على الجهاز
 import { kvGet, kvSet } from './db.js';
 
-export const APP_VERSION = '2.0.0';
+export const APP_VERSION = '2.5.0';
 export const DATA_VERSION = 1;
 const KEY = 'state';
 
@@ -27,6 +27,8 @@ export function defaultState() {
       passThreshold: 0.6,
       ytKey: '',
       quranDaily: 10,
+      // الروتين الثابت: النوم بينحسب من الفجر، والقيلولة، ودوام الشغل بأيام الشغل
+      sleep: { hours: 7, wakeBefore: 15, nap: { on: false, period: 'dhuhr', minutes: 40 }, work: { on: true, from: '07:00', to: '15:00' }, remind: true },
     },
     // المهام: كل مهمة إلها تاريخ (أو بلا تاريخ = صندوق الوارد)، والمتكرّرة إنجازها بسجلّ حسب اليوم
     tasks: [],
@@ -55,6 +57,20 @@ export function defaultState() {
     rewards: { ledger: [], items: [], penalties: [], redeemed: [] },
     focusLog: [],
     dayNotes: {},
+    muhasaba: {},
+    events: [],
+    reviews: {},
+    projects: [],
+    fasting: { monThu: false, white: true, special: true, log: {} },
+    qada: { prayers: { fajr: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 }, fasts: 0, log: [] },
+    sunnah: {},
+    dhikr: { counts: {}, targets: {} },
+    duas: { custom: [], favs: [] },
+    badges: {},
+    care: null,
+    routines: { home: [], work: [] },
+    routineApplied: {},
+    sleepLog: {},
   };
 }
 
@@ -72,9 +88,12 @@ export function migrate(d) {
   const base = defaultState();
   if (!d || typeof d !== 'object') return base;
   const out = deepDefaults(base, d);
-  for (const k of ['tasks', 'goals', 'checklists', 'subjects', 'exams', 'books', 'series', 'habits', 'focusLog', 'unitLog']) {
+  for (const k of ['tasks', 'goals', 'checklists', 'subjects', 'exams', 'books', 'series', 'habits', 'focusLog', 'unitLog', 'events', 'projects']) {
     if (!Array.isArray(out[k])) out[k] = [];
   }
+  for (const k of ['home', 'work']) if (!Array.isArray(out.routines?.[k])) out.routines[k] = [];
+  // العصر على قول الجمهور دايماً
+  if (out.settings?.prayer) out.settings.prayer.asrMadhab = 'standard';
   out.version = DATA_VERSION;
   return out;
 }

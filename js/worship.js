@@ -1,7 +1,7 @@
 // العبادات: سجلّ الصلوات، الأذكار، ورد القرآن والختمات، والحفظ
 import { store, uid } from './store.js';
 import { award, revoke, POINTS } from './rewards.js';
-import { PRAYERS } from './prayer.js';
+import { PRAYERS, logicalToday } from './prayer.js';
 import { ADHKAR_LISTS, ADHKAR_ORDER } from './data/adhkar.js';
 import { TOTAL_PAGES } from './data/quran-meta.js';
 import { addDays, daysBetween } from './dates.js';
@@ -102,6 +102,7 @@ export function readQuranTo(day, toPage) {
     if (!q.currentStart) q.currentStart = day;
   });
   award(`quran:${day}:${toPage}`, pages * POINTS.quranPage, `قرآن ${pages} صفحة`, day);
+  if (finished) rollPlan(day);
   return finished ? -1 : pages;
 }
 export function addQuranPages(day, n) { return readQuranTo(day, Math.min(TOTAL_PAGES, quranPage() + n - 1)); }
@@ -128,6 +129,59 @@ export function quranStats(today) {
   const etaDays = avg > 0 ? Math.ceil(left / pace) : null;
   return { page, read, left, pct: read / TOTAL_PAGES, daily, todayPages: pagesReadOn(today), avg, etaDays, eta: etaDays != null ? addDays(today, etaDays) : null, khatmas: (q.khatmas || []).length, daysToGoal: Math.ceil(left / daily) };
 }
+/* ---------- خطة الختمة ---------- */
+// plan: { mode: 'days' | 'month', days, perMonth, start, end, startPage, n }
+// ورد اليوم = الباقي من الختمة (من مكانك ببداية اليوم) ÷ الأيام الباقية للموعد.
+// إذا ما كمّلت، بكرة بينحسب من جديد فالباقي بيتوزّع لحاله.
+export const khatmaDuration = (plan) => (plan.mode === 'month' ? Math.max(3, Math.floor(30 / Math.max(1, plan.perMonth || 1))) : Math.max(1, plan.days || 7));
+export function setKhatmaPlan({ mode = 'days', days = 7, perMonth = 4, fromStart = true }, today = logicalToday()) {
+  const plan = { mode, days, perMonth, start: today, n: 1 };
+  plan.end = addDays(today, khatmaDuration(plan) - 1);
+  store.update((s) => {
+    if (fromStart && (s.quran.page || 1) !== 1) {
+      // البداية من أول المصحف: منحفظ وين كنت كختمة ناقصة ما بتنحسب
+      s.quran.page = 1;
+    }
+    plan.startPage = s.quran.page || 1;
+    s.quran.plan = plan;
+    s.quran.core = s.quran.core ?? true;
+  });
+}
+export function clearKhatmaPlan() { store.update((s) => { s.quran.plan = null; }); }
+export function wirdToday(today = logicalToday()) {
+  const q = store.state.quran;
+  const read = pagesReadOn(today);
+  const nowPage = q.page || 1;
+  const dayStart = Math.max(1, nowPage - read);
+  const plan = q.plan || null;
+  let target;
+  let daysLeft = null;
+  if (plan) {
+    daysLeft = Math.max(1, daysBetween(today, plan.end) + 1);
+    const remaining = TOTAL_PAGES - dayStart + 1;
+    target = Math.max(1, Math.ceil(remaining / daysLeft));
+  } else target = store.state.settings.quranDaily || 10;
+  const to = Math.min(TOTAL_PAGES, dayStart + target - 1);
+  const overall = (nowPage - 1) / TOTAL_PAGES;
+  // متوقّع الختم على سرعة آخر أسبوع
+  let sum = 0; for (let i = 1; i <= 7; i++) sum += pagesReadOn(addDays(today, -i));
+  const avg = (sum + read) / 7.5;
+  const eta = avg > 0 ? addDays(today, Math.ceil((TOTAL_PAGES - nowPage + 1) / avg)) : null;
+  return { from: dayStart, to, target, read, done: read >= target, nowPage, plan, daysLeft, overall, eta, monthCount: plan?.mode === 'month' ? plan.perMonth : null };
+}
+// بعد ما تخلص ختمة: إذا الخطة شهرية بتبلّش الختمة الجاية لحالها
+function rollPlan(day) {
+  const plan = store.state.quran.plan;
+  if (!plan) return;
+  store.update((s) => {
+    if (plan.mode === 'month') {
+      const next = { ...plan, n: (plan.n || 1) + 1, start: addDays(day, 1), startPage: 1 };
+      next.end = addDays(next.start, khatmaDuration(next) - 1);
+      s.quran.plan = next;
+    } else s.quran.plan = { ...plan, done: true, end: day };
+  });
+}
+
 export function quranStreak(today) {
   let n = 0, d = pagesReadOn(today) ? today : addDays(today, -1);
   for (let i = 0; i < 400; i++) { if (pagesReadOn(d) > 0) { n += 1; d = addDays(d, -1); } else break; }

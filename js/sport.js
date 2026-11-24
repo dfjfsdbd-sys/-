@@ -2,9 +2,10 @@
 import { store, uid } from './store.js';
 import { award, revoke, POINTS } from './rewards.js';
 import { addDays, weekday } from './dates.js';
+import { shiftOn } from './shifts.js';
 
 export const ACTIVITY = { 1.2: 'قليل الحركة', 1.375: 'حركة خفيفة (1-3 تمارين/أسبوع)', 1.55: 'حركة متوسطة (3-5)', 1.725: 'نشيط جداً (6-7)' };
-export const GOALS = { lose: 'خسارة وزن', keep: 'تثبيت', gain: 'زيادة وزن وعضل' };
+export const GOALS = { lose: 'تنزيل وزن', gain: 'زيادة عضل', keep: 'لياقة وصحة' };
 export const MEALS = { breakfast: 'فطور', lunch: 'غدا', dinner: 'عشا', snack: 'سناك' };
 export const WORKOUT_TYPES = {
   gym: { name: 'جيم / أوزان', met: 5, icon: 'dumbbell' },
@@ -96,13 +97,89 @@ export function workoutStreakWeeks(today) {
   }
   return n;
 }
-// تمرين اليوم من البرنامج (إن وجد)
+// تمرين اليوم من البرنامج (إن وجد). بأيام الشغل: تمرين خفيف 20 دقيقة بداله (إذا مفعّل)
 export function plannedWorkout(day) {
   const prog = (sp().programs || []).find((p) => p.active);
+  const work = Boolean(store.state.settings.shift?.enabled) && shiftOn(day)?.kind === 'work';
+  if (work && sp().profile?.workLight !== false && prog) {
+    const t = PROGRAM_TEMPLATES.light20;
+    return { program: { ...prog, name: t.name }, day: t.days[0], light: true };
+  }
   if (!prog) return null;
   const dayId = prog.schedule?.[weekday(day)];
   const pd = prog.days.find((x) => x.id === dayId);
   return pd ? { program: prog, day: pd } : null;
+}
+// الجاي من البرنامج (لبطاقة الأسبوع)
+export function nextPlanned(today) {
+  for (let i = 1; i <= 7; i++) { const d = addDays(today, i); const p = plannedWorkout(d); if (p) return { d, ...p }; }
+  return null;
+}
+
+/* ---------- البرامج الجاهزة ---------- */
+// تمرين: { name, sets, reps, unit: 'reps' | 'sec' | 'min', rest (ثواني) }
+const X = (name, sets, reps, unit = 'reps', rest = 60) => ({ name, sets, reps, unit, rest });
+export const PROGRAM_TEMPLATES = {
+  home3: {
+    name: 'جسم كامل 3 أيام — بالبيت', sub: 'بدون أدوات · مبتدئ · 35 د', place: 'home', icon: 'house', tint: '#a682e8', week: [6, 1, 3],
+    days: [
+      { id: 'A', name: 'يوم A', exercises: [X('إحماء', 1, 5, 'min', 0), X('ضغط', 3, 12), X('سكوات', 3, 15), X('بلانك', 3, 40, 'sec', 45), X('عقلة أسترالية (طاولة)', 3, 8)] },
+      { id: 'B', name: 'يوم B', exercises: [X('إحماء', 1, 5, 'min', 0), X('ضغط ضيق', 3, 10), X('لانجز (لكل رجل)', 3, 10), X('جسر الحوض', 3, 15), X('سوبرمان', 3, 12), X('بلانك جانبي', 3, 30, 'sec', 45)] },
+      { id: 'C', name: 'يوم C', exercises: [X('إحماء', 1, 5, 'min', 0), X('ضغط مائل', 3, 12), X('سكوات قفز', 3, 10), X('ديبس (كرسي)', 3, 10), X('متسلّق الجبل', 3, 30, 'sec', 45), X('إطالة', 1, 5, 'min', 0)] },
+    ],
+  },
+  gym3: {
+    name: 'جسم كامل 3 أيام — نادي', sub: 'أوزان · مبتدئ · 50 د', place: 'gym', icon: 'dumbbell', tint: '#e0705f', week: [6, 1, 3],
+    days: [
+      { id: 'A', name: 'يوم A', exercises: [X('سكوات', 3, 10, 'reps', 90), X('بنش برس', 3, 10, 'reps', 90), X('تجديف بار', 3, 10, 'reps', 90), X('ضغط كتف', 3, 12), X('بلانك', 3, 40, 'sec', 45)] },
+      { id: 'B', name: 'يوم B', exercises: [X('رفعة رومانية', 3, 10, 'reps', 90), X('سحب أمامي', 3, 12), X('ضغط دمبل مائل', 3, 10), X('لانجز دمبل', 3, 10), X('كرنش', 3, 15)] },
+      { id: 'C', name: 'يوم C', exercises: [X('ليغ بريس', 3, 12), X('عقلة بمساعدة', 3, 8, 'reps', 90), X('تفتيح صدر', 3, 12), X('باي سبس', 3, 12), X('ترايسبس', 3, 12)] },
+    ],
+  },
+  ppl: {
+    name: 'دفع، سحب، رجلين', sub: 'نادي · 6 أيام · متوسط', place: 'gym', icon: 'dumbbell', tint: '#e0a04a', week: [6, 0, 1, 2, 3, 4],
+    days: [
+      { id: 'P', name: 'دفع (صدر، كتف، ترايسبس)', exercises: [X('بنش برس', 4, 8, 'reps', 120), X('ضغط كتف', 3, 10, 'reps', 90), X('تفتيح صدر', 3, 12), X('رفرفة جانبي', 3, 15), X('ترايسبس حبل', 3, 12)] },
+      { id: 'L', name: 'سحب (ظهر، باي)', exercises: [X('سحب أمامي', 4, 10, 'reps', 90), X('تجديف بار', 3, 10, 'reps', 90), X('فيس بول', 3, 15), X('باي سبس', 3, 12), X('هامر', 3, 12)] },
+      { id: 'G', name: 'رجلين', exercises: [X('سكوات', 4, 8, 'reps', 120), X('رفعة رومانية', 3, 10, 'reps', 90), X('ليغ بريس', 3, 12), X('ليغ كيرل', 3, 12), X('سمانة', 4, 15)] },
+    ],
+  },
+  run5k: {
+    name: 'مشي وجري — أول 5 كم', sub: '8 أسابيع · 3 أيام · 30 د', place: 'out', icon: 'person-running', tint: '#62c2d6', week: [6, 1, 3],
+    days: [{ id: 'R', name: 'جري متقطّع', exercises: [X('مشي سريع (إحماء)', 1, 5, 'min', 0), X('جري دقيقة + مشي دقيقة ونص', 8, 150, 'sec', 0), X('مشي (تبريد)', 1, 5, 'min', 0)] }],
+  },
+  light20: {
+    name: 'أيام الشغل: 20 دقيقة خفيف', sub: 'بينحط لحاله بأيام الشغل', place: 'home', icon: 'briefcase', tint: '#e0a04a', week: [],
+    days: [{ id: 'W', name: 'تمرين خفيف', exercises: [X('ضغط', 2, 10), X('سكوات', 2, 15), X('بلانك', 2, 30, 'sec', 30), X('إطالة', 1, 5, 'min', 0)] }],
+  },
+};
+// برنامج من قالب جاهز: الأيام بتتوزّع على أيام الأسبوع
+export function programFromTemplate(key, daysPerWeek = null) {
+  const t = PROGRAM_TEMPLATES[key];
+  const days = t.days.map((d) => ({ ...JSON.parse(JSON.stringify(d)), id: uid('pd') }));
+  const week = daysPerWeek && t.week.length > daysPerWeek ? t.week.slice(0, daysPerWeek) : t.week;
+  const schedule = {};
+  week.forEach((wd, i) => { schedule[wd] = days[i % days.length].id; });
+  return { id: uid('pg'), name: t.name, template: key, place: t.place, days, schedule, active: true };
+}
+export function suggestTemplate(p) {
+  if (p.goal === 'keep' && p.place !== 'gym') return 'run5k';
+  if (p.place === 'gym') return (Number(p.daysPerWeek) || 3) >= 5 ? 'ppl' : 'gym3';
+  return 'home3';
+}
+export const exText = (e) => (e.unit === 'min' ? `${e.reps} د` : `${e.sets > 1 ? `${e.sets} × ` : ''}${e.unit === 'sec' ? `${e.reps} ث` : e.reps}`);
+export function waterTarget(day) {
+  const kg = latestWeight(day);
+  return kg ? Math.max(6, Math.min(14, Math.round((kg * 35) / 250))) : 8;
+}
+// جلسة تمرين اليوم: أي تمارين خلصت
+export const sessionOn = (day) => (sp().session?.d === day ? sp().session : { d: day, done: [] });
+export function toggleExercise(day, i) {
+  store.update((s) => {
+    const cur = s.sport.session?.d === day ? s.sport.session : { d: day, done: [] };
+    cur.done = cur.done.includes(i) ? cur.done.filter((x) => x !== i) : [...cur.done, i];
+    s.sport.session = cur;
+  });
 }
 
 export function sportToday(day) {
