@@ -248,9 +248,12 @@ async function payload(ids, title, { subImg = 0, lecImg = 0 } = {}) {
     const lecs = [];
     for (const l of e.lectureList) {
       const idx = (s?.lectures || []).findIndex((y) => y.id === l.id);
-      lecs.push([l.title, l.pdf || '', lecImg ? await shrink(l.image, lecImg) : null, idx + 1]);
+      lecs.push([l.title, l.pdf || '', lecImg ? (await shrink(l.image, lecImg)) || 0 : 0, idx + 1]);
     }
-    x.push({ s: e.subjectName, c: tintHex(e.subjectColor || 'sky'), ic: s?.icon || 'grad', i: subImg ? await shrink(s?.image, subImg) : null, k: e.kindLabel, d: e.date, h: e.time || '', p: e.place || '', q: e.qtype || '', n: e.qcount || 0, m: e.duration || 0, o: e.outOf || 0, no: e.notes || '', l: lecs });
+    const o = { s: e.subjectName, c: tintHex(e.subjectColor || 'sky'), ic: s?.icon || 'grad', i: subImg ? await shrink(s?.image, subImg) : null, k: e.kindLabel, d: e.date, h: e.time, p: e.place, q: e.qtype, n: e.qcount, m: e.duration, o: e.outOf, no: e.notes, l: lecs };
+    // الحقول الفاضية ما منبعتها — كل حرف بيطوّل الرابط
+    for (const k of Object.keys(o)) if (o[k] == null || o[k] === '' || o[k] === 0) delete o[k];
+    x.push(o);
   }
   return { v: 1, t: title, u: logicalToday(), x };
 }
@@ -265,19 +268,16 @@ async function encode(obj) {
 }
 const shareBase = () => new URL('share.html', location.href.split('#')[0]).href;
 
-// منحاول بصور صغيرة؛ إذا طال الرابط كتير منشيل صور المحاضرات، وبعدين كل الصور
+// الرابط بلا صور: الصور بتطوّله لآلاف الأحرف، وواتساب وتلغرام بيقصّوه فما بينفتح.
+// المادة بتطلع بأيقونتها ولونها، والصور بتوصل بالملف.
+export const LINK_SAFE = 3500;
 export async function shareUrl(ids, title) {
-  const tries = [{ subImg: 96, lecImg: 64 }, { subImg: 96, lecImg: 0 }, { subImg: 0, lecImg: 0 }];
-  let url = '';
-  for (const t of tries) {
-    url = `${shareBase()}#${await encode(await payload(ids, title, t))}`;
-    if (url.length < 28000) break;
-  }
-  return url;
+  return `${shareBase()}#${await encode(await payload(ids, title))}`;
 }
 async function shareLink(ids, title) {
   const url = await shareUrl(ids, title);
   const text = `${title} — ${ids.length === 1 ? 'مذاكرة' : `${ids.length} مذاكرات`}`;
+  if (url.length > LINK_SAFE) toast('الرابط طويل شوي — إذا ما انفتح عند رفقاتك ابعتلهم «ملف»', { kind: 'warn' });
   if (navigator.share) { try { await navigator.share({ title, text, url }); return; } catch (err) { if (err?.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(url); toast('انسخ الرابط — الصقه لرفقاتك'); } catch { window.open(url, '_blank', 'noopener'); }
 }
@@ -342,7 +342,7 @@ export async function examsImage(ids, title) {
     const line = [e.h ? time12(e.h) : null, e.p || null, e.l.length ? lecWord(e.l.length) : null].filter(Boolean).join('  ·  ');
     g.fillText(line, tx, y + 168);
     const q = QTYPES[e.q];
-    if (q || e.m) { g.fillStyle = '#8a8a99'; g.font = F(500, 25); g.fillText([q ? `${q.name}${e.n ? ` ${e.n} سؤال` : ''}` : null, e.m ? `${e.m} دقيقة` : null].filter(Boolean).join('  ·  '), tx, y + 204); }
+    if (q || e.m) { g.fillStyle = '#8a8a99'; g.font = F(500, 25); g.fillText([q ? `${q.name}${e.n ? ` ${countText(e.n, ['سؤال واحد', 'سؤالين', 'أسئلة', 'سؤال'])}` : ''}` : null, e.m ? `${e.m} دقيقة` : null].filter(Boolean).join('  ·  '), tx, y + 204); }
     // صورة المادة
     const ix = P + 34, iy = y + 45, isz = CH - 90;
     g.save(); rr(ix, iy, isz, isz, 28); g.clip();
@@ -369,7 +369,7 @@ export function openShareExams(preIds = null) {
       fill(body, [
         h('div', { class: 'am-title' },
           h('h3', null, icon('share-nodes', 14), 'شارك المذاكرات', h('button', { type: 'button', class: 'am-x', 'aria-label': 'إغلاق', onclick: () => close() }, icon('close', 16))),
-          h('small', null, 'رفقاتك بيشوفوا المواعيد والمحاضرات وصورها وروابط الـPDF — مش جاهزيتك ولا تقدّمك')),
+          h('small', null, 'رفقاتك بيشوفوا المواعيد والمحاضرات وروابط الـPDF — مش جاهزيتك ولا تقدّمك')),
         h('div', { class: 'f-row' }, h('label', { class: 'f-label' }, 'شو بدك تشارك؟'),
           h('div', { class: 'chips' }, all.map((e) => h('button', { type: 'button', class: 'chip small', 'aria-pressed': String(sel.has(e.id)), onclick: () => { if (sel.has(e.id)) sel.delete(e.id); else sel.add(e.id); render(); } },
             sel.has(e.id) ? icon('check', 11) : null, `${e.subjectName} ${parseISO(e.date).getDate()}`)))),
@@ -377,9 +377,9 @@ export function openShareExams(preIds = null) {
           h('input', { type: 'text', value: title, oninput: (ev) => { title = ev.target.value; } })),
         h('div', { class: 'f-row' }, h('label', { class: 'f-label' }, 'كيف؟'),
           h('div', { class: 'sh-opts' }, [
-            ['link', 'link', '#4cb8d4', 'رابط تفاعلي', 'بيفتح بأي متصفح — بيضغطوا على المذاكرة فبتطلع محاضراتها بصورها وروابط الـPDF'],
+            ['link', 'link', '#4cb8d4', 'رابط تفاعلي', 'بيفتح بأي متصفح — بيضغطوا على المذاكرة فبتطلع محاضراتها وروابط الـPDF، بأيقونة المادة ولونها'],
             ['image', 'image', '#e06a9e', 'صورة', 'للستوري والمجموعات — المذاكرات بنفس البطاقات'],
-            ['file', 'file-code', '#e8c46a', 'ملف', 'نفس الصفحة التفاعلية بس كملف — بيفتح بدون نت'],
+            ['file', 'file-code', '#e8c46a', 'ملف', 'نفس الصفحة التفاعلية مع صور المواد والمحاضرات — بيفتح بدون نت'],
           ].map(([k, ic, c, t, s]) => h('button', { type: 'button', class: `sh-o${how === k ? ' on' : ''}`, style: { '--c': c }, onclick: () => { how = k; render(); } },
             h('span', { class: 'sh-ic' }, icon(ic, 15)), h('span', null, h('b', null, t), h('small', null, s)), how === k ? icon('circle-check', 16) : null)))),
         h('div', { class: 'am-sticky' },
