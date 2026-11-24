@@ -11,7 +11,7 @@
      التطبيق بيطلعلك «في نسخة جديدة — حدّث».
    ================================================================ */
 
-const VERSION = '2.5.0';
+const VERSION = '2.5.1';
 const CACHE = `manzumati-${VERSION}`;
 const RUNTIME = 'manzumati-runtime';
 
@@ -75,14 +75,16 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   if (BYPASS.test(url.href) || url.pathname.endsWith('/__backup.json')) return;
 
-  // 1) صفحة التطبيق: الشبكة أولاً
+  // 1) صفحة التطبيق: الشبكة أولاً. الصفحات التانية (share.html…) بتنخزّن باسمها مش مكان index.html
   if (url.origin === location.origin && isHtml(req)) {
+    const isApp = url.pathname.endsWith('/') || url.pathname.endsWith('/index.html');
     event.respondWith((async () => {
       try {
         const res = await fetch(req);
-        if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put('./index.html', copy)); }
+        if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(isApp ? './index.html' : url.pathname, copy)); }
         return res;
       } catch {
+        if (!isApp) { const own = await caches.match(url.pathname, { ignoreSearch: true }); if (own) return own; }
         return (await caches.match('./index.html', { ignoreSearch: true }))
           || (await caches.match('./', { ignoreSearch: true }))
           || new Response('<!doctype html><meta charset="utf-8"><body style="background:#0E1320;color:#E8ECF6;font-family:sans-serif;display:grid;place-items:center;height:100vh;margin:0;text-align:center" dir="rtl">افتح التطبيق مرة والنت شغّال، وبعدها بيشتغل بلا نت.</body>', { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
