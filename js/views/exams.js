@@ -1,6 +1,6 @@
 // المذاكرات والامتحانات: البطاقة، صفحة المذاكرة (غلاف بصورة المادة، المعلومات، المحاضرات بصورها وروابط PDF)،
 // نافذة الإضافة، والمشاركة مع رفقاتك (رابط تفاعلي، صورة، أو ملف) — بلا جاهزيتك ولا تقدّمك.
-import { h, icon, ring, fill, openSheet, toast, haptic, openDatePicker, openTimePicker, confirmSheet, toggleRow } from '../ui.js';
+import { h, icon, ring, bar, fill, openSheet, toast, haptic, openDatePicker, openTimePicker, confirmSheet, toggleRow } from '../ui.js';
 import { store, uid } from '../store.js';
 import { logicalToday } from '../prayer.js';
 import { addDays, shortDate, daysBetween, parseISO, MONTHS, WEEKDAYS, time12, daysText, countText, inDaysText } from '../dates.js';
@@ -9,7 +9,7 @@ import { addTask } from '../tasks.js';
 import { plannedUnits } from '../libitems.js';
 import { tintHex } from '../icons.js';
 import { openSubjectEdit } from './study.js';
-import { driveHasToken, driveSignIn, prepareDrive, uploadPublicImage, driveFileAlive } from '../drive.js';
+import { driveHasToken, driveSignIn, prepareDrive, uploadPublicImage, driveFileAlive, uploadPdfToDrive } from '../drive.js';
 
 export const EXAM_KINDS = { quiz: 'مذاكرة', final: 'امتحان نهائي', practical: 'امتحان عملي', pop: 'كويز', oral: 'شفهي', other: 'تقييم' };
 const KIND_TILES = [['quiz', 'مذاكرة', 'clipboard-check'], ['final', 'نهائي', 'flag-checkered'], ['practical', 'عملي', 'flask'], ['pop', 'كويز', 'bolt'], ['oral', 'شفهي', 'comment']];
@@ -60,23 +60,69 @@ function thumb(l, i, c, s) {
   return h('span', { class: `xl-th${src ? ' img' : ''}`, style: { '--c': c } }, src ? h('img', { src, alt: '', loading: 'lazy' }) : h('b', { class: 'num' }, String(i + 1)));
 }
 function openPdf(url) { try { window.open(url, '_blank', 'noopener'); } catch { /* */ } }
-function editPdf(sid, lid, after) {
+// PDF المحاضرة: يا بتختار الملف من هاتفك (بينرفع على درايفك وبينحط رابطه لحاله)، يا بتلصق رابط عندك
+export function editPdf(sid, lid, after) {
   const l = subjectById(sid)?.lectures.find((x) => x.id === lid);
   if (!l) return;
-  openSheet('رابط PDF للمحاضرة', (body, close) => {
-    const inp = h('input', { type: 'url', dir: 'ltr', value: l.pdf || '', placeholder: 'https://drive.google.com/…', 'data-autofocus': true });
-    fill(body, [
-      h('p', { class: 'hint' }, `«${l.title}» — حط رابط الملف (درايف، تلغرام، أي رابط). رفقاتك بيقدروا يفتحوه من صفحة المشاركة.`),
-      h('label', { class: 'field' }, h('span', { class: 'field-label' }, 'الرابط'), inp),
+  const s = subjectById(sid);
+  if (navigator.onLine) prepareDrive().catch(() => {});
+  openSheet('PDF المحاضرة', (body, close) => {
+    const inp = h('input', { type: 'url', dir: 'ltr', value: l.pdf || '', placeholder: 'https://drive.google.com/…' });
+    const savePdf = (v) => store.update((st) => { const x = st.subjects.find((y) => y.id === sid)?.lectures.find((z) => z.id === lid); if (x) x.pdf = v || null; });
+    let busy = null; // نسبة الرفع
+    const fileInp = h('input', { type: 'file', accept: 'application/pdf,.pdf', style: { display: 'none' }, onchange: async () => {
+      const f = fileInp.files?.[0];
+      fileInp.value = '';
+      if (!f) return;
+      if (!/pdf$/i.test(f.type || f.name)) { toast('اختار ملف PDF.', { kind: 'warn' }); return; }
+      busy = 0; draw();
+      try {
+        const name = `${s?.name || 'مادة'} — ${l.title}.pdf`;
+        const url = await uploadPdfToDrive(f, name, (p) => { busy = p; draw(); });
+        savePdf(url);
+        haptic('success'); close(); after?.();
+        toast('انرفع الملف على درايفك وانحط رابطه — رفقاتك بيفتحوه من المشاركة');
+      } catch (err) {
+        console.warn(err);
+        busy = null; draw();
+        const why = { 'too-big': 'الملف أكبر من 5 ميغا — ارفعه على درايف وحط رابطه تحت', offline: 'ما في نت', expired: 'انتهى الإذن، جرّب كمان مرة', popup_closed: 'انسكّرت نافذة جوجل', access_denied: 'انلغى تسجيل الدخول' }[err?.message] || 'جرّب بعد شوي';
+        toast(`ما انرفع الملف (${why}).`, { kind: 'warn', duration: 5000 });
+      }
+    } });
+    function pickFromPhone() {
+      if (!navigator.onLine) { toast('بدها نت لترفع الملف.', { kind: 'warn' }); return; }
+      // أول مرة: منفتح حساب جوجل، وبعدها بتضغط مرة تانية لتختار الملف (المتصفح ما بيفتح نافذتين ورا بعض)
+      if (!driveHasToken()) {
+        driveSignIn().then(() => { try { fileInp.click(); } catch { /* */ } toast('تمام — اختار الملف'); draw(); })
+          .catch(() => toast('لازم تختار حساب جوجل لنرفع الملف على درايفك.', { kind: 'warn' }));
+        return;
+      }
+      fileInp.click();
+    }
+    function draw() {
+      fill(body, [
+        fileInp,
+        h('p', { class: 'hint' }, `«${l.title}» — رفقاتك بيفتحوا الملف من صفحة المشاركة.`),
+        busy != null
+          ? h('div', { class: 'pdf-up' }, h('div', { class: 'pdf-up-t' }, icon('cloud-arrow-up', 14), `عم نرفع الملف على درايفك… ${Math.round(busy * 100)}%`), bar(busy, { cls: 'good' }))
+          : h('button', { type: 'button', class: 'pdf-pick', onclick: pickFromPhone },
+            h('span', { class: 'pp-ic' }, icon('file-pdf', 20)),
+            h('span', null, h('b', null, l.pdf ? 'بدّل الملف من هاتفك' : 'اختار PDF من هاتفك'), h('small', null, driveHasToken() ? 'بينرفع على درايفك (مجلّد ملفات المحاضرات) وبينحط رابطه لحاله' : 'بينرفع على درايفك — أول مرة بتختار حساب جوجل')),
+            icon('chevL', 13)),
+        h('div', { class: 'sheet-section' }, 'أو عندك رابط جاهز'),
+        h('label', { class: 'field' }, h('span', { class: 'field-label' }, 'الرابط'), inp),
       h('div', { class: 'two' },
         h('button', { type: 'button', class: 'btn', onclick: () => {
           const v = inp.value.trim();
           if (v && !/^https?:\/\//i.test(v)) { toast('الرابط لازم يبلّش بـ https://', { kind: 'warn' }); return; }
-          store.update((st) => { const x = st.subjects.find((y) => y.id === sid)?.lectures.find((z) => z.id === lid); if (x) x.pdf = v || null; });
+          savePdf(v);
           close(); toast(v ? 'انحفظ الرابط' : 'انشال الرابط'); after?.();
-        } }, icon('check', 15), 'احفظ'),
-        l.pdf ? h('button', { type: 'button', class: 'btn danger', onclick: () => { store.update((st) => { const x = st.subjects.find((y) => y.id === sid)?.lectures.find((z) => z.id === lid); if (x) x.pdf = null; }); close(); after?.(); } }, 'شيله') : h('button', { type: 'button', class: 'btn secondary', onclick: () => close() }, 'إلغاء')),
-    ]);
+        } }, icon('check', 15), 'احفظ الرابط'),
+        l.pdf ? h('button', { type: 'button', class: 'btn danger', onclick: () => { savePdf(null); close(); after?.(); } }, 'شيله') : h('button', { type: 'button', class: 'btn secondary', onclick: () => close() }, 'إلغاء')),
+        l.pdf ? h('button', { type: 'button', class: 'btn secondary block', style: { marginTop: '8px' }, onclick: () => openPdf(l.pdf) }, icon('file-pdf', 14), 'افتح الملف الحالي') : null,
+      ]);
+    }
+    draw();
   });
 }
 

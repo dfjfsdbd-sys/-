@@ -1,5 +1,5 @@
 // الدراسة: المواد ومحاضراتها، وجدول المذاكرات والامتحانات (تاريخ، محاضرات داخلة، جاهزيتك، وخطة مذاكرة)
-import { h, icon, badge, bar, ring, fill, openSheet, toast, haptic, chips, openDatePicker, openTimePicker, confirmSheet, pickImage, lowResCheck, empty, openActions } from '../ui.js';
+import { h, icon, badge, bar, ring, fill, openSheet, toast, haptic, chips, openDatePicker, openTimePicker, confirmSheet, pickImage, lowResCheck, empty, openActions, openReorder } from '../ui.js';
 import { store, uid } from '../store.js';
 import { logicalToday } from '../prayer.js';
 import { addDays, dayLabel, shortDate, daysBetween, parseISO, MONTHS, WEEKDAYS, time12, durText, daysText, countText, inDaysText } from '../dates.js';
@@ -9,7 +9,7 @@ import { openFocus } from './focus.js';
 import { secTitle, itemCard } from './components.js';
 import { ITEM_ICON_CHOICES, TINT_KEYS, tintHex } from '../icons.js';
 
-import { EXAM_KINDS, examView, examsBetween, examCard, openExam, openExamEdit, openShareExams } from './exams.js';
+import { EXAM_KINDS, examView, examsBetween, examCard, openExam, openExamEdit, openShareExams, editPdf } from './exams.js';
 export { EXAM_KINDS, examsBetween, openExam, openExamEdit, openShareExams };
 const subjectById = (id) => store.state.subjects.find((x) => x.id === id);
 
@@ -25,7 +25,7 @@ export function renderStudy(ctx) {
   return h('div', null,
     h('div', { class: 'study-hero' },
       ring(overall, 62, { stroke: 5, color: 'var(--sky)', label: `${Math.round(overall * 100)}%` }),
-      h('div', null, h('strong', null, `${subs.length} مواد، ${lectCount} محاضرة`), h('small', null, upcoming.length ? `أقرب ${upcoming[0].kindLabel}: ${upcoming[0].subjectName} ${dayLabel(upcoming[0].date, today)}` : 'ما في امتحانات قريبة مسجّلة'))),
+      h('div', null, h('strong', null, `${countText(subs.length, ['مادة وحدة', 'مادتين', 'مواد', 'مادة'])}، ${lectsText(lectCount)}`), h('small', null, upcoming.length ? `أقرب ${upcoming[0].kindLabel}: ${upcoming[0].subjectName} ${dayLabel(upcoming[0].date, today)}` : 'ما في امتحانات قريبة مسجّلة'))),
     secTitle('المذاكرات والامتحانات', { ic: 'calCheck', count: upcoming.length || null, action: h('span', { class: 'sec-acts' },
       upcoming.length ? h('button', { type: 'button', class: 'link-btn share-btn', onclick: () => openShareExams() }, icon('share-nodes', 13), 'شارك') : null,
       h('button', { type: 'button', class: 'link-btn', onclick: () => openExamEdit(null) }, icon('plus', 16), 'إضافة')) }),
@@ -33,20 +33,34 @@ export function renderStudy(ctx) {
     past.length ? h('details', { class: 'past-exams' }, h('summary', null, `امتحانات مضت (${past.length})`), h('div', { class: 'group rows' }, past.reverse().map((e) => h('button', { type: 'button', class: 'row', onclick: () => openExam(e.id) },
       h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, `${e.kindLabel}: ${e.subjectName}`), h('span', { class: 'row-sub' }, shortDate(e.date))),
       e.grade != null ? h('span', { class: 'pill accent' }, `${e.grade}${e.outOf ? `/${e.outOf}` : ''}`) : h('span', { class: 'pill' }, 'سجّل العلامة'))))) : null,
-    secTitle('المواد', { ic: 'grad', count: subs.length, action: h('button', { type: 'button', class: 'link-btn', onclick: () => openSubjectEdit(null) }, icon('plus', 16), 'مادة') }),
+    secTitle('المواد', { ic: 'grad', count: subs.length, action: h('span', { class: 'sec-acts' },
+      subs.length > 1 ? h('button', { type: 'button', class: 'link-btn', onclick: () => openSubjectsOrder() }, icon('arrow-down-up-across-line', 13), 'رتّب') : null,
+      h('button', { type: 'button', class: 'link-btn', onclick: () => openSubjectEdit(null) }, icon('plus', 16), 'مادة')) }),
     // المواد بطاقات بصورها بعمودين، والمادة اللي امتحانها قريب عليها علامة
     subs.length ? h('div', { class: 'ic-grid' }, subs.map((s) => {
       const next = (s.lectures || []).find((l) => (l.mastery || 0) < 100);
       const ex = upcoming.find((e) => e.subjectId === s.id);
       return itemCard({
         tint: s.color || 'sky', ic: s.icon || 'grad', image: s.image, title: s.name,
-        sub: `${(s.lectures || []).length} محاضرة${next ? ` · التالية ${next.title}` : s.lectures?.length ? ' · كلها ثابتة' : ''}`,
+        sub: `${lectsText((s.lectures || []).length)}${next ? ` · التالية ${next.title}` : s.lectures?.length ? ' · كلها ثابتة' : ''}`,
         pct: unitsProgress(s.lectures), tag: ex ? `${ex.kindLabel} ${inDaysText(daysBetween(today, ex.date))}` : null,
         onClick: () => ctx.open(`tracks/subject/${s.id}`),
       });
     })) : empty('grad', 'أضف مواد الفصل ومحاضراتها، وكل محاضرة بتصير مهمة بلمسة.', h('button', { type: 'button', class: 'btn', onclick: () => openSubjectEdit(null) }, icon('plus', 18), 'مادة جديدة')));
 }
-export function studyActions() { return h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'إضافة', onclick: () => openActions('إضافة', [{ icon: 'grad', label: 'مادة جديدة', run: () => openSubjectEdit(null) }, { icon: 'calCheck', label: 'مذاكرة أو امتحان', run: () => openExamEdit(null) }, { icon: 'share-nodes', label: 'شارك المذاكرات', run: () => openShareExams() }]) }, icon('plus', 20)); }
+export function studyActions() { return h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'إضافة', onclick: () => openActions('إضافة', [{ icon: 'grad', label: 'مادة جديدة', run: () => openSubjectEdit(null) }, { icon: 'calCheck', label: 'مذاكرة أو امتحان', run: () => openExamEdit(null) }, store.state.subjects.length > 1 ? { icon: 'arrow-down-up-across-line', label: 'رتّب المواد', run: () => openSubjectsOrder() } : null, { icon: 'share-nodes', label: 'شارك المذاكرات', run: () => openShareExams() }]) }, icon('plus', 20)); }
+
+// ترتيب المواد: نفس الترتيب بيطلع بصفحة الدراسة والمكتبة ونافذة الإضافة
+export function openSubjectsOrder() {
+  const subs = store.state.subjects;
+  openReorder('رتّب المواد', subs.map((s) => ({ id: s.id, label: s.name, sub: lectsText((s.lectures || []).length), image: s.image, icon: s.icon || 'grad', color: tintHex(s.color || 'sky') })), (ids) => {
+    store.update((st) => {
+      const pos = new Map(ids.map((id, i) => [id, i]));
+      st.subjects = [...st.subjects].sort((a, b) => (pos.get(a.id) ?? 1e9) - (pos.get(b.id) ?? 1e9));
+    });
+  });
+}
+const lectsText = (n) => (n ? countText(n, ['محاضرة وحدة', 'محاضرتين', 'محاضرات', 'محاضرة']) : 'بلا محاضرات');
 
 /* ---------- صفحة المادة ---------- */
 export function renderSubject(ctx) {
@@ -116,9 +130,11 @@ function openLecture(sid, lid) {
         h('div', { class: 'sheet-section' }, 'الإتقان'),
         h('div', { class: 'mastery-grid' }, MASTERY_STEPS.map((st) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String((l.mastery || 0) === st.v), onclick: () => { if (st.v > (l.mastery || 0)) studyUnit('subject', sid, lid, { mastery: st.v, day: today }); else set({ mastery: st.v, done: st.v >= 100 }); render(); } }, `${st.v}% ${st.label}`))),
         h('label', { class: 'field', style: { marginTop: '12px' } }, h('span', { class: 'field-label' }, 'ملاحظات المحاضرة'), h('textarea', { rows: 3, onchange: (e) => set({ notes: e.target.value }) }, l.notes || '')),
-        h('label', { class: 'field' }, h('span', { class: 'field-label' }, 'رابط PDF (اختياري)'),
-          h('input', { type: 'url', dir: 'ltr', value: l.pdf || '', placeholder: 'https://…', onchange: (e) => { const v = e.target.value.trim(); if (v && !/^https?:\/\//i.test(v)) { toast('الرابط لازم يبلّش بـ https://', { kind: 'warn' }); return; } set({ pdf: v || null }); } }),
-          h('span', { class: 'field-hint' }, 'بيطلع زر PDF جنب المحاضرة بصفحة المذاكرة وبالمشاركة مع رفقاتك')),
+        // PDF المحاضرة: من الهاتف (بينرفع على درايفك) أو رابط جاهز
+        h('button', { type: 'button', class: 'pdf-pick', style: { marginTop: '12px' }, onclick: () => editPdf(sid, lid, render) },
+          h('span', { class: 'pp-ic' }, icon('file-pdf', 20)),
+          h('span', null, h('b', null, l.pdf ? 'ملف PDF محطوط' : 'أضف PDF المحاضرة'), h('small', null, l.pdf ? 'اضغط لتفتحه أو تبدّله' : 'من هاتفك أو رابط — بيطلع لرفقاتك بالمشاركة')),
+          l.pdf ? h('span', { class: 'pill good' }, icon('check', 10), 'موجود') : icon('chevL', 13)),
         h('div', { class: 'two' },
           h('button', { type: 'button', class: 'btn', onclick: () => { close(); setTimeout(() => startLecture(s, l, today), 250); } }, icon('play', 16), 'ابدأ دراسة'),
           h('button', { type: 'button', class: 'btn secondary', onclick: () => { addTask({ title: `${s.name}: ${l.title}`, date: today, tag: 'study', link: { kind: 'lecture', itemId: sid, unitId: lid, image: l.image || s.image || null } }); toast('انضافت لمهام اليوم'); } }, icon('plus', 16), 'لمهام اليوم')),
