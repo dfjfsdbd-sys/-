@@ -415,6 +415,69 @@ export function pickImage({ size = IMG_SIZE, square = true } = {}) {
   });
 }
 
+/* ---------- ترتيب قائمة: اسحب من المقبض (⋮⋮) أو استعمل الأسهم، وبعدين «احفظ» ---------- */
+// items: [{ id, label, sub, image, icon, color }] — onSave(ids بالترتيب الجديد)
+export function openReorder(title, items, onSave) {
+  let order = items.map((x) => x.id);
+  const byId = new Map(items.map((x) => [x.id, x]));
+  openSheet(title, (body, close) => {
+    const list = h('div', { class: 'ro-list' });
+    const move = (i, d) => { const j = i + d; if (j < 0 || j >= order.length) return; [order[i], order[j]] = [order[j], order[i]]; haptic('select'); draw(); };
+    function row(id, i) {
+      const x = byId.get(id);
+      const el = h('div', { class: 'ro-row', 'data-id': id, style: { '--c': x.color || 'var(--accent)' } },
+        h('span', { class: 'ro-grip', 'aria-label': 'اسحب لترتّب' }, icon('grip-vertical', 15)),
+        h('span', { class: 'ro-num num' }, String(i + 1)),
+        x.image ? h('img', { class: 'ro-img', src: x.image, alt: '', loading: 'lazy' }) : h('span', { class: 'ro-ic' }, icon(x.icon || 'grad', 15)),
+        h('span', { class: 'ro-main' }, h('b', null, x.label), x.sub ? h('small', null, x.sub) : null),
+        h('span', { class: 'ro-arrows' },
+          h('button', { type: 'button', 'aria-label': 'لفوق', disabled: i === 0 ? true : null, onclick: () => move(i, -1) }, icon('chevron-up', 12)),
+          h('button', { type: 'button', 'aria-label': 'لتحت', disabled: i === order.length - 1 ? true : null, onclick: () => move(i, 1) }, icon('chevron-down', 12))));
+      // السحب: بتمسك المقبض وبتطلّع/بتنزّل، والباقي بيفسحلك محل
+      el.querySelector('.ro-grip').addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        const rows = [...list.children];
+        const h0 = el.getBoundingClientRect().height + 6;
+        const from = rows.indexOf(el);
+        let to = from;
+        const y0 = e.clientY;
+        el.classList.add('dragging');
+        try { el.setPointerCapture(e.pointerId); } catch { /* */ }
+        const onMove = (ev) => {
+          const dy = ev.clientY - y0;
+          el.style.transform = `translateY(${dy}px)`;
+          to = Math.max(0, Math.min(rows.length - 1, from + Math.round(dy / h0)));
+          rows.forEach((r, k) => {
+            if (r === el) return;
+            const shift = from < to ? (k > from && k <= to ? -h0 : 0) : (k < from && k >= to ? h0 : 0);
+            r.style.transform = shift ? `translateY(${shift}px)` : '';
+          });
+        };
+        const onUp = () => {
+          el.removeEventListener('pointermove', onMove);
+          el.removeEventListener('pointerup', onUp);
+          el.removeEventListener('pointercancel', onUp);
+          if (to !== from) { const [m] = order.splice(from, 1); order.splice(to, 0, m); haptic('select'); }
+          draw();
+        };
+        el.addEventListener('pointermove', onMove);
+        el.addEventListener('pointerup', onUp);
+        el.addEventListener('pointercancel', onUp);
+      });
+      return el;
+    }
+    function draw() { fill(list, order.map(row)); }
+    draw();
+    fill(body, [
+      h('p', { class: 'hint' }, 'اسحب من المقبض لفوق أو لتحت، أو استعمل الأسهم.'),
+      list,
+      h('div', { class: 'two', style: { marginTop: '12px' } },
+        h('button', { type: 'button', class: 'btn', onclick: () => { onSave(order.slice()); close(); toast('انحفظ الترتيب'); } }, icon('check', 15), 'احفظ الترتيب'),
+        h('button', { type: 'button', class: 'btn secondary', onclick: () => close() }, 'إلغاء')),
+    ]);
+  }, { tall: true });
+}
+
 /* ---------- السحب يمين/يسار على بطاقة (لإنجاز أو تأجيل) ---------- */
 export function swipeable(el, { onLeft, onRight, leftLabel, rightLabel } = {}) {
   let x0 = null, y0 = 0, dx = 0, active = false, width = 1;

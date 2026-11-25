@@ -1,7 +1,7 @@
 // الحالة وحفظها على الجهاز
 import { kvGet, kvSet } from './db.js';
 
-export const APP_VERSION = '2.5.2';
+export const APP_VERSION = '2.5.3';
 export const DATA_VERSION = 1;
 const KEY = 'state';
 

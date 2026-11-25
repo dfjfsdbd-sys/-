@@ -210,23 +210,65 @@ export function markChanged() {
    صور المواد والمحاضرات اللي بتطلع برابط المذاكرات: بتنرفع بمجلّد لحالها بدرايفك، وكل صورة
    «أي حدا معه الرابط بيشوفها»، والرابط بيحمل رقمها بس فبيضل قصير. ما بتحتاج تكون مفعّل المزامنة. */
 const SHARE_FOLDER = 'المنظومة الإنتاجية — صور المشاركة';
+const PDF_FOLDER = 'المنظومة الإنتاجية — ملفات المحاضرات';
 export const driveHasToken = () => tokenValid();
 export const driveSignIn = () => getToken(false);
-let folderP = null;
-function shareFolder() {
-  if (!folderP) {
-    folderP = (async () => {
-      const q = encodeURIComponent(`name='${SHARE_FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+const folders = new Map();
+function folderNamed(name, description) {
+  if (!folders.has(name)) {
+    folders.set(name, (async () => {
+      const q = encodeURIComponent(`name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
       const j = await (await dfetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)&pageSize=1`)).json();
       if (j.files?.[0]?.id) return j.files[0].id;
       const r = await (await dfetch('https://www.googleapis.com/drive/v3/files?fields=id', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: SHARE_FOLDER, mimeType: 'application/vnd.google-apps.folder', description: 'صور المواد والمحاضرات اللي بتطلع بروابط المذاكرات المشارَكة' }),
+        body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder', description }),
       })).json();
       return r.id;
-    })().catch((e) => { folderP = null; throw e; });
+    })().catch((e) => { folders.delete(name); throw e; }));
   }
-  return folderP;
+  return folders.get(name);
+}
+const shareFolder = () => folderNamed(SHARE_FOLDER, 'صور المواد والمحاضرات اللي بتطلع بروابط المذاكرات المشارَكة');
+const makePublic = (id) => dfetch(`https://www.googleapis.com/drive/v3/files/${id}/permissions`, {
+  method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: 'reader', type: 'anyone' }),
+});
+
+// ملف PDF من الهاتف ← درايفك (مجلّد ملفات المحاضرات)، و«أي حدا معه الرابط بيفتحه»، وبيرجع رابطه.
+// الرفع على دفعات (resumable) حتى الملفات الكبيرة تمشي، ومع نسبة التقدّم.
+export async function uploadPdfToDrive(file, name, onProgress) {
+  await getToken(true).catch(() => getToken(false));
+  const parent = await folderNamed(PDF_FOLDER, 'ملفات PDF للمحاضرات — بتنفتح من روابط المذاكرات');
+  const meta = { name, parents: [parent], mimeType: file.type || 'application/pdf' };
+  const start = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json; charset=UTF-8', 'X-Upload-Content-Type': meta.mimeType, 'X-Upload-Content-Length': String(file.size) },
+    body: JSON.stringify(meta),
+  });
+  if (start.status === 401) { clearToken(); throw new Error('expired'); }
+  if (!start.ok) throw new Error(`http-${start.status}`);
+  const session = start.headers.get('Location');
+  let id;
+  if (session) {
+    id = await new Promise((resolve, reject) => {
+      const x = new XMLHttpRequest();
+      x.open('PUT', session);
+      x.setRequestHeader('Content-Type', meta.mimeType);
+      x.upload.onprogress = (e) => { if (e.lengthComputable) onProgress?.(e.loaded / e.total); };
+      x.onload = () => { if (x.status >= 200 && x.status < 300) { try { resolve(JSON.parse(x.responseText).id); } catch { reject(new Error('bad-response')); } } else reject(new Error(`http-${x.status}`)); };
+      x.onerror = () => reject(new Error('offline'));
+      x.send(file);
+    });
+  } else {
+    // المتصفح ما سمح نقرا عنوان الجلسة: منرفعه دفعة وحدة (للملفات الصغيرة)
+    if (file.size > 5 * 1024 * 1024) throw new Error('too-big');
+    const b = `-------manz${Date.now()}`;
+    const body = new Blob([`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: ${meta.mimeType}\r\n\r\n`, file, `\r\n--${b}--`]);
+    ({ id } = await (await dfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', { method: 'POST', headers: { 'Content-Type': `multipart/related; boundary=${b}` }, body })).json());
+    onProgress?.(1);
+  }
+  await makePublic(id);
+  return `https://drive.google.com/file/d/${id}/view`;
 }
 // الصورة لسّا موجودة؟ (إذا انمسحت من درايف منرفعها من جديد)
 export async function driveFileAlive(id) {
@@ -243,9 +285,7 @@ export async function uploadPublicImage(blob, name) {
   const { id } = await (await dfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
     method: 'POST', headers: { 'Content-Type': `multipart/related; boundary=${b}` }, body,
   })).json();
-  await dfetch(`https://www.googleapis.com/drive/v3/files/${id}/permissions`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: 'reader', type: 'anyone' }),
-  });
+  await makePublic(id);
   return id;
 }
 
