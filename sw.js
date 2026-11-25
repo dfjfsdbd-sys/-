@@ -11,7 +11,7 @@
      التطبيق بيطلعلك «في نسخة جديدة — حدّث».
    ================================================================ */
 
-const VERSION = '2.5.1';
+const VERSION = '2.5.2';
 const CACHE = `manzumati-${VERSION}`;
 const RUNTIME = 'manzumati-runtime';
 

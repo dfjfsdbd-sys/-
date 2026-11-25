@@ -63,6 +63,20 @@ a{color:inherit;text-decoration:none}
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : ''; }
   function safeImg(u) { return /^data:image\/(png|jpe?g|webp);base64,/i.test(u || '') ? u : ''; }
+  // الصورة: يا جوّا البيانات (الملف)، يا رقم ملفها على درايف (الرابط: g:رقم). fb = شو بيطلع مكانها إذا ما حمّلت
+  function pic(u, fb) {
+    var m = /^g:([\w-]{10,100})$/.exec(u || '');
+    if (m) return '<img src="https://drive.google.com/thumbnail?id=' + m[1] + '&amp;sz=w320" alt="" loading="lazy" referrerpolicy="no-referrer" data-g="' + m[1] + '" data-fb="' + esc(fb) + '">';
+    var d = safeImg(u);
+    return d ? '<img src="' + d + '" alt="">' : '';
+  }
+  function fallback(img) {
+    // أول مرة منجرّب عنوان جوجل التاني، وبعدها منحط الأيقونة أو الرقم
+    if (!img.dataset.alt) { img.dataset.alt = '1'; img.src = 'https://lh3.googleusercontent.com/d/' + img.dataset.g + '=w320'; return; }
+    var p = img.parentNode, fb = img.dataset.fb || '';
+    img.remove();
+    if (p) p.innerHTML = fb.indexOf('i:') === 0 ? '<i class="fa-solid fa-' + fb.slice(2) + '"></i>' : esc(fb.slice(2));
+  }
   function parse(d) { var p = d.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
   function iso(dt) { return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0'); }
   function t12(h) { if (!h) return ''; var a = h.split(':'), H = +a[0], m = a[1]; return (H % 12 || 12) + ':' + m + (H < 12 ? ' ص' : ' م'); }
@@ -149,24 +163,27 @@ a{color:inherit;text-decoration:none}
     list.forEach(function (e, i) {
       e.l = e.l || [];
       var dt = parse(e.d), n = Math.round((dt - parse(today)) / 86400000), c = /^#[0-9a-f]{6}$/i.test(e.c) ? e.c : '#4a9ee0';
-      var q = Q[e.q], img = safeImg(e.i);
+      var q = Q[e.q], subIc = ICONS[e.ic] || 'graduation-cap', img = pic(e.i, 'i:' + subIc);
       var chips = [];
       if (q) chips.push('<span><i class="fa-solid fa-' + q[1] + '"></i> ' + q[0] + (e.n ? ' · ' + count(e.n, ['سؤال واحد', 'سؤالين', 'أسئلة', 'سؤال']) : '') + '</span>');
       if (e.m) chips.push('<span><i class="fa-regular fa-clock"></i> ' + e.m + ' د</span>');
       if (e.l.length) chips.push('<span><i class="fa-solid fa-layer-group"></i> ' + count(e.l.length, ['محاضرة وحدة', 'محاضرتين', 'محاضرات', 'محاضرة']) + '</span>');
       var lecs = e.l.map(function (l) {
-        var li = safeImg(l[2]), pdf = safeUrl(l[1]);
-        return '<div class="lr"><span class="th">' + (li ? '<img src="' + li + '" alt="">' : (l[3] || '')) + '</span><div class="in"><b>' + esc(l[0]) + '</b>' + (l[3] ? '<small>محاضرة ' + l[3] + '</small>' : '') + '</div>' + (pdf ? '<a class="pdf" href="' + esc(pdf) + '" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> PDF</a>' : '') + '</div>';
+        var li = pic(l[2], 'n:' + (l[3] || '')), pdf = safeUrl(l[1]);
+        return '<div class="lr"><span class="th">' + (li || (l[3] || '')) + '</span><div class="in"><b>' + esc(l[0]) + '</b>' + (l[3] ? '<small>محاضرة ' + l[3] + '</small>' : '') + '</div>' + (pdf ? '<a class="pdf" href="' + esc(pdf) + '" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> PDF</a>' : '') + '</div>';
       }).join('');
       html += '<div class="fc' + (n < 0 ? ' past' : '') + (i === 0 && n >= 0 ? ' open' : '') + '" style="--c:' + c + '">' +
         '<button class="top" type="button"><span class="dd"><b>' + dt.getDate() + '</b><small>' + MONTHS[dt.getMonth()] + '</small><span>' + DAYS[dt.getDay()] + '</span></span>' +
         '<span class="mid"><span class="tt"><span class="pt">' + esc(e.k) + '</span><b>' + esc(e.s) + '</b></span><small>' + [t12(e.h), esc(e.p), '<span class="left">' + inDays(n) + '</span>'].filter(Boolean).join(' — ') + '</small>' + (chips.length ? '<span class="qs">' + chips.join('') + '</span>' : '') + '</span>' +
-        '<span class="av">' + (img ? '<img src="' + img + '" alt="">' : '<i class="fa-solid fa-' + (ICONS[e.ic] || 'graduation-cap') + '"></i>') + '</span></button>' +
+        '<span class="av">' + (img || '<i class="fa-solid fa-' + subIc + '"></i>') + '</span></button>' +
         '<div class="bd">' + (lecs || '<div class="none">ما انحددت المحاضرات بعد.</div>') + (e.no ? '<div class="memo"><i class="fa-regular fa-note-sticky"></i> ' + esc(e.no) + '</div>' : '') +
         (n >= 0 ? '<a class="cal" href="' + esc(gcal(e)) + '" target="_blank" rel="noopener"><i class="fa-regular fa-calendar-plus"></i> ضيفها لتقويمي</a>' : '') + '</div></div>';
     });
     html += '<div class="ft"><i class="fa-solid fa-seedling"></i> انعملت بتطبيقي</div>';
     app.innerHTML = html;
+    Array.prototype.forEach.call(app.querySelectorAll('img[data-g]'), function (im) {
+      im.addEventListener('error', function () { fallback(im); });
+    });
     Array.prototype.forEach.call(app.querySelectorAll('.fc .top'), function (b) { b.addEventListener('click', function () { b.parentNode.classList.toggle('open'); }); });
   }
   var p = window.SHARE_DATA ? Promise.resolve(window.SHARE_DATA) : decode(location.hash.slice(1));
