@@ -20,6 +20,8 @@ import { openActions } from '../ui.js';
 import { renderProjectsInline } from './projects.js';
 
 let mode = 'week';
+// فتح التخطيط على قسم معيّن (مثلاً «المشاريع» من المكتبة)
+export function setPlanMode(m) { mode = m; }
 let weekStart = null;
 let month = null;
 

@@ -14,7 +14,7 @@ import { WORKOUT_TYPES } from '../sport.js';
 import { masteryLabel } from '../library.js';
 import { confirmDelete } from './components.js';
 import { googleCalendarUrl } from '../notify.js';
-import { libItems, unitsFor, unitWord, plannedUnits, nextUnit, makeLink, autoTitle, typeOf, itemProgress } from '../libitems.js';
+import { libItems, unitsFor, unitWord, plannedUnits, nextUnit, makeLink, autoTitle, typeOf, itemProgress, linkItemId } from '../libitems.js';
 
 export const STATION_NAMES = { fajr: 'بعد الفجر', morning: 'فترة الصباح', dhuhr: 'بعد الظهر', asr: 'بعد العصر', maghrib: 'بعد المغرب', isha: 'بعد العشاء' };
 const SHORT = { fajr: 'الفجر', morning: 'الصباح', dhuhr: 'الظهر', asr: 'العصر', maghrib: 'المغرب', isha: 'العشاء' };
@@ -44,7 +44,7 @@ export function openTaskForm(id, preset = {}) {
   const editing = id ? taskById(id) : null;
   if (id && !editing) return;
   const f = editing ? {
-    type: typeOf(editing), itemId: editing.link?.itemId ? (editing.link.kind === 'adhkar' ? `adhkar:${editing.link.itemId}` : editing.link.itemId) : null,
+    type: typeOf(editing), itemId: editing.link?.itemId ? (editing.link.kind === 'adhkar' ? `adhkar:${editing.link.itemId}` : linkItemId(editing.link)) : null,
     unitId: editing.link?.unitId || null, title: editing.title, estimate: editing.estimate || 0,
     date: editing.date, period: editing.period, time: editing.time, recur: editing.recur, due: editing.due,
     remind: editing.remind, priority: editing.priority || 0, notes: editing.notes || '', checklist: [...(editing.checklist || [])],

@@ -1,5 +1,5 @@
 // «وين مقصّر هالأسبوع» والمجالات: من سجلّك الحقيقي، مع مقارنة بنفس الأيام من الأسبوع الماضي
-import { h, icon, bar } from '../ui.js';
+import { h, icon, bar, toast } from '../ui.js';
 import { store } from '../store.js';
 import { PRAYERS, PRAYER_NAMES, adhanFor, nowMinOfLogical } from '../prayer.js';
 import { addDays, weekStartOf, toMin, daysText, countText, inDaysText, daysBetween } from '../dates.js';
@@ -10,6 +10,19 @@ import { shiftOn } from '../shifts.js';
 import { muhasabaDone, openMuhasaba } from './muhasaba.js';
 import { openKhatma } from './khatma.js';
 import { openExam, EXAM_KINDS } from './study.js';
+import { planExam } from './exams.js';
+import { plannedUnits } from '../libitems.js';
+
+// النقاط اللي سكّرتها هالأسبوع (بالـ×): بتختفي لحد الأسبوع الجاي
+const offKeys = (ws) => new Set(store.state.weakOff?.[ws] || []);
+function hideWeak(ws, key) {
+  store.update((s) => {
+    const all = { ...(s.weakOff || {}) };
+    for (const k of Object.keys(all)) if (k < addDays(ws, -21)) delete all[k];
+    all[ws] = [...new Set([...(all[ws] || []), key])];
+    s.weakOff = all;
+  });
+}
 
 const ON_TIME = new Set(['ontime', 'jamaah', 'sunnah']);
 const range = (a, b) => { const out = []; for (let d = a; d <= b; d = addDays(d, 1)) out.push(d); return out; };
@@ -93,25 +106,28 @@ export function weakTop(today) {
   if (worst) {
     const work = worst.miss.filter((d) => shiftOn(d)?.kind === 'work').length;
     out.push({
+      key: `pr:${worst.k}`,
       sev: worst.miss.length / Math.max(1, logged.length) + (worst.k === 'fajr' ? 0.15 : 0.1),
       t: `صلاة ${PRAYER_NAMES[worst.k]} بوقتها ${logged.length - worst.miss.length} من ${logged.length}`,
       s: work ? `${work === worst.miss.length ? 'كل اللي فاتوا' : `${work} من اللي فاتوا`} بأيام الشغل` : `فاتتك ${countText(worst.miss.length, ['مرة', 'مرتين', 'مرات', 'مرة'])} هالأسبوع`,
       fix: worst.k === 'fajr' ? { ic: 'moon', label: 'رتّب نومك على دورات', go: 'settings/sleep' } : { ic: 'mosque', label: 'افتح الصلوات', go: 'tracks/worship' },
     });
   }
-  // مذاكرة قريبة وفيها محاضرات ما خلصت
+  // مذاكرة قريبة وفيها محاضرات ما خلصت — واللي انوزّعت كمهام على أيامك ما عادت تقصير
+  const planned = plannedUnits();
   for (const e of s.exams || []) {
     const n = daysBetween(today, e.date);
     if (n < 0 || n > 10) continue;
     const sj = s.subjects.find((x) => x.id === e.subjectId);
-    const lects = (sj?.lectures || []).filter((l) => e.lectureIds?.includes(l.id) && (l.mastery || 0) < 75);
+    const lects = (sj?.lectures || []).filter((l) => e.lectureIds?.includes(l.id) && (l.mastery || 0) < 75 && !planned.has(l.id));
     if (!lects.length) continue;
     out.push({
+      key: `ex:${e.id}`,
       // المذاكرة القريبة أهم شي: كل ما قربت وكتر الباقي بتطلع لفوق
       sev: 0.8 + Math.min(0.5, lects.length / Math.max(1, n + 1) / 2),
-      t: `${sj.name}: باقي ${countText(lects.length, ['محاضرة', 'محاضرتين', 'محاضرات', 'محاضرة'])}`,
+      t: `${sj.name}: باقي ${countText(lects.length, ['محاضرة', 'محاضرتين', 'محاضرات', 'محاضرة'])} ما انوزّعت`,
       s: `${EXAM_KINDS[e.kind] || 'الامتحان'} ${inDaysText(n)}`,
-      fix: { ic: 'wand', label: 'وزّعهم على الأيام', run: () => openExam(e.id) },
+      fix: n > 0 ? { ic: 'wand', label: 'وزّعهم على الأيام', run: () => planExam(e, lects, today) } : { ic: 'calendar-check', label: 'افتح المذاكرة', run: () => openExam(e.id) },
     });
   }
   // المجالات الضعيفة
@@ -119,22 +135,23 @@ export function weakTop(today) {
     if (a.key === 'prayers' || a.pct == null || a.pct >= 0.6 || a.total < 2) continue;
     if (a.key === 'quran') {
       const w = wirdToday(today);
-      out.push({ sev: 1 - a.pct, t: `ورد القرآن ${a.done} من ${a.total} صفحة`, s: w.plan ? `الختمة متأخرة — الورد اليومي صار ${w.target}` : 'هالأسبوع لحد هلّق', fix: { ic: 'quran', label: 'افتح الختمة', run: () => openKhatma() } });
+      out.push({ key: 'ar:quran', sev: 1 - a.pct, t: `ورد القرآن ${a.done} من ${a.total} صفحة`, s: w.plan ? `الختمة متأخرة — الورد اليومي صار ${w.target}` : 'هالأسبوع لحد هلّق', fix: { ic: 'quran', label: 'افتح الختمة', run: () => openKhatma() } });
     } else if (a.key === 'habits') {
       const th = passThreshold();
       let low = null;
       for (const hb of activeHabits()) { const n = past.filter((d) => { const sc = habitScore(d, hb.id); return sc != null && sc < th; }).length; if (n >= 2 && (!low || n > low.n)) low = { hb, n }; }
-      if (low) out.push({ sev: 1 - a.pct, t: `${low.hb.name} تحت الحد ${daysText(low.n)}`, s: `متوسط السلوك ${Math.round(a.pct * 100)}%`, fix: { ic: 'compass', label: 'افتح السلوك', go: 'tracks/habits' } });
+      if (low) out.push({ key: `hb:${low.hb.id}`, sev: 1 - a.pct, t: `${low.hb.name} تحت الحد ${daysText(low.n)}`, s: `متوسط السلوك ${Math.round(a.pct * 100)}%`, fix: { ic: 'compass', label: 'افتح السلوك', go: 'tracks/habits' } });
     } else {
-      out.push({ sev: (1 - a.pct) * 0.9, t: `${a.name}: ${a.sub}`, s: a.prevPct != null && a.prevPct > a.pct ? `الأسبوع الماضي كانت ${Math.round(a.prevPct * 100)}%` : 'هالأسبوع لحد هلّق', fix: { ic: a.ic, label: `افتح ${a.short}`, go: a.go } });
+      out.push({ key: `ar:${a.key}`, sev: (1 - a.pct) * 0.9, t: `${a.name}: ${a.sub}`, s: a.prevPct != null && a.prevPct > a.pct ? `الأسبوع الماضي كانت ${Math.round(a.prevPct * 100)}%` : 'هالأسبوع لحد هلّق', fix: { ic: a.ic, label: `افتح ${a.short}`, go: a.go } });
     }
   }
   // محاسبة النفس
   if (past.length >= 3) {
     const nights = past.filter((d) => muhasabaDone(d)).length;
-    if (nights < past.length / 2) out.push({ sev: 0.35, t: `محاسبة النفس ${nights} من ${past.length} ليالي`, s: 'دقيقتين قبل النوم بيفرقوا', fix: { ic: 'feather', label: 'حاسب حالك الليلة', run: () => openMuhasaba(today) } });
+    if (nights < past.length / 2) out.push({ key: 'mh', sev: 0.35, t: `محاسبة النفس ${nights} من ${past.length} ليالي`, s: 'دقيقتين قبل النوم بيفرقوا', fix: { ic: 'feather', label: 'حاسب حالك الليلة', run: () => openMuhasaba(today) } });
   }
-  return out.sort((a, b) => b.sev - a.sev).slice(0, 3);
+  const off = offKeys(ws);
+  return out.filter((x) => !off.has(x.key)).sort((a, b) => b.sev - a.sev).slice(0, 3);
 }
 
 export function strengthsOf(today) {
@@ -170,7 +187,9 @@ export function weakCard(ctx) {
     h('div', { class: 'wm-list' }, top.map((x, i) => h('div', { class: 'wm-it' },
       h('span', { class: 'wm-n num' }, String(i + 1)),
       h('div', null, h('b', null, x.t), h('small', null, x.s),
-        x.fix ? h('button', { type: 'button', class: 'wm-fix', onclick: () => runFix(x.fix) }, icon(x.fix.ic, 11), x.fix.label) : null)))));
+        x.fix ? h('button', { type: 'button', class: 'wm-fix', onclick: () => runFix(x.fix) }, icon(x.fix.ic, 11), x.fix.label) : null),
+      // سكّرها لهالأسبوع (مثلاً إذا عالجتها بطريقة تانية)
+      x.key ? h('button', { type: 'button', class: 'wm-x', 'aria-label': 'خبّيها لهالأسبوع', onclick: () => { const ws = weekStartOf(today); hideWeak(ws, x.key); toast('انخبّت لهالأسبوع', { action: 'تراجع', onAction: () => store.update((s) => { s.weakOff = { ...(s.weakOff || {}), [ws]: (s.weakOff?.[ws] || []).filter((k) => k !== x.key) }; }) }); } }, icon('close', 11)) : null))));
 }
 
 export function areasCard(ctx) {

@@ -1,22 +1,23 @@
-// الختمة: هدف (ختمة بعدد أيام، أو عدة ختمات بالشهر) ← ورد كل يوم من صفحة لصفحة، وشريط لوين وصلت.
+// الورد: نافذة الإنجاز اللي بتنفتح من صفحة المهام (لوين وصلت وقديش قرأت) — بس إنجاز.
+// تخطيط الختمة (ختمة بعدد أيام، أو عدة ختمات بالشهر) صار بصفحة القرآن الكريم بالعبادات: khatmaPlanCard.
 // إذا ما كمّلت، بكرة الباقي بيتوزّع على الأيام الباقية لحالو.
 import { h, icon, fill, openSheet, toast, haptic, bar } from '../ui.js';
 import { store } from '../store.js';
 import { logicalToday } from '../prayer.js';
-import { shortDate, WEEKDAYS, parseISO, addDays, daysBetween, daysText } from '../dates.js';
+import { shortDate, WEEKDAYS, parseISO, addDays, daysBetween, daysText, pagesText } from '../dates.js';
 import { wirdToday, readQuranTo, setKhatmaPlan, clearKhatmaPlan, khatmaDuration, quranPage } from '../worship.js';
 import { TOTAL_PAGES, surahOfPage } from '../data/quran-meta.js';
 import { openReader } from './worship.js';
 
 const juz = (pages) => {
   const j = pages / 20;
-  return j >= 1 ? `${+j.toFixed(1)} جزء` : `${pages} صفحة`;
+  return j >= 1 ? `${+j.toFixed(1)} جزء` : pagesText(pages);
 };
 const dayName = (d) => `${WEEKDAYS[parseISO(d).getDay()]} ${shortDate(d)}`;
 
 export function openKhatma(day = logicalToday()) {
   let unsub = null;
-  openSheet('الختمة', (body, close) => {
+  openSheet('ورد اليوم', (body, close) => {
     function render() {
       const w = wirdToday(day);
       const p = w.plan;
@@ -30,24 +31,16 @@ export function openKhatma(day = logicalToday()) {
         h('div', { class: 'kh-k' }, 'ورد اليوم'),
         h('div', { class: 'kh-range' }, `من ص ${w.from} إلى ص ${w.to}`),
         h('div', { class: 'muted' }, `${surahOfPage(w.from).name} ← ${surahOfPage(w.to).name} · ${juz(w.target)}`),
-        h('div', { class: 'kh-prog' }, h('span', null, `قرأت ${w.read} من ${w.target} صفحة`), h('b', null, `${Math.round(pct * 100)}%`)),
+        h('div', { class: 'kh-prog' }, h('span', null, `قرأت ${w.read} من ${pagesText(w.target)}`), h('b', null, `${Math.round(pct * 100)}%`)),
         bar(pct, { cls: 'good big' }),
         h('div', { class: 'kh-acts' },
           h('button', { type: 'button', class: 'btn good', onclick: () => { close(); setTimeout(() => openReader(w.nowPage, day), 240); } }, icon('bookOpen', 15), `كمّل من ص ${w.nowPage}`),
           h('button', { type: 'button', class: 'btn secondary', onclick: () => askPage() }, icon('flag', 14), 'وصلت لصفحة…')),
-        h('div', { class: 'kh-quick' }, [5, 10, 20].map((n) => h('button', { type: 'button', class: 'chip small', onclick: () => log(Math.min(TOTAL_PAGES, w.nowPage + n - 1)) }, `+${n} صفحات`)),
-          left > 0 ? h('button', { type: 'button', class: 'chip small', onclick: () => log(w.to) }, 'خلّصت ورد اليوم') : null)));
-      rows.push(h('div', { class: 'sheet-section' }, 'الختمة كلها'),
-        h('div', { class: 'kh-box' },
-          h('div', { class: 'kh-prog' }, h('span', null, `ص ${w.nowPage - 1} من ${TOTAL_PAGES}`), h('b', null, `${Math.round(w.overall * 100)}%`)),
-          bar(w.overall, { cls: 'good big' }),
-          h('p', { class: 'muted', style: { marginTop: '8px' } }, w.eta ? `على سرعتك بتخلص ${dayName(w.eta)}${p ? ` · الهدف ${dayName(p.end)}` : ''}` : 'سجّل قراءتك لنحسب أيمت بتخلص')));
-      if (p && left > 0 && w.daysLeft > 1) {
-        const nextTarget = Math.ceil((TOTAL_PAGES - w.nowPage + 1) / (w.daysLeft - 1));
-        rows.push(h('div', { class: 'sheet-section' }, 'إذا ما كمّلت اليوم'),
-          h('div', { class: 'kh-box muted' }, `بكرة بيطلعلك من ص ${w.nowPage} إلى ص ${Math.min(TOTAL_PAGES, w.nowPage + nextTarget - 1)} — الباقي بيتوزّع على ${w.daysLeft - 1} أيام، والشريط بيكمّل من مكانه.`));
-      }
-      rows.push(h('div', { class: 'sheet-section' }, p ? 'غيّر الخطة' : 'ابدأ ختمة'), planForm(p));
+        h('div', { class: 'kh-quick' }, [5, 10, 20].map((n) => h('button', { type: 'button', class: 'chip small', onclick: () => log(Math.min(TOTAL_PAGES, w.nowPage + n - 1)) }, `+${n} ${n <= 10 ? 'صفحات' : 'صفحة'}`)),
+          left > 0 ? h('button', { type: 'button', class: 'chip small good-chip', onclick: () => log(w.to) }, icon('check', 11), 'خلّصت ورد اليوم') : null)));
+      // التخطيط مش هون: رابط لصفحة القرآن الكريم بالعبادات
+      rows.push(h('button', { type: 'button', class: 'kh-link', onclick: () => { close(); setTimeout(() => { location.hash = '#/tracks/quran'; }, 240); } },
+        icon('sliders', 14), h('span', null, p ? 'خطة الختمة والورد اليومي' : 'ابدأ ختمة أو غيّر الورد اليومي', h('small', null, 'بصفحة القرآن الكريم بالعبادات')), icon('chevL', 12)));
       fill(body, rows);
     }
     function log(to) {
@@ -63,7 +56,31 @@ export function openKhatma(day = logicalToday()) {
           h('button', { type: 'button', class: 'btn block', onclick: () => { const v = Number(inp.value); if (!v || v < quranPage()) { toast('اكتب رقم صفحة بعد مكانك.', { kind: 'warn' }); return; } cl(); setTimeout(() => log(Math.min(TOTAL_PAGES, v)), 230); } }, 'سجّل')]);
       });
     }
-    function planForm(p) {
+    render();
+    unsub = store.subscribe(() => { if (document.contains(body)) render(); });
+  }, { onClose: () => unsub?.() });
+}
+
+/* ---------- خطة الختمة (بصفحة القرآن الكريم) ---------- */
+export function khatmaPlanCard(day = logicalToday()) {
+  const w = wirdToday(day);
+  const p = w.plan;
+  const wrap = h('div', null);
+  if (p) {
+    wrap.append(h('div', { class: 'kh-sum' },
+      h('div', { class: 'kh-top' },
+        h('span', { class: 'pill good' }, icon('quran', 12), p.mode === 'month' ? `الختمة ${p.n || 1} من ${p.perMonth} هالشهر` : `ختمة بـ ${daysText(p.days)}`),
+        h('span', { class: 'muted' }, `الهدف ${dayName(p.end)}`)),
+      h('div', { class: 'kh3' },
+        h('div', null, h('b', { class: 'num' }, String(w.target)), h('small', null, `${w.target >= 3 && w.target <= 10 ? 'صفحات' : 'صفحة'} باليوم`)),
+        h('div', null, h('b', null, w.daysLeft === 1 ? 'اليوم' : daysText(w.daysLeft)), h('small', null, w.daysLeft === 1 ? 'آخر يوم' : 'باقي')),
+        h('div', null, h('b', null, w.eta ? `${WEEKDAYS[parseISO(w.eta).getDay()]}` : '—'), h('small', null, 'بتخلص على سرعتك'))),
+      w.read < w.target && w.daysLeft > 1 ? h('p', { class: 'muted', style: { marginTop: '8px' } }, 'إذا ما كمّلت ورد اليوم، الباقي بيتوزّع على الأيام الجاية لحاله.') : null));
+  }
+  wrap.append(planForm(p, day));
+  return wrap;
+}
+function planForm(p, day) {
       const f = { mode: p?.mode === 'month' ? 'month' : (p?.mode === 'days' && ![7].includes(p.days) ? 'custom' : 'days7'), days: p?.days || 10, perMonth: p?.perMonth || 4, fromStart: !p };
       const box = h('div', { class: 'kh-box' });
       function draw() {
@@ -85,15 +102,11 @@ export function openKhatma(day = logicalToday()) {
           h('p', { class: 'muted' }, `= ${daily} صفحة باليوم تقريباً (${juz(daily)}) · بتطلع كمهمة ببعد الفجر`),
           h('button', { type: 'button', class: 'btn good block', onclick: () => {
             setKhatmaPlan({ mode: f.mode === 'month' ? 'month' : 'days', days: f.mode === 'days7' ? 7 : f.days, perMonth: f.perMonth, fromStart: f.fromStart }, day);
-            toast('انحفظت خطة الختمة'); render();
+            toast('انحفظت خطة الختمة');
           } }, icon('check', 15), p ? 'غيّر الخطة' : 'ابدأ الختمة'),
-          p ? h('button', { type: 'button', class: 'btn danger block', onclick: () => { clearKhatmaPlan(); render(); } }, 'وقّف الخطة (رجوع للورد اليومي)') : null,
+          p ? h('button', { type: 'button', class: 'btn danger block', onclick: () => { clearKhatmaPlan(); toast('وقفت الخطة — رجعنا للورد اليومي'); } }, 'وقّف الخطة (رجوع للورد اليومي)') : null,
         ]);
       }
       draw();
       return box;
-    }
-    render();
-    unsub = store.subscribe(() => { if (document.contains(body)) render(); });
-  }, { onClose: () => unsub?.() });
 }

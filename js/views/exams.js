@@ -1,13 +1,15 @@
 // المذاكرات والامتحانات: البطاقة، صفحة المذاكرة (غلاف بصورة المادة، المعلومات، المحاضرات بصورها وروابط PDF)،
 // نافذة الإضافة، والمشاركة مع رفقاتك (رابط تفاعلي، صورة، أو ملف) — بلا جاهزيتك ولا تقدّمك.
-import { h, icon, ring, fill, openSheet, toast, haptic, openDatePicker, openTimePicker, confirmSheet } from '../ui.js';
+import { h, icon, ring, fill, openSheet, toast, haptic, openDatePicker, openTimePicker, confirmSheet, toggleRow } from '../ui.js';
 import { store, uid } from '../store.js';
 import { logicalToday } from '../prayer.js';
 import { addDays, shortDate, daysBetween, parseISO, MONTHS, WEEKDAYS, time12, daysText, countText, inDaysText } from '../dates.js';
 import { masteryLabel, unitsProgress } from '../library.js';
 import { addTask } from '../tasks.js';
+import { plannedUnits } from '../libitems.js';
 import { tintHex } from '../icons.js';
 import { openSubjectEdit } from './study.js';
+import { driveHasToken, driveSignIn, prepareDrive, uploadPublicImage, driveFileAlive } from '../drive.js';
 
 export const EXAM_KINDS = { quiz: 'مذاكرة', final: 'امتحان نهائي', practical: 'امتحان عملي', pop: 'كويز', oral: 'شفهي', other: 'تقييم' };
 const KIND_TILES = [['quiz', 'مذاكرة', 'clipboard-check'], ['final', 'نهائي', 'flag-checkered'], ['practical', 'عملي', 'flask'], ['pop', 'كويز', 'bolt'], ['oral', 'شفهي', 'comment']];
@@ -89,6 +91,9 @@ export function openExam(id) {
       const c = tintHex(e.subjectColor || 'sky');
       const n = daysBetween(today, e.date);
       const notReady = e.lectureList.filter((l) => (l.mastery || 0) < 75);
+      // اللي إلها مهمة بأيامك (لسّا ما انعملت) انوزّعت — ما منعيد نوزّعها
+      const planned = plannedUnits();
+      const unplanned = notReady.filter((l) => !planned.has(l.id));
       const perDay = n > 1 ? Math.ceil(notReady.length / (n - 1)) : notReady.length;
       const q = QTYPES[e.qtype];
       const d = parseISO(e.date);
@@ -107,7 +112,8 @@ export function openExam(id) {
         n >= 0 && e.lectures ? h('div', { class: 'xm-ready' },
           ring(e.ready, 56, { stroke: 5, color: e.ready >= 0.75 ? 'var(--good)' : e.ready >= 0.5 ? '#f0b766' : 'var(--bad)', label: `${Math.round(e.ready * 100)}%` }),
           h('div', null, h('b', null, 'جاهزيتك'), h('small', null, notReady.length ? `باقي ${lecWord(notReady.length)}${n > 1 ? ` — إذا درست ${perDay} باليوم بتخلص قبلها بيوم` : ''}` : 'كل المحاضرات مراجَعة — الله يوفقك'))) : null,
-        n > 0 && notReady.length ? h('button', { type: 'button', class: 'btn block', style: { margin: '10px 0 0' }, onclick: () => { planExam(raw, notReady, today); close(); } }, icon('wand', 15), 'وزّع الباقي على الأيام') : null,
+        n > 0 && unplanned.length ? h('button', { type: 'button', class: 'btn block', style: { margin: '10px 0 0' }, onclick: () => { planExam(raw, unplanned, today); close(); } }, icon('wand', 15), unplanned.length < notReady.length ? `وزّع الباقي (${lecWord(unplanned.length)})` : 'وزّع الباقي على الأيام') : null,
+        n > 0 && notReady.length && !unplanned.length ? h('p', { class: 'xm-planned' }, icon('circle-check', 13), 'المحاضرات الباقية كلها موزّعة على أيامك كمهام') : null,
         h('div', { class: 'xm-sec' }, icon('layer-group', 12), `المحاضرات الداخلة`, h('em', { class: 'num' }, String(e.lectures))),
         e.lectureList.length ? h('div', { class: 'xl-list' }, e.lectureList.map((l, i) => {
           const m = l.mastery || 0;
@@ -147,7 +153,9 @@ export function planExam(e, lects, today) {
       addTask({ title: `${s?.name}: ${l.title}`, date, tag: 'study', link: { kind: 'lecture', itemId: e.subjectId, unitId: l.id, image: l.image || s?.image || null }, period: null });
     }
   }
-  if (n > 1) addTask({ title: `مراجعة عامة: ${s?.name} (${EXAM_KINDS[e.kind] || 'امتحان'})`, date: addDays(e.date, -1), tag: 'study', priority: 1 });
+  const reviewTitle = `مراجعة عامة: ${s?.name} (${EXAM_KINDS[e.kind] || 'امتحان'})`;
+  const reviewDay = addDays(e.date, -1);
+  if (n > 1 && !store.state.tasks.some((t) => t.title === reviewTitle && t.date === reviewDay)) addTask({ title: reviewTitle, date: reviewDay, tag: 'study', priority: 1 });
   toast(`انوزّعت ${lecWord(lects.length)} على ${daysText(days)}`);
 }
 
@@ -239,18 +247,20 @@ function shrink(src, size, q = 0.7) {
     img.src = src;
   });
 }
-// البيانات اللي بتنشارك: مواعيد ومحاضرات وروابط — بلا أي تقدّم
-async function payload(ids, title, { subImg = 0, lecImg = 0 } = {}) {
-  const list = ids.map((id) => store.state.exams.find((x) => x.id === id)).filter(Boolean).map(examView).sort((a, b) => a.date.localeCompare(b.date));
+const examsOf = (ids) => ids.map((id) => store.state.exams.find((x) => x.id === id)).filter(Boolean).map(examView).sort((a, b) => a.date.localeCompare(b.date));
+// البيانات اللي بتنشارك: مواعيد ومحاضرات وروابط — بلا أي تقدّم.
+// pic: كيف بتنحط الصورة (افتراضياً صورة مصغّرة جوّا البيانات، وبالرابط رقم ملفها على درايف)
+async function payload(ids, title, { subImg = 0, lecImg = 0, pic = null } = {}) {
+  const img = pic || ((src, size) => shrink(src, size));
   const x = [];
-  for (const e of list) {
+  for (const e of examsOf(ids)) {
     const s = e.subject;
     const lecs = [];
     for (const l of e.lectureList) {
       const idx = (s?.lectures || []).findIndex((y) => y.id === l.id);
-      lecs.push([l.title, l.pdf || '', lecImg ? (await shrink(l.image, lecImg)) || 0 : 0, idx + 1]);
+      lecs.push([l.title, l.pdf || '', lecImg && l.image ? (await img(l.image, lecImg)) || 0 : 0, idx + 1]);
     }
-    const o = { s: e.subjectName, c: tintHex(e.subjectColor || 'sky'), ic: s?.icon || 'grad', i: subImg ? await shrink(s?.image, subImg) : null, k: e.kindLabel, d: e.date, h: e.time, p: e.place, q: e.qtype, n: e.qcount, m: e.duration, o: e.outOf, no: e.notes, l: lecs };
+    const o = { s: e.subjectName, c: tintHex(e.subjectColor || 'sky'), ic: s?.icon || 'grad', i: subImg && s?.image ? await img(s.image, subImg) : null, k: e.kindLabel, d: e.date, h: e.time, p: e.place, q: e.qtype, n: e.qcount, m: e.duration, o: e.outOf, no: e.notes, l: lecs };
     // الحقول الفاضية ما منبعتها — كل حرف بيطوّل الرابط
     for (const k of Object.keys(o)) if (o[k] == null || o[k] === '' || o[k] === 0) delete o[k];
     x.push(o);
@@ -268,17 +278,67 @@ async function encode(obj) {
 }
 const shareBase = () => new URL('share.html', location.href.split('#')[0]).href;
 
-// الرابط بلا صور: الصور بتطوّله لآلاف الأحرف، وواتساب وتلغرام بيقصّوه فما بينفتح.
-// المادة بتطلع بأيقونتها ولونها، والصور بتوصل بالملف.
+// الصور ما بتنحط جوّا الرابط نفسه: بتطوّله لآلاف الأحرف، وواتساب وتلغرام بيقصّوه فما بينفتح.
+// بدالها بتنرفع على درايفك، والرابط بيحمل رقم كل صورة بس (g:رقم).
 export const LINK_SAFE = 3500;
-export async function shareUrl(ids, title) {
-  return `${shareBase()}#${await encode(await payload(ids, title))}`;
+const SUB_PX = 240, LEC_PX = 160;
+const picKey = (src, size) => `${size}|${src}`;
+// كل الصور اللي بتلزم لهالمذاكرات
+export function linkPics(ids) {
+  const want = new Map();
+  for (const e of examsOf(ids)) {
+    if (e.subject?.image) want.set(picKey(e.subject.image, SUB_PX), { src: e.subject.image, size: SUB_PX, name: `${e.subjectName}.jpg` });
+    for (const l of e.lectureList) if (l.image) want.set(picKey(l.image, LEC_PX), { src: l.image, size: LEC_PX, name: `${e.subjectName} — ${l.title}.jpg` });
+  }
+  return want;
 }
-async function shareLink(ids, title) {
-  const url = await shareUrl(ids, title);
-  const text = `${title} — ${ids.length === 1 ? 'مذاكرة' : `${ids.length} مذاكرات`}`;
-  if (url.length > LINK_SAFE) toast('الرابط طويل شوي — إذا ما انفتح عند رفقاتك ابعتلهم «ملف»', { kind: 'warn' });
-  if (navigator.share) { try { await navigator.share({ title, text, url }); return; } catch (err) { if (err?.name === 'AbortError') return; } }
+async function digest(s) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(d)].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+async function pool(items, n, fn) {
+  let i = 0;
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => { while (i < items.length) await fn(items[i++]); }));
+}
+// برفع الصور الناقصة على درايف (اللي انرفعت قبل بتنعاد بلا رفع). بترجّع: مفتاح الصورة ← رقم ملفها
+export async function uploadLinkPics(ids, onProgress) {
+  const items = [...linkPics(ids).entries()];
+  const cache = { ...(store.state.shareImgs || {}) };
+  const found = new Map();
+  let done = 0, failed = 0;
+  onProgress?.(0, items.length);
+  await pool(items, 4, async ([k, w]) => {
+    const hk = await digest(k);
+    let id = cache[hk];
+    if (id && !(await driveFileAlive(id))) id = null;
+    if (!id) {
+      try {
+        const data = await shrink(w.src, w.size, 0.82);
+        if (data) { id = await uploadPublicImage(await (await fetch(data)).blob(), w.name); cache[hk] = id; }
+      } catch (e) { if (e?.message === 'expired') throw e; failed += 1; }
+    }
+    if (id) found.set(k, id);
+    onProgress?.(++done, items.length);
+  });
+  store.update((s) => { s.shareImgs = cache; }, { silent: true });
+  return { found, failed };
+}
+export async function shareUrl(ids, title, found = null) {
+  const opts = found ? { subImg: SUB_PX, lecImg: LEC_PX, pic: (src, size) => (found.has(picKey(src, size)) ? `g:${found.get(picKey(src, size))}` : 0) } : {};
+  return `${shareBase()}#${await encode(await payload(ids, title, opts))}`;
+}
+// بيبعت الرابط. بيرمي NotAllowedError إذا راحت «ضغطتك» (بعد رفع طويل) — وقتها منطلب ضغطة جديدة
+async function sendUrl(url, title, n) {
+  const text = `${title} — ${n === 1 ? 'مذاكرة' : `${n} مذاكرات`}`;
+  if (navigator.share) {
+    try { await navigator.share({ title, text, url }); return; } catch (err) {
+      if (err?.name === 'AbortError') return;
+      if (err?.name === 'NotAllowedError') throw err;
+    }
+  }
+  await copyUrl(url);
+}
+async function copyUrl(url) {
   try { await navigator.clipboard.writeText(url); toast('انسخ الرابط — الصقه لرفقاتك'); } catch { window.open(url, '_blank', 'noopener'); }
 }
 async function shareFile(ids, title) {
@@ -364,8 +424,38 @@ export function openShareExams(preIds = null) {
   let how = 'link';
   let title = (() => { try { return localStorage.getItem(TITLE_KEY) || 'المذاكرات الجاية'; } catch { return 'المذاكرات الجاية'; } })();
   let busy = false;
+  let withPics = true;
+  let progress = null;   // {done, total} وقت رفع الصور
+  let ready = null;      // {url, n, t}: الرابط جاهز وبدّه ضغطة جديدة ليتبعت
+  const selIds = () => all.filter((e) => sel.has(e.id)).map((e) => e.id);
+  // منحضّر عميل جوجل من هلّق، حتى نافذة تسجيل الدخول تنفتح جوّا ضغطة «أرسل»
+  if (linkPics(all.map((e) => e.id)).size && navigator.onLine) prepareDrive().catch(() => {});
   openSheet(null, (body, close) => {
+    function picsRow() {
+      if (how !== 'link') return null;
+      const n = linkPics(selIds()).size;
+      if (!n) return null;
+      return h('div', { class: 'f-row' }, toggleRow({
+        ic: 'image', title: `مع صور المواد والمحاضرات (${countText(n, ['صورة وحدة', 'صورتين', 'صور', 'صورة'])})`,
+        sub: driveHasToken()
+          ? 'الصور بتنحفظ بدرايفك بمجلّد «صور المشاركة»، وبيشوفها بس اللي معه الرابط.'
+          : 'بتنحفظ بدرايفك (بتختار حساب جوجل أول مرة)، وبيشوفها بس اللي معه الرابط.',
+        checked: withPics, onChange: (v) => { withPics = v; },
+      }));
+    }
     function render() {
+      if (ready) {
+        fill(body, [
+          h('div', { class: 'am-title' },
+            h('h3', null, icon('circle-check', 14), 'الرابط جاهز', h('button', { type: 'button', class: 'am-x', 'aria-label': 'إغلاق', onclick: () => close() }, icon('close', 16))),
+            h('small', null, ready.failed ? `${countText(ready.failed, ['صورة وحدة', 'صورتين', 'صور', 'صورة'])} ما انرفعت — بتطلع مكانها أيقونة المادة` : 'الصور انرفعت. ابعته لرفقاتك.')),
+          h('div', { class: 'am-sticky' },
+            h('button', { type: 'button', class: 'btn secondary', onclick: () => copyUrl(ready.url).then(() => close()) }, icon('copy', 15), 'انسخ'),
+            h('button', { type: 'button', class: 'btn', style: { flex: 1 }, onclick: () => sendUrl(ready.url, ready.t, ready.n).then(() => close()).catch(() => copyUrl(ready.url).then(() => close())) }, icon('paper-plane', 15), 'أرسل الرابط')),
+        ]);
+        return;
+      }
+      const label = progress ? (progress.total ? `عم نرفع الصور ${progress.done} من ${progress.total}…` : 'عم نجهّزها…') : busy ? 'عم نجهّزها…' : 'أرسل';
       fill(body, [
         h('div', { class: 'am-title' },
           h('h3', null, icon('share-nodes', 14), 'شارك المذاكرات', h('button', { type: 'button', class: 'am-x', 'aria-label': 'إغلاق', onclick: () => close() }, icon('close', 16))),
@@ -377,27 +467,57 @@ export function openShareExams(preIds = null) {
           h('input', { type: 'text', value: title, oninput: (ev) => { title = ev.target.value; } })),
         h('div', { class: 'f-row' }, h('label', { class: 'f-label' }, 'كيف؟'),
           h('div', { class: 'sh-opts' }, [
-            ['link', 'link', '#4cb8d4', 'رابط تفاعلي', 'بيفتح بأي متصفح — بيضغطوا على المذاكرة فبتطلع محاضراتها وروابط الـPDF، بأيقونة المادة ولونها'],
+            ['link', 'link', '#4cb8d4', 'رابط تفاعلي', 'بيفتح بأي متصفح — بيضغطوا على المذاكرة فبتطلع محاضراتها بصورها وروابط الـPDF'],
             ['image', 'image', '#e06a9e', 'صورة', 'للستوري والمجموعات — المذاكرات بنفس البطاقات'],
             ['file', 'file-code', '#e8c46a', 'ملف', 'نفس الصفحة التفاعلية مع صور المواد والمحاضرات — بيفتح بدون نت'],
           ].map(([k, ic, c, t, s]) => h('button', { type: 'button', class: `sh-o${how === k ? ' on' : ''}`, style: { '--c': c }, onclick: () => { how = k; render(); } },
             h('span', { class: 'sh-ic' }, icon(ic, 15)), h('span', null, h('b', null, t), h('small', null, s)), how === k ? icon('circle-check', 16) : null)))),
+        picsRow(),
         h('div', { class: 'am-sticky' },
-          h('button', { type: 'button', class: 'btn', style: { flex: 1 }, disabled: busy || !sel.size ? true : null, onclick: send }, icon('paper-plane', 15), busy ? 'عم نجهّزها…' : 'أرسل')),
+          h('button', { type: 'button', class: 'btn', style: { flex: 1 }, disabled: busy || !sel.size ? true : null, onclick: send }, icon('paper-plane', 15), label)),
       ]);
+    }
+    async function sendLink(ids, t) {
+      let found = null, failed = 0;
+      if (withPics && linkPics(ids).size) {
+        if (!navigator.onLine) { toast('بدها نت لترفع الصور — طفّيت الصور، اضغط «أرسل» لتبعته بلاها.', { kind: 'warn' }); withPics = false; busy = false; render(); return; }
+        {
+          try {
+            await driveSignIn();
+            progress = { done: 0, total: 0 }; render();
+            ({ found, failed } = await uploadLinkPics(ids, (done, total) => { progress = { done, total }; render(); }));
+          } catch (err) {
+            // ما زبط درايف: منطفي الصور ومنخلّيه يضغط «أرسل» مرة تانية إذا بدّه يبعته بلاها
+            console.warn(err);
+            const why = { popup_closed: 'انسكّرت نافذة جوجل', popup_failed_to_open: 'المتصفح منع نافذة جوجل', access_denied: 'انلغى تسجيل الدخول', denied: 'انلغى تسجيل الدخول', offline: 'ما في نت', expired: 'انتهى الإذن، جرّب كمان مرة' }[err?.message] || 'جرّب بعد شوي';
+            toast(`ما انرفعت الصور (${why}). اضغط «أرسل» لتبعته بلا صور.`, { kind: 'warn' });
+            withPics = false; progress = null; busy = false; render();
+            return;
+          }
+        }
+      }
+      const url = await shareUrl(ids, t, found);
+      if (url.length > LINK_SAFE) toast('الرابط طويل شوي — إذا ما انفتح عند رفقاتك ابعتلهم «ملف»', { kind: 'warn' });
+      try {
+        await sendUrl(url, t, ids.length); close();
+        if (failed) toast(`${countText(failed, ['صورة وحدة', 'صورتين', 'صور', 'صورة'])} ما انرفعت — بتطلع مكانها أيقونة المادة`, { kind: 'warn' });
+      } catch {
+        // الرفع طوّل فراحت «ضغطتك» — منطلب ضغطة جديدة
+        progress = null; ready = { url, t, n: ids.length, failed }; render();
+      }
     }
     async function send() {
       if (busy || !sel.size) return;
       const t = (title || '').trim() || 'المذاكرات الجاية';
       try { localStorage.setItem(TITLE_KEY, t); } catch { /* */ }
       busy = true; render();
-      const ids = all.filter((e) => sel.has(e.id)).map((e) => e.id);
+      const ids = selIds();
       try {
-        if (how === 'link') await shareLink(ids, t);
-        else if (how === 'file') await shareFile(ids, t);
+        if (how === 'link') { await sendLink(ids, t); return; }
+        if (how === 'file') await shareFile(ids, t);
         else await shareImage(ids, t);
         close();
-      } catch (err) { console.warn(err); toast('ما زبطت المشاركة — جرّب طريقة تانية.', { kind: 'warn' }); busy = false; render(); }
+      } catch (err) { console.warn(err); toast('ما زبطت المشاركة — جرّب طريقة تانية.', { kind: 'warn' }); busy = false; progress = null; render(); }
     }
     render();
   }, { cls: 'task-form' });

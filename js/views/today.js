@@ -1,13 +1,13 @@
 // صفحة المهام: فوق «مدار اليوم» (إنت هلّق، الصلاة الجاية، الصلوات الخمس، مقياس البركة)،
 // وبعدها كل مهام اليوم بمحطاتها مرتّبة بالوقت — ومهام التعهّد جوّاتها بعلامة.
 // تحت: ملخّص التعهّد، المنجز، صندوق التراكم، وبكرة.
-import { h, icon, toast, haptic, fill, swipeable } from '../ui.js';
+import { h, icon, toast, haptic, fill, swipeable, openActions } from '../ui.js';
 import { store } from '../store.js';
 import { logicalToday, periodsFor, adhanFor, currentPeriod, nextPrayer, nowMinOfLogical, PERIODS, PRAYERS, PRAYER_NAMES, PERIOD_SKY, hasLocation } from '../prayer.js';
 import { tasksOn, overdue, inbox, deadlines, isDoneOn, setDone, moveTask, periodOf, TAGS, RECUR_LABEL, addTask } from '../tasks.js';
 import { WEEKDAYS, MONTHS, hijriDate, dayLabel, addDays, daysBetween, time12, fromMin, toMin, shortDate, parseISO, WEEK_START, weekStartOf, daysText, inDaysText, minutesText, tasksText } from '../dates.js';
 import { shiftSummary } from '../shifts.js';
-import { prayerOn, setPrayer, PRAYER_STATUS, adhkarDone, setAdhkarDone, adhkarSettings, allAdhkarLists, wirdToday } from '../worship.js';
+import { prayerOn, setPrayer, PRAYER_STATUS, adhkarDone, setAdhkarDone, adhkarSettings, allAdhkarLists, wirdToday, readQuranTo, unreadQuran } from '../worship.js';
 import { activeHabits, habitDueOn, habitScore, habitOk, scoreLabel } from '../habits.js';
 import { commitActive, liveVerdict, commitStats, dayVerdict } from '../commit.js';
 import { levelOf, totalPoints, pointsOn } from '../rewards.js';
@@ -82,7 +82,67 @@ function collect(today) {
   if (!store.state.settings.muhasabaOff) out.push({ kind: 'muhasaba', station: 'isha', done: muhasabaDone(today), time: '23:50' });
   // آخر يوم بالأسبوع: مراجعة الأسبوع ببعد العصر
   if (parseISO(today).getDay() === (WEEK_START + 6) % 7) out.push({ kind: 'review', station: 'asr', done: reviewDone(weekStartOf(today)) });
-  return out;
+  // اللي شلته من مهام اليوم ما بيطلع، والمعلّم «تمّت» أو «ما تمّت» بينزل من المحطات
+  const off = store.state.settings.todayOff || {};
+  return out.filter((x) => x.kind === 'task' || !off[offKey(x)]).map((x) => {
+    const m = markOf(today, itemKey(x));
+    if (m === 'done' && !x.done) return { ...x, done: true, marked: true };
+    if (m === 'skip' && !x.done) return { ...x, skipped: true };
+    return x;
+  });
+}
+
+/* ---------- تمّت / ما تمّت للعناصر التلقائية ---------- */
+function itemKey(x) {
+  if (x.kind === 'task') return `task:${x.t.id}`;
+  if (x.kind === 'adhkar') return `adhkar:${x.list.id}`;
+  if (x.kind === 'habit') return `habit:${x.hb.id}`;
+  if (x.kind === 'care') return `care:${x.slot}`;
+  if (x.kind === 'care-session' || x.kind === 'care-rec') return `${x.kind}:${x.x.id}`;
+  return x.kind;
+}
+const offKey = (x) => itemKey(x);
+const markOf = (day, k) => store.state.dayMarks?.[day]?.[k] || null;
+function setMark(day, k, v) {
+  store.update((s) => {
+    s.dayMarks = s.dayMarks || {};
+    const m = { ...(s.dayMarks[day] || {}) };
+    if (v) m[k] = v; else delete m[k];
+    s.dayMarks[day] = m;
+    // منحتفظ بآخر شهرين بس
+    const cut = addDays(day, -60);
+    for (const d of Object.keys(s.dayMarks)) if (d < cut || !Object.keys(s.dayMarks[d]).length) delete s.dayMarks[d];
+  });
+}
+// وين بتعدّل هالعنصر، وكيف بتطفيه
+function itemSettings(x) {
+  if (x.kind === 'quran' || x.kind === 'adhkar') return () => { location.hash = '#/tracks/worship'; };
+  if (x.kind === 'fast') return () => { location.hash = '#/tracks/fasting'; };
+  if (x.kind === 'hifz') return () => { location.hash = '#/tracks/hifz'; };
+  if (x.kind === 'habit') return () => { location.hash = '#/tracks/habits'; };
+  if (x.kind.startsWith('care')) return () => { location.hash = '#/tracks/care'; };
+  return null;
+}
+function setTodayOff(x, v) {
+  store.update((s) => { s.settings.todayOff = { ...(s.settings.todayOff || {}) }; if (v) s.settings.todayOff[offKey(x)] = { name: titleOf(x), at: Date.now() }; else delete s.settings.todayOff[offKey(x)]; });
+}
+function itemActions(x, today) {
+  const name = titleOf(x);
+  const edit = itemSettings(x);
+  openActions(name, [
+    !x.done ? { icon: 'check', label: 'تمّت', run: () => complete(x, today) } : { icon: 'rotate-left', label: 'رجّعها لمهام اليوم', run: () => uncomplete(x, today) },
+    !x.done && !x.skipped ? { icon: 'close', label: 'ما تمّت اليوم', sub: 'بتنزل من المحطات لـ«ما تمّت اليوم» تحت', run: () => skip(x, today) } : null,
+    x.skipped ? { icon: 'rotate-left', label: 'رجّعها لمهام اليوم', run: () => setMark(today, itemKey(x), null) } : null,
+    { icon: 'expand', label: 'افتحها', run: () => openItem(x, today) },
+    edit ? { icon: 'sliders', label: 'عدّل إعداداتها', run: edit } : null,
+    x.kind !== 'task' ? { icon: 'eye-slash', label: 'شيلها من مهام اليوم', sub: 'ما عاد تطلع هون — بترجّعها من الإعدادات', danger: true, run: () => { setTodayOff(x, true); toast(`انشالت: ${name}`, { action: 'تراجع', onAction: () => setTodayOff(x, false) }); } } : null,
+  ]);
+}
+function skip(x, today) {
+  haptic('select');
+  const k = itemKey(x);
+  setMark(today, k, 'skip');
+  toast(`ما تمّت: ${titleOf(x)}`, { action: 'تراجع', onAction: () => setMark(today, k, null) });
 }
 // مقياس البركة: المهام + الصلوات
 function dayScore(today, items) {
@@ -181,12 +241,12 @@ function stations(today, items) {
   const cur = currentPeriod().key;
   const curIdx = PERIODS.indexOf(cur);
   const a = adhanFor(today);
-  const pending = items.filter((x) => !x.done).length;
+  const pending = items.filter((x) => !x.done && !x.skipped).length;
   const wrap = h('div', { class: 'stw' },
     h('div', { class: 'section-title' }, h('span', null, icon('listCheck', 12), 'مهام اليوم'), h('i', { class: 'st-line' }), h('span', { class: 'sec-count' }, pending ? `${pending} باقية` : 'خلصوا')));
   if (!tipSeen()) {
     const tip = h('div', { class: 'tip-card' }, icon('hand-pointer', 14),
-      h('span', null, h('b', null, 'اسحب المهمة يسار'), ' لتخلص، ', h('b', null, 'يمين'), ' لبكرة، و', h('b', null, 'اضغط مطوّل'), ' لتعدّل.'),
+      h('span', null, h('b', null, 'اسحب المهمة يسار'), ' لتخلص، ', h('b', null, 'يمين'), ' لبكرة أو «ما تمّت»، و', h('b', null, 'اضغط مطوّل'), ' لخياراتها.'),
       h('button', { type: 'button', class: 'tip-x', 'aria-label': 'فهمت', onclick: () => { try { localStorage.setItem(TIP_KEY, '1'); } catch { /* */ } tip.remove(); } }, icon('close', 12)));
     wrap.append(tip);
   }
@@ -195,7 +255,7 @@ function stations(today, items) {
   }
   let suggShown = false;
   PERIODS.forEach((k, i) => {
-    const list = sortItems(items.filter((x) => x.station === k && !x.done));
+    const list = sortItems(items.filter((x) => x.station === k && !x.done && !x.skipped));
     const past = i < curIdx, now = k === cur;
     const late = past ? list.length : 0;
     const est = list.reduce((s, x) => s + (x.kind === 'task' ? (x.t.estimate || 0) : 0), 0);
@@ -226,7 +286,7 @@ function stations(today, items) {
     }
     wrap.append(block);
   });
-  const any = sortItems(items.filter((x) => !x.station && !x.done));
+  const any = sortItems(items.filter((x) => !x.station && !x.done && !x.skipped));
   if (any.length) wrap.append(h('section', { class: 'st3' }, h('div', { class: 'st3-h' }, h('span', { class: 'st3-dot', style: { background: 'var(--ink3)' } }), h('span', { class: 'st3-nm' }, 'بأي وقت اليوم')), h('div', { class: 'st3-list' }, any.map((x) => card(x, today)))));
   return wrap;
 }
@@ -295,15 +355,27 @@ function openItem(x, today) {
   else if (x.kind === 'review') openWeekReview(weekStartOf(today));
   else openTask(x.t, today);
 }
+// «تمّت» لكل الأنواع: اللي إله سجلّ حقيقي (الأذكار، الورد، الصيام) بيتسجّل فيه، والباقي بعلامة لليوم
 function complete(x, today) {
   haptic('done');
-  if (x.kind === 'adhkar') { setAdhkarDone(today, x.list.id, true); toast(`تمّت: ${x.list.name}`, { action: 'تراجع', onAction: () => setAdhkarDone(today, x.list.id, false) }); }
-  else if (x.kind === 'task') { setDone(x.t.id, today, true); toast(`تمّت: ${x.t.title}`, { action: 'تراجع', onAction: () => setDone(x.t.id, today, false) }); }
-  else openItem(x, today);
+  const k = itemKey(x);
+  const clearSkip = () => { if (markOf(today, k) === 'skip') setMark(today, k, null); };
+  if (x.kind === 'adhkar') { clearSkip(); setAdhkarDone(today, x.list.id, true); toast(`تمّت: ${x.list.name}`, { action: 'تراجع', onAction: () => setAdhkarDone(today, x.list.id, false) }); }
+  else if (x.kind === 'task') { clearSkip(); setDone(x.t.id, today, true); toast(`تمّت: ${x.t.title}`, { action: 'تراجع', onAction: () => setDone(x.t.id, today, false) }); }
+  else if (x.kind === 'quran' && x.w.to >= x.w.nowPage) {
+    clearSkip();
+    const to = x.w.to;
+    const pages = readQuranTo(today, to);
+    toast(`تمّ الورد — وصلت لصفحة ${to}`, pages > 0 ? { action: 'تراجع', onAction: () => unreadQuran(today, pages, to) } : {});
+  } else if (x.kind === 'fast') { clearSkip(); setFasted(today, true); toast('تقبّل الله صيامك', { action: 'تراجع', onAction: () => setFasted(today, false) }); }
+  else { setMark(today, k, 'done'); toast(`تمّت: ${titleOf(x)}`, { action: 'تراجع', onAction: () => setMark(today, k, null) }); }
 }
 function uncomplete(x, today) {
+  const k = itemKey(x);
+  if (markOf(today, k)) { setMark(today, k, null); return; }
   if (x.kind === 'adhkar') setAdhkarDone(today, x.list.id, false);
   else if (x.kind === 'task') setDone(x.t.id, today, false);
+  else if (x.kind === 'fast') setFasted(today, false);
   else openItem(x, today);
 }
 
@@ -366,7 +438,7 @@ function card(x, today, { backlogMode = false } = {}) {
   if (x.kind === 'task' && x.t.priority) chips.push(h('span', { class: 'core-badge' }, 'أساسية'));
   const check = h('button', {
     type: 'button', class: `tc-check${x.done ? ' on' : ''}`, 'aria-label': x.done ? 'رجّعها' : 'تمّت',
-    onclick: (e) => { e.stopPropagation(); if (x.done) uncomplete(x, today); else if (x.kind === 'task' || x.kind === 'adhkar') { el.classList.add('just-done'); setTimeout(() => complete(x, today), 220); } else openItem(x, today); },
+    onclick: (e) => { e.stopPropagation(); if (x.done) uncomplete(x, today); else { el.classList.add('just-done'); setTimeout(() => complete(x, today), 220); } },
   }, icon('check', 18));
   const el = h('div', {
     class: `task-card${x.done ? ' is-done' : ''}${x.kind === 'muhasaba' ? ' is-night' : ''}`, role: 'button', tabindex: '0',
@@ -379,16 +451,29 @@ function card(x, today, { backlogMode = false } = {}) {
     moved = false; const x0 = e.clientX, y0 = e.clientY;
     const mv = (ev) => { if (Math.abs(ev.clientX - x0) > 8 || Math.abs(ev.clientY - y0) > 8) { moved = true; clearTimeout(lp); } };
     el.addEventListener('pointermove', mv);
-    lp = setTimeout(() => { if (!moved && x.kind === 'task') { el.dataset.lp = '1'; haptic('select'); openTaskForm(x.t.id, { day: today }); } }, 560);
+    // ضغطة مطوّلة: المهمة العادية بتنفتح للتعديل، والتلقائية (الورد، الصيام…) بتطلع خياراتها
+    lp = setTimeout(() => {
+      if (moved) return;
+      el.dataset.lp = '1'; haptic('select');
+      if (x.kind === 'task') openTaskForm(x.t.id, { day: today }); else itemActions(x, today);
+    }, 560);
     const up = () => { clearTimeout(lp); el.removeEventListener('pointermove', mv); };
     el.addEventListener('pointerup', up, { once: true });
     el.addEventListener('pointercancel', up, { once: true });
   });
-  el.addEventListener('click', (e) => { if (el.dataset.lp) { delete el.dataset.lp; return; } if (e.target.closest('.tc-check')) return; openItem(x, today); });
-  if (!x.done) {
+  el.addEventListener('click', (e) => {
+    if (el.dataset.lp) { delete el.dataset.lp; return; }
+    if (Date.now() - Number(el.dataset.swipedAt || 0) < 500) return;
+    if (e.target.closest('.tc-check')) return;
+    openItem(x, today);
+  });
+  if (!x.done && !x.skipped) {
+    // يسار: تمّت. يمين: المهمة العادية لبكرة، والتلقائية أو المتكرّرة «ما تمّت اليوم»
     swipeable(el, {
       onLeft: () => complete(x, today),
-      onRight: x.kind === 'task' && !x.t.recur ? () => { const from = x.t.date; moveTask(x.t.id, addDays(today, 1)); toast('انتقلت لبكرة', { action: 'تراجع', onAction: () => moveTask(x.t.id, from) }); } : null,
+      onRight: x.kind === 'task' && !x.t.recur
+        ? () => { const from = x.t.date; moveTask(x.t.id, addDays(today, 1)); toast('انتقلت لبكرة', { action: 'تراجع', onAction: () => moveTask(x.t.id, from) }); }
+        : () => skip(x, today),
     });
   }
   return el;
@@ -419,7 +504,12 @@ function commitSummary(ctx, today) {
 function doneSection(today, items) {
   const done = items.filter((x) => x.done);
   const wrap = h('div', null, h('div', { class: 'section-title' }, h('span', null, icon('checkCircle', 12), 'المنجز اليوم'), h('i', { class: 'st-line' }), h('span', { class: 'sec-count' }, String(done.length))));
-  if (!done.length) { wrap.append(h('div', { class: 'drop-pane' }, h('p', { class: 'empty-zone-hint' }, 'لم يكتمل شيء بعد — اسحب مهمة يساراً لتعليمها منجزة'))); return wrap; }
+  if (!done.length) {
+    wrap.append(h('div', { class: 'drop-pane' }, h('p', { class: 'empty-zone-hint' }, 'لم يكتمل شيء بعد — اسحب مهمة يساراً لتعليمها منجزة')));
+    const sk = skippedRow(today, items);
+    if (sk) wrap.append(sk);
+    return wrap;
+  }
   const pane = h('div', { class: 'drop-pane' });
   const draw = () => fill(pane, [
     h('button', { type: 'button', class: 'done-summary', onclick: () => { doneOpen = !doneOpen; draw(); } },
@@ -429,7 +519,27 @@ function doneSection(today, items) {
     doneOpen ? h('div', { class: 'st3-list done-list' }, done.map((x) => card(x, today))) : null]);
   draw();
   wrap.append(pane);
+  const sk = skippedRow(today, items);
+  if (sk) wrap.append(sk);
   return wrap;
+}
+/* ---------- ما تمّت اليوم: اللي علّمته «ما تمّت» بينزل هون، وبترجّعه بضغطة ---------- */
+let skipOpen = false;
+function skippedRow(today, items) {
+  const list = items.filter((x) => x.skipped);
+  if (!list.length) return null;
+  const pane = h('div', { class: 'drop-pane sk-pane' });
+  const draw = () => fill(pane, [
+    h('button', { type: 'button', class: 'done-summary sk', onclick: () => { skipOpen = !skipOpen; draw(); } },
+      h('span', { class: 'ds-check' }, icon('close', 11)),
+      h('span', { class: 'ds-txt' }, `ما تمّت اليوم ${list.length} — ${list.slice(0, 2).map(titleOf).join('، ')}${list.length > 2 ? '…' : ''}`),
+      h('span', { class: 'ds-more' }, skipOpen ? 'إخفاء' : 'عرض')),
+    skipOpen ? h('div', { class: 'sk-list' }, list.map((x) => h('div', { class: 'sk-it', style: { '--c': colorOf(x) } },
+      h('span', { class: 'sk-nm' }, titleOf(x)),
+      h('button', { type: 'button', class: 'sk-b', onclick: () => complete(x, today) }, icon('check', 11), 'تمّت'),
+      h('button', { type: 'button', class: 'sk-b', onclick: () => setMark(today, itemKey(x), null) }, icon('rotate-left', 11), 'رجّعها')))) : null]);
+  draw();
+  return pane;
 }
 
 /* ---------- صندوق التراكم ---------- */

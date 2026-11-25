@@ -46,6 +46,16 @@ export function renderSettings(ctx) {
         h('button', { type: 'button', class: 'row', onclick: () => openPinSetup() }, h('span', { class: 'row-ic' }, icon('key', 16)), h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'غيّر الرمز')), icon('chevL', 16)),
       ] : null),
 
+    // العناصر التلقائية اللي شلتها من صفحة المهام (الورد، الصيام، المحاسبة…): بترجّعها من هون
+    Object.keys(s.todayOff || {}).length ? [
+      secTitle('شلتها من مهام اليوم', { ic: 'eye-slash' }),
+      h('div', { class: 'group rows' },
+        Object.entries(s.todayOff).map(([k, v]) => h('div', { class: 'row' },
+          h('span', { class: 'row-ic' }, icon('eye-slash', 16)),
+          h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, v?.name || k), h('span', { class: 'row-sub' }, 'ما عم تطلع بصفحة المهام')),
+          h('button', { type: 'button', class: 'btn small secondary', onclick: () => { store.update((st) => { const o = { ...(st.settings.todayOff || {}) }; delete o[k]; st.settings.todayOff = o; }); toast(`رجعت: ${v?.name || ''}`); } }, 'رجّعها')))),
+    ] : null,
+
     secTitle('الصلاة والموقع', { ic: 'mosque' }),
     h('div', { class: 'group rows' },
       h('div', { class: 'row' }, h('span', { class: 'row-ic' }, icon('pin', 18)),

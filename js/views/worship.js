@@ -12,6 +12,7 @@ import { invalidateDay } from '../commit.js';
 import { hifzToday, hifzStats } from '../hifz.js';
 import { SUNNAH_SLOTS, sunnahOn, toggleSunnahSlot, rakaatOn, fastInfo, upcomingFasts, qada, qadaPrayersTotal } from '../fasting.js';
 import { openCounter } from './duas.js';
+import { khatmaPlanCard } from './khatma.js';
 
 const ADHKAR_ID_ORDER = ['morning', 'evening', 'prayer', 'sleep', 'wake'];
 
@@ -272,7 +273,10 @@ export function renderQuran(ctx) {
       h('div', { class: 'two', style: { marginTop: '12px' } },
         h('button', { type: 'button', class: 'btn secondary', onclick: () => openQuranLog(today) }, icon('plus', 18), 'سجّل'),
         h('button', { type: 'button', class: 'btn', onclick: () => openReader(qs.page, today) }, icon('bookOpen', 18), 'المصحف'))),
-    secTitle('الورد اليومي', { ic: 'target' }),
+    // التخطيط للختمة هون (مش بنافذة الورد اللي بصفحة المهام)
+    secTitle('خطة الختمة', { ic: 'flag' }),
+    khatmaPlanCard(today),
+    secTitle(store.state.quran.plan ? 'الورد اليومي (لما توقف الخطة)' : 'الورد اليومي بلا خطة', { ic: 'target' }),
     h('div', { class: 'group rows' },
       h('div', { class: 'row' }, h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, 'عدد الصفحات باليوم'), h('span', { class: 'row-sub' }, 'الختمة كل 30 يوم = 20 صفحة')),
         h('div', { class: 'stepper' },

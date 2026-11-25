@@ -1,5 +1,5 @@
 // الدراسة: المواد ومحاضراتها، وجدول المذاكرات والامتحانات (تاريخ، محاضرات داخلة، جاهزيتك، وخطة مذاكرة)
-import { h, icon, badge, bar, ring, fill, openSheet, toast, haptic, chips, openDatePicker, openTimePicker, confirmSheet, pickImage, empty, openActions } from '../ui.js';
+import { h, icon, badge, bar, ring, fill, openSheet, toast, haptic, chips, openDatePicker, openTimePicker, confirmSheet, pickImage, lowResCheck, empty, openActions } from '../ui.js';
 import { store, uid } from '../store.js';
 import { logicalToday } from '../prayer.js';
 import { addDays, dayLabel, shortDate, daysBetween, parseISO, MONTHS, WEEKDAYS, time12, durText, daysText, countText, inDaysText } from '../dates.js';
@@ -111,7 +111,7 @@ function openLecture(sid, lid) {
       const set = (patch) => { store.update((st) => { Object.assign(st.subjects.find((y) => y.id === sid).lectures.find((z) => z.id === lid), patch); }); render(); };
       fill(body, [
         h('div', { class: 'lect-head' },
-          h('button', { type: 'button', class: 'lect-img', 'aria-label': 'صورة المحاضرة', onclick: async () => { const img = await pickImage(); if (img) set({ image: img }); } }, l.image ? h('img', { src: l.image, alt: '' }) : [icon('image', 26), h('small', null, 'صورة')]),
+          h('button', { type: 'button', class: 'lect-img', 'aria-label': 'صورة المحاضرة', onclick: async () => { const img = await pickImage(); if (img) set({ image: img }); } }, l.image ? h('img', { src: l.image, alt: '', onload: lowResCheck }) : [icon('image', 26), h('small', null, 'صورة')]),
           h('label', { class: 'field', style: { flex: 1, margin: 0 } }, h('span', { class: 'field-label' }, 'الاسم'), h('input', { type: 'text', value: l.title, onchange: (e) => set({ title: e.target.value.trim() || l.title }) }))),
         h('div', { class: 'sheet-section' }, 'الإتقان'),
         h('div', { class: 'mastery-grid' }, MASTERY_STEPS.map((st) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String((l.mastery || 0) === st.v), onclick: () => { if (st.v > (l.mastery || 0)) studyUnit('subject', sid, lid, { mastery: st.v, day: today }); else set({ mastery: st.v, done: st.v >= 100 }); render(); } }, `${st.v}% ${st.label}`))),
@@ -156,7 +156,7 @@ export function openSubjectEdit(id) {
     function render() {
       fill(body, [
         h('div', { class: 'lect-head' },
-          h('button', { type: 'button', class: 'lect-img', onclick: async () => { const img = await pickImage(); if (img) { d.image = img; render(); } } }, d.image ? h('img', { src: d.image, alt: '' }) : [icon('image', 26), h('small', null, 'صورة')]),
+          h('button', { type: 'button', class: 'lect-img', onclick: async () => { const img = await pickImage(); if (img) { d.image = img; render(); } } }, d.image ? h('img', { src: d.image, alt: '', onload: lowResCheck }) : [icon('image', 26), h('small', null, 'صورة')]),
           h('label', { class: 'field', style: { flex: 1, margin: 0 } }, h('span', { class: 'field-label' }, 'اسم المادة'), h('input', { type: 'text', value: d.name, 'data-autofocus': true, placeholder: 'متل: نسج خاص نظري', oninput: (e) => { d.name = e.target.value; } }))),
         h('div', { class: 'field', style: { marginTop: '12px' } }, h('span', { class: 'field-label' }, 'اللون والأيقونة'),
           h('div', { class: 'tint-row' }, TINT_KEYS.map((k) => h('button', { type: 'button', class: 'tint-dot', 'aria-pressed': String(d.color === k), style: { '--tint': tintHex(k) }, onclick: () => { d.color = k; render(); } }))),

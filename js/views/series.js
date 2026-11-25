@@ -1,5 +1,5 @@
 // السلاسل والدروس: فقه النفس، الدروس الشرعية، وأي سلسلة يوتيوب — جلب الحلقات من الرابط وتشغيلها مع تتبّع المشاهدة
-import { h, icon, badge, bar, ring, fill, openSheet, toast, haptic, chips, confirmSheet, pickImage, empty, openActions } from '../ui.js';
+import { h, icon, badge, bar, ring, fill, openSheet, toast, haptic, chips, confirmSheet, pickImage, lowResCheck, empty, openActions } from '../ui.js';
 import { store, uid } from '../store.js';
 import { logicalToday } from '../prayer.js';
 import { durText, clockText, dayLabel } from '../dates.js';
@@ -10,7 +10,9 @@ import { secTitle } from './components.js';
 import { TINT_KEYS, tintHex } from '../icons.js';
 
 export const SERIES_KINDS = { self: 'فقه النفس', sharia: 'دروس شرعية', study: 'دراسة', sport: 'رياضة', other: 'أخرى' };
-const seriesById = (id) => store.state.series.find((x) => x.id === id);
+export const seriesById = (id) => store.state.series.find((x) => x.id === id);
+// سلسلة الكتاب (kind: 'book') بتطلع جوّا صفحة كتابها، مش بقوائم السلاسل
+export const isBookSeries = (s) => s?.kind === 'book';
 export const epProgress = (e) => (e.done ? 1 : Math.max(e.progress || 0, (e.mastery || 0) / 100));
 export const seriesProgress = (s) => { const e = s.episodes || []; return e.length ? e.reduce((a, x) => a + epProgress(x), 0) / e.length : 0; };
 export const nextEp = (s) => (s.episodes || []).find((e) => !e.done && !e.listenOnly);
@@ -19,7 +21,7 @@ export const seriesMode = (s) => s?.mode || (s?.kind === 'self' ? 'notes' : 'lis
 let unnotedOnly = false;
 
 export function renderSeriesList(ctx) {
-  const list = store.state.series;
+  const list = store.state.series.filter((s) => !isBookSeries(s));
   if (!list.length) return h('div', null, empty('youtube', 'أضف سلسلة (مثلاً فقه النفس) وحط رابط قائمة التشغيل من يوتيوب، وبتنضاف كل الحلقات بأسمائها وصورها.', h('button', { type: 'button', class: 'btn', onclick: () => openSeriesEdit(null) }, icon('plus', 18), 'سلسلة جديدة')));
   const groups = {};
   for (const s of list) (groups[s.kind || 'other'] = groups[s.kind || 'other'] || []).push(s);
@@ -59,6 +61,17 @@ export function renderSeries(ctx) {
     h('div', { class: 'group rows ep-list' }, (s.episodes || []).map((e, i) => (unnotedOnly && seriesMode(s) === 'notes' && !e.listenOnly ? null : epRow(s, e, i)))));
   root.dataset.title = s.name;
   return root;
+}
+// دروس كتاب مربوط بسلسلة يوتيوب: «التالي» وقائمة الدروس بصورها وتقدّمها (نفس عرض السلسلة)
+export function episodesBlock(s, word = 'الدروس') {
+  const n = nextEp(s);
+  return [
+    n ? h('button', { type: 'button', class: 'next-ep', onclick: () => openEpisode(s.id, n.id) },
+      h('span', { class: 'ne-thumb' }, (n.image || n.videoId) ? h('img', { src: n.image || thumbOf(n.videoId), alt: '', loading: 'lazy' }) : icon('video', 28), h('i', null, icon('play', 22))),
+      h('span', { class: 'ne-info' }, h('small', null, n.progress > 0.02 ? `كمّل من ${clockText(n.position || 0)}` : 'الدرس الجاي'), h('b', null, n.title), n.progress > 0 ? bar(n.progress, { cls: 'thin' }) : null)) : null,
+    secTitle(`${word} (${(s.episodes || []).length})`, { ic: 'youtube' }),
+    h('div', { class: 'group rows ep-list' }, (s.episodes || []).map((e, i) => epRow(s, e, i))),
+  ];
 }
 export function seriesActions(ctx) {
   return h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'خيارات', onclick: () => openActions('السلسلة', [
@@ -235,7 +248,7 @@ function openImport(sid) {
 }
 
 // دمج الحلقات بالسلسلة: الحلقة رقم i بتاخد اسم وصورة الفيديو رقم i وبيضل تقدّمك فيها
-function mergePlaylist(sid, r, url) {
+export function mergePlaylist(sid, r, url) {
   store.update((st) => {
     let s = st.series.find((x) => x.id === sid);
     if (!s) { s = { id: uid('se'), name: r.title || 'سلسلة', kind: 'self', color: 'violet', icon: 'video', image: null, unitWord: 'حلقة', episodes: [] }; st.series.push(s); }
@@ -273,9 +286,9 @@ export function openSeriesEdit(id, preset = {}) {
       fill(body, [
         ex ? null : h('label', { class: 'field' }, h('span', { class: 'field-label' }, 'رابط قائمة التشغيل على يوتيوب (اختياري)'), h('input', { type: 'url', dir: 'ltr', value: d.url || '', placeholder: 'https://www.youtube.com/playlist?list=…', oninput: (e) => { d.url = e.target.value; } })),
         h('div', { class: 'lect-head' },
-          h('button', { type: 'button', class: 'lect-img', onclick: async () => { const img = await pickImage(); if (img) { d.image = img; render(); } } }, d.image ? h('img', { src: d.image, alt: '' }) : [icon('image', 26), h('small', null, 'صورة')]),
+          h('button', { type: 'button', class: 'lect-img', onclick: async () => { const img = await pickImage(); if (img) { d.image = img; render(); } } }, d.image ? h('img', { src: d.image, alt: '', onload: lowResCheck }) : [icon('image', 26), h('small', null, 'صورة')]),
           h('label', { class: 'field', style: { flex: 1, margin: 0 } }, h('span', { class: 'field-label' }, 'الاسم'), h('input', { type: 'text', value: d.name, placeholder: ex ? '' : 'بيتعبّى من يوتيوب لحاله', oninput: (e) => { d.name = e.target.value; } }))),
-        h('div', { class: 'field', style: { marginTop: '12px' } }, h('span', { class: 'field-label' }, 'النوع'), chips(Object.entries(SERIES_KINDS).map(([v, l]) => ({ value: v, label: l })), d.kind, (v) => { d.kind = v; render(); })),
+        isBookSeries(ex) ? null : h('div', { class: 'field', style: { marginTop: '12px' } }, h('span', { class: 'field-label' }, 'النوع'), chips(Object.entries(SERIES_KINDS).map(([v, l]) => ({ value: v, label: l })), d.kind, (v) => { d.kind = v; render(); })),
         h('div', { class: 'field' }, h('span', { class: 'field-label' }, 'طريقة المتابعة'),
           h('div', { class: 'seg' },
             h('button', { type: 'button', 'aria-pressed': String(d.mode === 'notes'), onclick: () => { d.mode = 'notes'; render(); } }, icon('pen-nib', 13), 'مع تدوين'),
