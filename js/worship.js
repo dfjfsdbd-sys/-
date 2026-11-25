@@ -105,6 +105,18 @@ export function readQuranTo(day, toPage) {
   if (finished) rollPlan(day);
   return finished ? -1 : pages;
 }
+// تراجع عن قراءة وحدة بعينها (زر «تراجع» بعد ما تعلّم الورد تمّ)
+export function unreadQuran(day, pages, toPage) {
+  if (!pages || pages < 0) return;
+  store.update((s) => {
+    const q = s.quran, l = q.log?.[day];
+    if (!l) return;
+    l.pages = Math.max(0, (l.pages || 0) - pages);
+    if (!l.pages) delete q.log[day]; else l.to = toPage - pages;
+    q.page = Math.max(1, toPage - pages + 1);
+  });
+  revoke(`quran:${day}:${toPage}`);
+}
 export function addQuranPages(day, n) { return readQuranTo(day, Math.min(TOTAL_PAGES, quranPage() + n - 1)); }
 export function undoQuranDay(day) {
   const log = store.state.quran.log?.[day];

@@ -69,6 +69,16 @@ export const sheetOpen = () => stack.length > 0;
 export function closeAllSheets() { while (stack.length) history.back(); }
 
 export function openSheet(title, build, { onClose, tall = false, full = false, cls = '' } = {}) {
+  // ما منفتح نافذتين فوق بعض إلا إذا التانية انطلبت من جوّا الأولى (متل اختيار تاريخ من نافذة مهمة).
+  // ضغطة جاية من الصفحة اللي ورا (أو ضغطتين ورا بعض) بتسكّر القديمة وبتحط الجديدة مكانها.
+  const ev = window.event;
+  const path = ev?.composedPath?.() || [];
+  const fromSheet = path.some((n) => n?.classList?.contains('sheet')) || Boolean(ev?.target?.closest?.('.sheet'));
+  let reuseState = false;
+  if (stack.length && !fromSheet) {
+    while (stack.length) stack.pop().destroy();
+    reuseState = true;
+  }
   const titleId = `sheet-${Math.random().toString(36).slice(2, 8)}`;
   const body = h('div', { class: 'sheet-body' });
   const backdrop = h('div', { class: 'sheet-backdrop' });
@@ -124,7 +134,7 @@ export function openSheet(title, build, { onClose, tall = false, full = false, c
   backdrop.addEventListener('click', close);
   document.addEventListener('keydown', onKey);
   stack.push(entry);
-  history.pushState({ sheet: stack.length }, '');
+  if (reuseState) history.replaceState({ sheet: stack.length }, ''); else history.pushState({ sheet: stack.length }, '');
   document.body.append(backdrop, panel);
   document.body.classList.add('sheet-lock');
   build(body, close, { panel, setTitle: (t) => { const el = panel.querySelector('.sheet-head h2'); if (el) el.textContent = t; } });
@@ -344,8 +354,29 @@ export function openMonthPicker({ value, onPick, title = 'الشهر' }) {
   });
 }
 
-// اختيار صورة وتصغيرها (مربعة) لتصلح أيقونة
-export function pickImage({ size = 160, square = true } = {}) {
+// الصور القديمة الصغيرة (أقل من 400 بكسل) بالأغلفة الكبيرة: بدل ما تنمطّ وتطلع مغبّشة،
+// منعرضها بحجم بيناسب دقّتها فوق نسخة مغبّشة منها كخلفية
+document.addEventListener('load', (e) => {
+  const im = e.target;
+  if (!(im instanceof HTMLImageElement)) return;
+  const box = im.parentElement;
+  if (!box?.matches?.('.ic-cov, .xm-cover')) return;
+  const need = Math.max(im.clientWidth, im.clientHeight) * (window.devicePixelRatio || 1);
+  if (im.naturalWidth && im.naturalWidth < 400 && need > im.naturalWidth * 1.25) {
+    box.classList.add('lr');
+    box.style.setProperty('--lr', `url("${im.currentSrc || im.src}")`);
+  }
+}, true);
+// صورة قديمة دقّتها قليلة (أقل من 400 بكسل)؟ منحط عليها علامة صغيرة حتى تبدّلها
+export function lowResCheck(e) {
+  const im = e.currentTarget, box = im?.parentElement;
+  if (!box || !im.naturalWidth || im.naturalWidth >= 400 || box.querySelector('.lowres-tag')) return;
+  box.classList.add('has-lowres');
+  box.append(h('span', { class: 'lowres-tag' }, 'دقّة قليلة'));
+}
+// اختيار صورة وتصغيرها (مربعة). 720 بكسل: بتطلع واضحة حتى بالبطاقات الكبيرة على شاشات الموبايل
+export const IMG_SIZE = 720;
+export function pickImage({ size = IMG_SIZE, square = true } = {}) {
   return new Promise((resolve) => {
     const inp = h('input', { type: 'file', accept: 'image/*', style: { display: 'none' } });
     inp.addEventListener('change', () => {
@@ -357,16 +388,21 @@ export function pickImage({ size = 160, square = true } = {}) {
         const img = new Image();
         img.onload = () => {
           const cv = document.createElement('canvas');
+          const g = cv.getContext('2d');
+          g.imageSmoothingQuality = 'high';
           if (square) {
             const s = Math.min(img.width, img.height);
-            cv.width = size; cv.height = size;
-            cv.getContext('2d').drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
+            const out = Math.min(size, s);   // ما منكبّر صورة صغيرة أصلاً
+            cv.width = out; cv.height = out;
+            g.imageSmoothingQuality = 'high';
+            g.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, out, out);
           } else {
             const k = Math.min(1, size / Math.max(img.width, img.height));
             cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
-            cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+            g.imageSmoothingQuality = 'high';
+            g.drawImage(img, 0, 0, cv.width, cv.height);
           }
-          resolve(cv.toDataURL('image/jpeg', 0.82));
+          resolve(cv.toDataURL('image/jpeg', 0.86));
         };
         img.onerror = () => resolve(null);
         img.src = reader.result;
@@ -408,6 +444,9 @@ export function swipeable(el, { onLeft, onRight, leftLabel, rightLabel } = {}) {
     x0 = null;
     if (!active) return;
     el.classList.remove('swiping', 'swipe-armed');
+    // السحب مش ضغطة: منسكّر أي «click» بيجي بعده مباشرة حتى ما تنفتح نافذة المهمة
+    el.dataset.swipedAt = String(Date.now());
+    active = false;
     if (Math.abs(dx) > width * 0.33) {
       haptic('done');
       const fn = dx > 0 ? onRight : onLeft;
@@ -417,7 +456,9 @@ export function swipeable(el, { onLeft, onRight, leftLabel, rightLabel } = {}) {
   };
   el.addEventListener('pointerup', end);
   el.addEventListener('pointercancel', end);
-  el.addEventListener('click', (e) => { if (active) { e.stopPropagation(); e.preventDefault(); active = false; } }, true);
+  el.addEventListener('click', (e) => {
+    if (Date.now() - Number(el.dataset.swipedAt || 0) < 500) { e.stopImmediatePropagation(); e.stopPropagation(); e.preventDefault(); }
+  }, true);
   return el;
 }
 

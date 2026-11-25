@@ -1,7 +1,7 @@
 // الحالة وحفظها على الجهاز
 import { kvGet, kvSet } from './db.js';
 
-export const APP_VERSION = '2.5.1';
+export const APP_VERSION = '2.5.2';
 export const DATA_VERSION = 1;
 const KEY = 'state';
 
@@ -29,6 +29,8 @@ export function defaultState() {
       quranDaily: 10,
       // الروتين الثابت: النوم بينحسب من الفجر، والقيلولة، ودوام الشغل بأيام الشغل
       sleep: { hours: 7, wakeBefore: 15, nap: { on: false, period: 'dhuhr', minutes: 40 }, work: { on: true, from: '07:00', to: '15:00' }, remind: true },
+      // العناصر التلقائية اللي شلتها من مهام اليوم (بترجّعها من الإعدادات)
+      todayOff: {},
     },
     // المهام: كل مهمة إلها تاريخ (أو بلا تاريخ = صندوق الوارد)، والمتكرّرة إنجازها بسجلّ حسب اليوم
     tasks: [],
@@ -68,6 +70,12 @@ export function defaultState() {
     duas: { custom: [], favs: [] },
     badges: {},
     care: null,
+    // صور المشاركة على درايف: بصمة الصورة ← رقم ملفها (حتى ما تنرفع كل مرة)
+    shareImgs: {},
+    // علامات اليوم للعناصر التلقائية (الورد، الصيام، المحاسبة…): يوم ← مفتاح العنصر ← 'done' أو 'skip'
+    dayMarks: {},
+    // «وين مقصّر»: النقاط اللي خبّيتها، لكل أسبوع
+    weakOff: {},
     routines: { home: [], work: [] },
     routineApplied: {},
     sleepLog: {},

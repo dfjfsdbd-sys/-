@@ -206,6 +206,49 @@ export function markChanged() {
   clearTimeout(debounce);
   debounce = setTimeout(() => syncNow({ silent: true }), 60000);
 }
+/* ---------- صور المشاركة ----------
+   صور المواد والمحاضرات اللي بتطلع برابط المذاكرات: بتنرفع بمجلّد لحالها بدرايفك، وكل صورة
+   «أي حدا معه الرابط بيشوفها»، والرابط بيحمل رقمها بس فبيضل قصير. ما بتحتاج تكون مفعّل المزامنة. */
+const SHARE_FOLDER = 'المنظومة الإنتاجية — صور المشاركة';
+export const driveHasToken = () => tokenValid();
+export const driveSignIn = () => getToken(false);
+let folderP = null;
+function shareFolder() {
+  if (!folderP) {
+    folderP = (async () => {
+      const q = encodeURIComponent(`name='${SHARE_FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+      const j = await (await dfetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)&pageSize=1`)).json();
+      if (j.files?.[0]?.id) return j.files[0].id;
+      const r = await (await dfetch('https://www.googleapis.com/drive/v3/files?fields=id', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: SHARE_FOLDER, mimeType: 'application/vnd.google-apps.folder', description: 'صور المواد والمحاضرات اللي بتطلع بروابط المذاكرات المشارَكة' }),
+      })).json();
+      return r.id;
+    })().catch((e) => { folderP = null; throw e; });
+  }
+  return folderP;
+}
+// الصورة لسّا موجودة؟ (إذا انمسحت من درايف منرفعها من جديد)
+export async function driveFileAlive(id) {
+  try {
+    const j = await (await dfetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}?fields=id,trashed`)).json();
+    return !j.trashed;
+  } catch (e) { if (e.message === 'expired') throw e; return false; }
+}
+export async function uploadPublicImage(blob, name) {
+  const parent = await shareFolder();
+  const b = `-------manz${Date.now()}${Math.random().toString(36).slice(2)}`;
+  const meta = { name, parents: [parent] };
+  const body = new Blob([`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: ${blob.type || 'image/jpeg'}\r\n\r\n`, blob, `\r\n--${b}--`]);
+  const { id } = await (await dfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+    method: 'POST', headers: { 'Content-Type': `multipart/related; boundary=${b}` }, body,
+  })).json();
+  await dfetch(`https://www.googleapis.com/drive/v3/files/${id}/permissions`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: 'reader', type: 'anyone' }),
+  });
+  return id;
+}
+
 // عند فتح التطبيق: منحضّر عميل جوجل، ومنرفع إذا صار يوم من آخر نسخة والإذن صالح
 export function armDrive() {
   if (!cfg.connected) return;

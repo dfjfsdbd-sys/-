@@ -11,7 +11,7 @@ export function libItems(type) {
   if (type === 'study') return (s.subjects || []).filter((x) => !x.archived).map((x) => ({ id: x.id, name: x.name, image: x.image, color: x.color, icon: x.icon || 'grad' }));
   if (type === 'book') return (s.books || []).map((x) => ({ id: x.id, name: x.name, image: x.image, color: x.color, icon: x.icon || 'book' }));
   if (type === 'self') return (s.series || []).filter((x) => x.kind === 'self').map((x) => ({ id: x.id, name: x.name, image: x.image, color: x.color, icon: x.icon || 'spa' }));
-  if (type === 'series') return (s.series || []).filter((x) => x.kind !== 'self').map((x) => ({ id: x.id, name: x.name, image: x.image, color: x.color, icon: x.icon || 'clapper' }));
+  if (type === 'series') return (s.series || []).filter((x) => x.kind !== 'self' && x.kind !== 'book').map((x) => ({ id: x.id, name: x.name, image: x.image, color: x.color, icon: x.icon || 'clapper' }));
   if (type === 'worship') {
     const out = allAdhkarLists().filter((l) => adhkarSettings(l.id).enabled).map((l) => ({ id: `adhkar:${l.id}`, name: l.name, image: l.image, icon: 'hands' }));
     out.push({ id: 'quran', name: 'ورد القرآن', icon: 'quran' });
@@ -25,7 +25,13 @@ export function libItems(type) {
 export function unitsFor(type, itemId) {
   const s = store.state;
   if (type === 'study') return s.subjects.find((x) => x.id === itemId)?.lectures || [];
-  if (type === 'book') { const b = s.books.find((x) => x.id === itemId); return b && b.mode !== 'pages' ? (b.units || []) : null; }
+  if (type === 'book') {
+    const b = s.books.find((x) => x.id === itemId);
+    // كتاب مربوط بسلسلة يوتيوب: دروسه هي فيديوهات السلسلة
+    const se = b?.seriesId ? s.series.find((x) => x.id === b.seriesId) : null;
+    if (se) return se.episodes || [];
+    return b && b.mode !== 'pages' ? (b.units || []) : null;
+  }
   if (type === 'self' || type === 'series') return s.series.find((x) => x.id === itemId)?.episodes || [];
   return null;
 }
@@ -45,7 +51,13 @@ export function makeLink(type, itemId, unitId) {
   const s = store.state;
   if (!itemId) return null;
   if (type === 'study') { const sj = s.subjects.find((x) => x.id === itemId); const l = sj?.lectures.find((x) => x.id === unitId); return { kind: unitId ? 'lecture' : 'subject', itemId, unitId: unitId || null, image: l?.image || sj?.image || null }; }
-  if (type === 'book') { const b = s.books.find((x) => x.id === itemId); const u = b?.units?.find((x) => x.id === unitId); return { kind: b?.mode === 'pages' ? 'book' : 'lesson', itemId, unitId: unitId || null, image: u?.image || b?.image || null }; }
+  if (type === 'book') {
+    const b = s.books.find((x) => x.id === itemId);
+    const se = b?.seriesId ? s.series.find((x) => x.id === b.seriesId) : null;
+    if (se) { const e = se.episodes.find((x) => x.id === unitId); return { kind: 'episode', itemId: se.id, unitId: unitId || null, image: e?.image || (e?.videoId ? `https://i.ytimg.com/vi/${e.videoId}/mqdefault.jpg` : null) || b.image || null }; }
+    const u = b?.units?.find((x) => x.id === unitId);
+    return { kind: b?.mode === 'pages' ? 'book' : 'lesson', itemId, unitId: unitId || null, image: u?.image || b?.image || null };
+  }
   if (type === 'self' || type === 'series') { const se = s.series.find((x) => x.id === itemId); const e = se?.episodes.find((x) => x.id === unitId); return { kind: 'episode', itemId, unitId: unitId || null, image: e?.image || (e?.videoId ? `https://i.ytimg.com/vi/${e.videoId}/mqdefault.jpg` : null) || se?.image || null }; }
   if (type === 'worship') { if (itemId.startsWith('adhkar:')) return { kind: 'adhkar', itemId: itemId.slice(7), image: adhkarSettings(itemId.slice(7)).image || null }; return { kind: itemId, itemId }; }
   if (type === 'behavior') return { kind: 'habit', itemId };
@@ -61,8 +73,14 @@ export function autoTitle(type, itemId, unitId) {
   return u ? `${name}: ${u.title}` : name;
 }
 // نوع المهمة من بياناتها (للتعديل)
+// حلقة من سلسلة كتاب: العنصر هو الكتاب نفسه
+const bookOfSeries = (sid) => store.state.books.find((b) => b.seriesId === sid) || null;
+export function linkItemId(link) {
+  if (link?.kind === 'episode') { const se = store.state.series.find((x) => x.id === link.itemId); if (se?.kind === 'book') return bookOfSeries(se.id)?.id || link.itemId; }
+  return link?.itemId || null;
+}
 export function typeOf(t) {
-  if (t.link?.kind === 'episode') return store.state.series.find((x) => x.id === t.link.itemId)?.kind === 'self' ? 'self' : 'series';
+  if (t.link?.kind === 'episode') { const k = store.state.series.find((x) => x.id === t.link.itemId)?.kind; return k === 'self' ? 'self' : k === 'book' ? 'book' : 'series'; }
   if (t.link?.kind === 'lecture' || t.link?.kind === 'subject') return 'study';
   if (t.link?.kind === 'lesson' || t.link?.kind === 'book') return 'book';
   if (['adhkar', 'quran', 'hifz'].includes(t.link?.kind)) return 'worship';
@@ -74,7 +92,11 @@ export function itemProgress(type, itemId) {
   const s = store.state;
   const avg = (arr, fn) => (arr?.length ? arr.reduce((a, x) => a + fn(x), 0) / arr.length : 0);
   if (type === 'study') { const x = s.subjects.find((y) => y.id === itemId); return x ? { pct: avg(x.lectures, (u) => Math.min(100, u.mastery || 0) / 100), n: `${(x.lectures || []).length} محاضرة` } : null; }
-  if (type === 'book') { const x = s.books.find((y) => y.id === itemId); if (!x) return null; return x.mode === 'pages' ? { pct: x.totalPages ? (x.pagesRead || 0) / x.totalPages : 0, n: `ص ${x.pagesRead || 0}` } : { pct: avg(x.units, (u) => Math.min(100, u.mastery || 0) / 100), n: `${(x.units || []).length} ${x.unitWord || 'درس'}` }; }
+  if (type === 'book') {
+    const x = s.books.find((y) => y.id === itemId); if (!x) return null;
+    const se = x.seriesId ? s.series.find((y) => y.id === x.seriesId) : null;
+    if (se) return { pct: avg(se.episodes, (e) => (e.done ? 1 : Math.max(e.progress || 0, (e.mastery || 0) / 100))), n: `${(se.episodes || []).length} ${x.unitWord || 'درس'}` };
+    return x.mode === 'pages' ? { pct: x.totalPages ? (x.pagesRead || 0) / x.totalPages : 0, n: `ص ${x.pagesRead || 0}` } : { pct: avg(x.units, (u) => Math.min(100, u.mastery || 0) / 100), n: `${(x.units || []).length} ${x.unitWord || 'درس'}` }; }
   if (type === 'self' || type === 'series') { const x = s.series.find((y) => y.id === itemId); return x ? { pct: avg(x.episodes, (e) => (e.done ? 1 : Math.max(e.progress || 0, (e.mastery || 0) / 100))), n: `${(x.episodes || []).length} حلقة` } : null; }
   return null;
 }
